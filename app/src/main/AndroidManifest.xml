@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.confi">
+    package="com.caldi">
 
     <application
         android:allowBackup="true"
@@ -8,7 +8,7 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".splash.SplashActivity"
+            android:name="com.caldi.splash.SplashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
             <intent-filter>
@@ -18,7 +18,7 @@
         </activity>
 
         <activity
-            android:name=".login.LoginActivity"
+            android:name="com.caldi.login.LoginActivity"
             android:screenOrientation="portrait" />
 
     </application>

@@ -1,4 +1,4 @@
-package com.confi
+package com.caldi
 
 import org.junit.Test
 

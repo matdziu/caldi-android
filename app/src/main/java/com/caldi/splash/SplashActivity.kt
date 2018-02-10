@@ -1,10 +1,10 @@
-package com.confi.splash
+package com.caldi.splash
 
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.support.v7.app.AppCompatActivity
-import com.confi.login.LoginActivity
+import com.caldi.login.LoginActivity
 
 class SplashActivity : AppCompatActivity() {
 

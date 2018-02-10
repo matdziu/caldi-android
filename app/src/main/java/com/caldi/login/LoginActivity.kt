@@ -1,8 +1,8 @@
-package com.confi.login
+package com.caldi.login
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.confi.R
+import com.caldi.R
 
 class LoginActivity : AppCompatActivity() {
 

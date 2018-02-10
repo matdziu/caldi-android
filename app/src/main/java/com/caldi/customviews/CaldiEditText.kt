@@ -1,13 +1,13 @@
-package com.confi.customviews
+package com.caldi.customviews
 
 import android.content.Context
 import android.support.v4.content.ContextCompat
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.widget.EditText
-import com.confi.R
+import com.caldi.R
 
-class ConfiEditText(context: Context, attrs: AttributeSet? = null) : EditText(context, attrs) {
+class CaldiEditText(context: Context, attrs: AttributeSet? = null) : EditText(context, attrs) {
 
     init {
         background = ContextCompat.getDrawable(context, R.drawable.round_empty_green_background)
