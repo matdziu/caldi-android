@@ -7,11 +7,10 @@ import android.util.TypedValue
 import android.widget.EditText
 import com.confi.R
 
-class ConfiEditText(context: Context, attrs: AttributeSet? = null)
-    : EditText(context, attrs) {
+class ConfiEditText(context: Context, attrs: AttributeSet? = null) : EditText(context, attrs) {
 
     init {
-        background = ContextCompat.getDrawable(context, R.drawable.round_background)
+        background = ContextCompat.getDrawable(context, R.drawable.round_empty_green_background)
         setTextColor(ContextCompat.getColor(context, R.color.colorPrimaryText))
         setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16f)
         val paddingPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, resources.displayMetrics).toInt()
