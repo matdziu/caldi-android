@@ -3,9 +3,15 @@ package com.caldi.login
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.View
+import android.widget.Toast
 import com.caldi.R
 import com.caldi.factories.LoginViewModelFactory
 import dagger.android.AndroidInjection
+import kotlinx.android.synthetic.main.activity_login.contentViewGroup
+import kotlinx.android.synthetic.main.activity_login.emailEditText
+import kotlinx.android.synthetic.main.activity_login.passwordEditText
+import kotlinx.android.synthetic.main.activity_login.progressBar
 import javax.inject.Inject
 
 class LoginActivity : AppCompatActivity(), LoginView {
@@ -32,7 +38,27 @@ class LoginActivity : AppCompatActivity(), LoginView {
         super.onStop()
     }
 
-    override fun render(loginViewState: LoginViewState) {
+    private fun showProgress(show: Boolean) {
+        if (show) {
+            contentViewGroup.visibility = View.GONE
+            progressBar.visibility = View.VISIBLE
+        } else {
+            contentViewGroup.visibility = View.VISIBLE
+            progressBar.visibility = View.GONE
+        }
+    }
 
+    override fun render(loginViewState: LoginViewState) {
+        showProgress(loginViewState.inProgress)
+        emailEditText.showError(!loginViewState.emailValid)
+        passwordEditText.showError(!loginViewState.passwordValid)
+
+        if (loginViewState.error && !loginViewState.dismissToast) {
+            Toast.makeText(this, getString(R.string.login_error_text), Toast.LENGTH_SHORT).show()
+        }
+
+        if (loginViewState.loginSuccess) {
+            // go to app
+        }
     }
 }
