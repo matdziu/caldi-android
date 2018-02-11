@@ -16,4 +16,12 @@ class CaldiEditText(context: Context, attrs: AttributeSet? = null) : EditText(co
         val paddingPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, resources.displayMetrics).toInt()
         setPadding(paddingPx, paddingPx, paddingPx, paddingPx)
     }
+
+    fun showError(show: Boolean) {
+        background = if (show) {
+            ContextCompat.getDrawable(context, R.drawable.round_empty_red_background)
+        } else {
+            ContextCompat.getDrawable(context, R.drawable.round_empty_green_background)
+        }
+    }
 }
