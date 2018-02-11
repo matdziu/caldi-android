@@ -16,9 +16,9 @@ class LoginActivity : AppCompatActivity(), LoginView {
     lateinit var loginViewModelFactory: LoginViewModelFactory
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        AndroidInjection.inject(this)
         loginViewModel = ViewModelProviders.of(this, loginViewModelFactory)[LoginViewModel::class.java]
     }
 
