@@ -42,12 +42,12 @@
             android:layout_marginBottom="16dp"
             android:hint="@string/repeat_password_hint"
             android:inputType="textPassword"
-            app:layout_constraintBottom_toTopOf="@id/signUpButton"
+            app:layout_constraintBottom_toTopOf="@id/createAccountButton"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
 
         <com.caldi.customviews.CaldiButton
-            android:id="@+id/signUpButton"
+            android:id="@+id/createAccountButton"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:background="@drawable/green_button_background"
