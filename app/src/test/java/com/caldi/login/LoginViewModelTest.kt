@@ -38,7 +38,7 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun testWithErrorFromRepository() {
+    fun testWithErrorFromInteractor() {
         val loginViewRobot = LoginViewRobot(loginViewModel)
         whenever(loginInteractor.login(any(), any())).thenReturn(Observable.just(PartialLoginViewState.ErrorState()))
 

@@ -5,11 +5,11 @@ import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import junit.framework.Assert
 
-class LoginViewRobot(private val loginViewModel: LoginViewModel) {
+class LoginViewRobot(loginViewModel: LoginViewModel) {
 
     private val renderedStates = arrayListOf<LoginViewState>()
 
-    private val inputObservable: Subject<InputData> = PublishSubject.create<InputData>()
+    private val inputObservable: Subject<InputData> = PublishSubject.create()
 
     private val loginView = object : LoginView {
 
