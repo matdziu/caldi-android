@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Toast
 import com.caldi.R
+import com.caldi.extensions.hideSoftKeyboard
 import com.caldi.factories.LoginViewModelFactory
 import com.jakewharton.rxbinding2.view.RxView
 import dagger.android.AndroidInjection
@@ -56,6 +57,7 @@ class LoginActivity : AppCompatActivity(), LoginView {
     }
 
     override fun render(loginViewState: LoginViewState) {
+        hideSoftKeyboard()
         showProgress(loginViewState.inProgress)
         emailEditText.showError(!loginViewState.emailValid)
         passwordEditText.showError(!loginViewState.passwordValid)

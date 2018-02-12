@@ -19,7 +19,8 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
                     return@flatMap if (!emailValid || !passwordValid) {
                         Observable.just(PartialLoginViewState.LocalValidation(emailValid, passwordValid))
                     } else {
-                        Observable.just(PartialLoginViewState.LoginSuccess())
+                        loginRepository.login(inputData.email, inputData.password)
+                                .startWith(PartialLoginViewState.InProgressState())
                     }
                 }
                 .subscribeWith(stateSubject)
