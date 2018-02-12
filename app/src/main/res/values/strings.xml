@@ -3,8 +3,9 @@
     <string name="email_hint">Email</string>
     <string name="password_hint">Password</string>
     <string name="sign_in_text">Sign in</string>
-    <string name="create_account_text">Create account</string>
     <string name="sign_in_with_google_text">Sign in with Google</string>
     <string name="sign_in_with_facebook_text">Sign in with Facebook</string>
     <string name="login_error_text">Something went wrong :(</string>
+    <string name="create_account_text">Create account</string>
+    <string name="repeat_password_hint">Repeat password</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.caldi.login
 
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
@@ -8,10 +9,12 @@ import android.widget.Toast
 import com.caldi.R
 import com.caldi.extensions.hideSoftKeyboard
 import com.caldi.factories.LoginViewModelFactory
+import com.caldi.signup.SignUpActivity
 import com.jakewharton.rxbinding2.view.RxView
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.activity_login.contentViewGroup
+import kotlinx.android.synthetic.main.activity_login.createAccountButton
 import kotlinx.android.synthetic.main.activity_login.emailEditText
 import kotlinx.android.synthetic.main.activity_login.loginButton
 import kotlinx.android.synthetic.main.activity_login.passwordEditText
@@ -30,6 +33,9 @@ class LoginActivity : AppCompatActivity(), LoginView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         loginViewModel = ViewModelProviders.of(this, loginViewModelFactory)[LoginViewModel::class.java]
+        createAccountButton.setOnClickListener {
+            startActivity(Intent(this, SignUpActivity::class.java))
+        }
     }
 
     override fun onStart() {
