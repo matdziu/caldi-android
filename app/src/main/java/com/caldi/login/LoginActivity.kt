@@ -7,9 +7,12 @@ import android.view.View
 import android.widget.Toast
 import com.caldi.R
 import com.caldi.factories.LoginViewModelFactory
+import com.jakewharton.rxbinding2.view.RxView
 import dagger.android.AndroidInjection
+import io.reactivex.Observable
 import kotlinx.android.synthetic.main.activity_login.contentViewGroup
 import kotlinx.android.synthetic.main.activity_login.emailEditText
+import kotlinx.android.synthetic.main.activity_login.loginButton
 import kotlinx.android.synthetic.main.activity_login.passwordEditText
 import kotlinx.android.synthetic.main.activity_login.progressBar
 import javax.inject.Inject
@@ -46,6 +49,10 @@ class LoginActivity : AppCompatActivity(), LoginView {
             contentViewGroup.visibility = View.VISIBLE
             progressBar.visibility = View.GONE
         }
+    }
+
+    override fun emitInput(): Observable<InputData> {
+        return RxView.clicks(loginButton).map { InputData(emailEditText.text.toString(), passwordEditText.text.toString()) }
     }
 
     override fun render(loginViewState: LoginViewState) {
