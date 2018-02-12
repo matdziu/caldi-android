@@ -5,7 +5,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 
-class LoginRepository {
+class LoginInteractor {
 
     fun login(email: String, password: String): Observable<PartialLoginViewState> {
         return if (email != "error") {

@@ -5,7 +5,7 @@ import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
 
-class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
+class LoginViewModel(private val loginInteractor: LoginInteractor) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
     private val stateSubject = BehaviorSubject.create<PartialLoginViewState>()
@@ -19,7 +19,7 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
                     return@flatMap if (!emailValid || !passwordValid) {
                         Observable.just(PartialLoginViewState.LocalValidation(emailValid, passwordValid))
                     } else {
-                        loginRepository.login(inputData.email, inputData.password)
+                        loginInteractor.login(inputData.email, inputData.password)
                                 .startWith(PartialLoginViewState.InProgressState())
                     }
                 }

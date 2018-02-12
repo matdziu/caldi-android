@@ -2,7 +2,7 @@ package com.caldi.injection.modules
 
 import com.caldi.factories.LoginViewModelFactory
 import com.caldi.injection.ActivityScope
-import com.caldi.login.LoginRepository
+import com.caldi.login.LoginInteractor
 import dagger.Module
 import dagger.Provides
 
@@ -11,13 +11,13 @@ class LoginActivityModule {
 
     @Provides
     @ActivityScope
-    fun provideLoginViewModelFactory(loginRepository: LoginRepository): LoginViewModelFactory {
-        return LoginViewModelFactory(loginRepository)
+    fun provideLoginViewModelFactory(loginInteractor: LoginInteractor): LoginViewModelFactory {
+        return LoginViewModelFactory(loginInteractor)
     }
 
     @Provides
     @ActivityScope
-    fun provideLoginRepository(): LoginRepository {
-        return LoginRepository()
+    fun provideLoginRepository(): LoginInteractor {
+        return LoginInteractor()
     }
 }
