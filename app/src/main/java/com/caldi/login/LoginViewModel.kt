@@ -23,9 +23,10 @@ class LoginViewModel(private val loginInteractor: LoginInteractor) : ViewModel()
                                 .startWith(PartialLoginViewState.InProgressState())
                     }
                 }
-                .subscribeWith(stateSubject)
 
-        compositeDisposable.add(inputDataObservable.scan(LoginViewState(), this::reduceState)
+        val mergedObservable = Observable.merge(arrayListOf(inputDataObservable)).subscribeWith(stateSubject)
+
+        compositeDisposable.add(mergedObservable.scan(LoginViewState(), this::reduceState)
                 .subscribe({ loginView.render(it) }))
     }
 
