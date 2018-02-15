@@ -10,9 +10,9 @@ import java.util.concurrent.TimeUnit
 class LoginInteractor {
 
     private val firebaseAuth = FirebaseAuth.getInstance()
-    private val stateSubject: Subject<PartialLoginViewState> = PublishSubject.create()
 
     fun login(email: String, password: String): Observable<PartialLoginViewState> {
+        val stateSubject: Subject<PartialLoginViewState> = PublishSubject.create()
         firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener({ task ->
                     if (task.isSuccessful) {
