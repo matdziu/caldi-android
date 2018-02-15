@@ -11,6 +11,8 @@ class LoginViewModel(private val loginInteractor: LoginInteractor) : ViewModel()
     private val stateSubject = BehaviorSubject.create<PartialLoginViewState>()
 
     fun bind(loginView: LoginView) {
+        val isLoggedInObservable = loginInteractor.isLoggedIn()
+
         val inputDataObservable = loginView.emitInput()
                 .flatMap { inputData ->
                     val emailValid = !inputData.email.isBlank()
@@ -24,7 +26,8 @@ class LoginViewModel(private val loginInteractor: LoginInteractor) : ViewModel()
                     }
                 }
 
-        val mergedObservable = Observable.merge(arrayListOf(inputDataObservable)).subscribeWith(stateSubject)
+        val mergedObservable = Observable.merge(arrayListOf(inputDataObservable, isLoggedInObservable))
+                .subscribeWith(stateSubject)
 
         compositeDisposable.add(mergedObservable.scan(LoginViewState(), this::reduceState)
                 .subscribe({ loginView.render(it) }))

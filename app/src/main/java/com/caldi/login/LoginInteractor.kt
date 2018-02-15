@@ -1,6 +1,7 @@
 package com.caldi.login
 
 import com.google.firebase.auth.FirebaseAuth
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.PublishSubject
@@ -25,5 +26,13 @@ class LoginInteractor {
                     }
                 })
         return stateSubject.observeOn(AndroidSchedulers.mainThread())
+    }
+
+    fun isLoggedIn(): Observable<PartialLoginViewState.LoginSuccess> {
+        return if (firebaseAuth.currentUser != null) {
+            Observable.just(PartialLoginViewState.LoginSuccess())
+        } else {
+            Completable.complete().toObservable()
+        }
     }
 }

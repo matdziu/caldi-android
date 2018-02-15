@@ -3,13 +3,20 @@ package com.caldi.login
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
+import io.reactivex.Completable
 import io.reactivex.Observable
+import org.junit.Before
 import org.junit.Test
 
 class LoginViewModelTest {
 
     private val loginInteractor: LoginInteractor = mock()
     private val loginViewModel = LoginViewModel(loginInteractor)
+
+    @Before
+    fun setUp() {
+        whenever(loginInteractor.isLoggedIn()).thenReturn(Completable.complete().toObservable())
+    }
 
     @Test
     fun testWithCorrectInput() {
