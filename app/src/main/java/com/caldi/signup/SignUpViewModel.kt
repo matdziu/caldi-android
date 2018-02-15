@@ -14,7 +14,7 @@ class SignUpViewModel(private val signUpInteractor: SignUpInteractor) : ViewMode
         val inputDataObservable = signUpView.emitInput()
                 .flatMap { inputData ->
                     val emailValid = !inputData.email.isBlank()
-                    val passwordValid = inputData.password.length >= 5
+                    val passwordValid = inputData.password.length >= 6
                     val repeatPasswordValid = !inputData.repeatPassword.isBlank()
                             && inputData.password == inputData.repeatPassword
 

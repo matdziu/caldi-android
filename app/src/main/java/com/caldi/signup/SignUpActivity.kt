@@ -1,6 +1,7 @@
 package com.caldi.signup
 
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
@@ -8,6 +9,7 @@ import android.widget.Toast
 import com.caldi.R
 import com.caldi.extensions.hideSoftKeyboard
 import com.caldi.factories.SignUpViewModelFactory
+import com.caldi.home.HomeActivity
 import com.jakewharton.rxbinding2.view.RxView
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
@@ -73,7 +75,10 @@ class SignUpActivity : AppCompatActivity(), SignUpView {
         }
 
         if (signUpViewState.signUpSuccess) {
-            // go to app
+            val intent = Intent(this, HomeActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent)
+            finish()
         }
     }
 }

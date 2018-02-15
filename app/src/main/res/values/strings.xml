@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Caldi</string>
     <string name="email_hint">Email</string>
-    <string name="password_hint_sign_up">Password (min. 5 chars)</string>
+    <string name="password_hint_sign_up">Password (min. 6 chars)</string>
     <string name="password_hint_login">Password</string>
     <string name="sign_in_text">Sign in</string>
     <string name="sign_in_with_google_text">Sign in with Google</string>

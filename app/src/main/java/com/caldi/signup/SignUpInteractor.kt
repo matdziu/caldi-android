@@ -1,23 +1,30 @@
 package com.caldi.signup
 
+import com.google.firebase.auth.FirebaseAuth
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.Subject
 import java.util.concurrent.TimeUnit
 
 
 class SignUpInteractor {
 
+    private val firebaseAuth = FirebaseAuth.getInstance()
+    private val stateSubject: Subject<PartialSignUpViewState> = PublishSubject.create()
+
     fun createAccount(email: String, password: String): Observable<PartialSignUpViewState> {
-        return if (email != "error") {
-            Observable.timer(3000, TimeUnit.MILLISECONDS).map { PartialSignUpViewState.SignUpSuccess() }
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeOn(Schedulers.io()) as Observable<PartialSignUpViewState>
-        } else {
-            Observable.timer(100, TimeUnit.MILLISECONDS).map { PartialSignUpViewState.ErrorState(true) }
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribeOn(Schedulers.io())
-                    .startWith(PartialSignUpViewState.ErrorState()) as Observable<PartialSignUpViewState>
-        }
+        firebaseAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener({ task ->
+                    if (task.isSuccessful) {
+                        stateSubject.onNext(PartialSignUpViewState.SignUpSuccess())
+                    } else {
+                        Observable.timer(100, TimeUnit.MILLISECONDS)
+                                .map { PartialSignUpViewState.ErrorState(true) }
+                                .startWith(PartialSignUpViewState.ErrorState())
+                                .subscribe(stateSubject)
+                    }
+                })
+        return stateSubject.observeOn(AndroidSchedulers.mainThread())
     }
 }
