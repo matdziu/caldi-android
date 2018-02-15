@@ -9,6 +9,7 @@ import android.widget.Toast
 import com.caldi.R
 import com.caldi.extensions.hideSoftKeyboard
 import com.caldi.factories.LoginViewModelFactory
+import com.caldi.home.HomeActivity
 import com.caldi.signup.SignUpActivity
 import com.jakewharton.rxbinding2.view.RxView
 import dagger.android.AndroidInjection
@@ -73,7 +74,8 @@ class LoginActivity : AppCompatActivity(), LoginView {
         }
 
         if (loginViewState.loginSuccess) {
-            // go to app
+            startActivity(Intent(this, HomeActivity::class.java))
+            finish()
         }
     }
 }
