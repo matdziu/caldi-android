@@ -1,12 +1,15 @@
 package com.caldi.login
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import java.util.concurrent.TimeUnit
+
 
 class LoginInteractor {
 
@@ -34,5 +37,22 @@ class LoginInteractor {
         } else {
             Completable.complete().toObservable()
         }
+    }
+
+    fun login(googleAccount: GoogleSignInAccount): Observable<PartialLoginViewState> {
+        val stateSubject: Subject<PartialLoginViewState> = PublishSubject.create()
+        val credential = GoogleAuthProvider.getCredential(googleAccount.idToken, null)
+        firebaseAuth.signInWithCredential(credential)
+                .addOnCompleteListener({ task ->
+                    if (task.isSuccessful) {
+                        stateSubject.onNext(PartialLoginViewState.LoginSuccess())
+                    } else {
+                        Observable.timer(100, TimeUnit.MILLISECONDS)
+                                .map { PartialLoginViewState.ErrorState(true) }
+                                .startWith(PartialLoginViewState.ErrorState())
+                                .subscribe(stateSubject)
+                    }
+                })
+        return stateSubject
     }
 }
