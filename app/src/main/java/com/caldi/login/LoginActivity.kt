@@ -19,6 +19,7 @@ import kotlinx.android.synthetic.main.activity_login.contentViewGroup
 import kotlinx.android.synthetic.main.activity_login.createAccountButton
 import kotlinx.android.synthetic.main.activity_login.emailEditText
 import kotlinx.android.synthetic.main.activity_login.loginButton
+import kotlinx.android.synthetic.main.activity_login.loginWithGoogleButton
 import kotlinx.android.synthetic.main.activity_login.passwordEditText
 import kotlinx.android.synthetic.main.activity_login.progressBar
 import javax.inject.Inject
@@ -27,6 +28,7 @@ import javax.inject.Inject
 class LoginActivity : AppCompatActivity(), LoginView {
 
     private lateinit var loginViewModel: LoginViewModel
+    private val requestCodeSignIn = 1
 
     @Inject
     lateinit var loginViewModelFactory: LoginViewModelFactory
@@ -39,8 +41,12 @@ class LoginActivity : AppCompatActivity(), LoginView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         loginViewModel = ViewModelProviders.of(this, loginViewModelFactory)[LoginViewModel::class.java]
+
         createAccountButton.setOnClickListener {
             startActivity(Intent(this, SignUpActivity::class.java))
+        }
+        loginWithGoogleButton.setOnClickListener {
+            startActivityForResult(googleSignInClient.signInIntent, requestCodeSignIn)
         }
     }
 
