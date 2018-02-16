@@ -11,10 +11,15 @@ import com.caldi.extensions.hideSoftKeyboard
 import com.caldi.factories.LoginViewModelFactory
 import com.caldi.home.HomeActivity
 import com.caldi.signup.SignUpActivity
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.common.api.ApiException
 import com.jakewharton.rxbinding2.view.RxView
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
+import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.Subject
 import kotlinx.android.synthetic.main.activity_login.contentViewGroup
 import kotlinx.android.synthetic.main.activity_login.createAccountButton
 import kotlinx.android.synthetic.main.activity_login.emailEditText
@@ -27,8 +32,10 @@ import javax.inject.Inject
 
 class LoginActivity : AppCompatActivity(), LoginView {
 
-    private lateinit var loginViewModel: LoginViewModel
     private val requestCodeSignIn = 1
+    private val googleSignInObservable: Subject<GoogleSignInAccount> = PublishSubject.create()
+
+    private lateinit var loginViewModel: LoginViewModel
 
     @Inject
     lateinit var loginViewModelFactory: LoginViewModelFactory
@@ -69,6 +76,21 @@ class LoginActivity : AppCompatActivity(), LoginView {
             progressBar.visibility = View.GONE
         }
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == requestCodeSignIn) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+            try {
+                val account = task.getResult(ApiException::class.java)
+                googleSignInObservable.onNext(account)
+            } catch (exception: ApiException) {
+                Toast.makeText(this, getString(R.string.login_error_text), Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    override fun emitGoogleSignIn(): Observable<GoogleSignInAccount> = googleSignInObservable
 
     override fun emitInput(): Observable<InputData> {
         return RxView.clicks(loginButton).map { InputData(emailEditText.text.toString(), passwordEditText.text.toString()) }
