@@ -11,6 +11,7 @@ import com.caldi.extensions.hideSoftKeyboard
 import com.caldi.factories.LoginViewModelFactory
 import com.caldi.home.HomeActivity
 import com.caldi.signup.SignUpActivity
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.jakewharton.rxbinding2.view.RxView
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
@@ -22,12 +23,16 @@ import kotlinx.android.synthetic.main.activity_login.passwordEditText
 import kotlinx.android.synthetic.main.activity_login.progressBar
 import javax.inject.Inject
 
+
 class LoginActivity : AppCompatActivity(), LoginView {
 
     private lateinit var loginViewModel: LoginViewModel
 
     @Inject
     lateinit var loginViewModelFactory: LoginViewModelFactory
+
+    @Inject
+    lateinit var googleSignInClient: GoogleSignInClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
