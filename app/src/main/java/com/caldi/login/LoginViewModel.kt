@@ -14,10 +14,10 @@ class LoginViewModel(private val loginInteractor: LoginInteractor) : ViewModel()
         val isLoggedInObservable = loginInteractor.isLoggedIn()
 
         val googleSignInObservable = loginView.emitGoogleSignIn()
-                .flatMap { loginInteractor.login(it) }
+                .flatMap { loginInteractor.login(it).startWith(PartialLoginViewState.InProgressState()) }
 
         val facebookSignInObservable = loginView.emitFacebookSignIn()
-                .flatMap { loginInteractor.login(it) }
+                .flatMap { loginInteractor.login(it).startWith(PartialLoginViewState.InProgressState()) }
 
         val inputDataObservable = loginView.emitInput()
                 .flatMap { inputData ->
