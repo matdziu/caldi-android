@@ -10,4 +10,6 @@
     <string name="sign_up_error_text">Something went wrong :(</string>
     <string name="create_account_text">Create account</string>
     <string name="repeat_password_hint">Repeat password</string>
+    <string name="facebook_app_id">796268567224376</string>
+    <string name="fb_login_protocol_scheme">fb796268567224376</string>
 </resources>

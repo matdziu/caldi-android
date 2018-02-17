@@ -12,6 +12,12 @@ import com.caldi.extensions.hideSoftKeyboard
 import com.caldi.factories.LoginViewModelFactory
 import com.caldi.home.HomeActivity
 import com.caldi.signup.SignUpActivity
+import com.facebook.AccessToken
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -25,6 +31,7 @@ import kotlinx.android.synthetic.main.activity_login.contentViewGroup
 import kotlinx.android.synthetic.main.activity_login.createAccountButton
 import kotlinx.android.synthetic.main.activity_login.emailEditText
 import kotlinx.android.synthetic.main.activity_login.loginButton
+import kotlinx.android.synthetic.main.activity_login.loginWithFacebookButton
 import kotlinx.android.synthetic.main.activity_login.loginWithGoogleButton
 import kotlinx.android.synthetic.main.activity_login.passwordEditText
 import kotlinx.android.synthetic.main.activity_login.progressBar
@@ -35,6 +42,7 @@ class LoginActivity : AppCompatActivity(), LoginView {
 
     private val requestCodeSignIn = 1
     private val googleSignInObservable: Subject<GoogleSignInAccount> = PublishSubject.create()
+    private val facebookSignInObservable: Subject<AccessToken> = PublishSubject.create()
 
     private lateinit var loginViewModel: LoginViewModel
 
@@ -44,17 +52,28 @@ class LoginActivity : AppCompatActivity(), LoginView {
     @Inject
     lateinit var googleSignInClient: GoogleSignInClient
 
+    @Inject
+    lateinit var callbackManager: CallbackManager
+
+    @Inject
+    lateinit var loginManager: LoginManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         loginViewModel = ViewModelProviders.of(this, loginViewModelFactory)[LoginViewModel::class.java]
 
+        initFacebookSignInCallback()
+
         createAccountButton.setOnClickListener {
             startActivity(Intent(this, SignUpActivity::class.java))
         }
         loginWithGoogleButton.setOnClickListener {
             startActivityForResult(googleSignInClient.signInIntent, requestCodeSignIn)
+        }
+        loginWithFacebookButton.setOnClickListener {
+            loginManager.logInWithReadPermissions(this, arrayListOf("email"))
         }
     }
 
@@ -68,6 +87,23 @@ class LoginActivity : AppCompatActivity(), LoginView {
         super.onStop()
     }
 
+    private fun initFacebookSignInCallback() {
+        loginManager.registerCallback(callbackManager,
+                object : FacebookCallback<LoginResult> {
+                    override fun onSuccess(loginResult: LoginResult) {
+                        facebookSignInObservable.onNext(loginResult.accessToken)
+                    }
+
+                    override fun onCancel() {
+                        Log.e("FacebookSignIn", "onCancel()")
+                    }
+
+                    override fun onError(exception: FacebookException) {
+                        Log.e("FacebookSignIn", exception.message)
+                    }
+                })
+    }
+
     private fun showProgress(show: Boolean) {
         if (show) {
             contentViewGroup.visibility = View.GONE
@@ -79,7 +115,7 @@ class LoginActivity : AppCompatActivity(), LoginView {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+        callbackManager.onActivityResult(requestCode, resultCode, data)
         if (requestCode == requestCodeSignIn) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
@@ -89,9 +125,12 @@ class LoginActivity : AppCompatActivity(), LoginView {
                 Log.e("GoogleSignIn", exception.message)
             }
         }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun emitGoogleSignIn(): Observable<GoogleSignInAccount> = googleSignInObservable
+
+    override fun emitFacebookSignIn(): Observable<AccessToken> = facebookSignInObservable
 
     override fun emitInput(): Observable<InputData> {
         return RxView.clicks(loginButton).map { InputData(emailEditText.text.toString(), passwordEditText.text.toString()) }

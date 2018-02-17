@@ -11,7 +11,8 @@ import dagger.android.ContributesAndroidInjector
 abstract class ActivityBuilder {
 
     @ActivityScope
-    @ContributesAndroidInjector(modules = [LoginActivityModule::class, GoogleSignInModule::class])
+    @ContributesAndroidInjector(modules = [LoginActivityModule::class, GoogleSignInModule::class,
+        FacebookSignInModule::class])
     abstract fun bindLoginActivity(): LoginActivity
 
     @ActivityScope

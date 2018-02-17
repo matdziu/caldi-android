@@ -16,6 +16,9 @@ class LoginViewModel(private val loginInteractor: LoginInteractor) : ViewModel()
         val googleSignInObservable = loginView.emitGoogleSignIn()
                 .flatMap { loginInteractor.login(it) }
 
+        val facebookSignInObservable = loginView.emitFacebookSignIn()
+                .flatMap { loginInteractor.login(it) }
+
         val inputDataObservable = loginView.emitInput()
                 .flatMap { inputData ->
                     val emailValid = !inputData.email.isBlank()
@@ -30,7 +33,7 @@ class LoginViewModel(private val loginInteractor: LoginInteractor) : ViewModel()
                 }
 
         val mergedObservable = Observable.merge(arrayListOf(inputDataObservable, isLoggedInObservable,
-                googleSignInObservable))
+                googleSignInObservable, facebookSignInObservable))
                 .subscribeWith(stateSubject)
 
         compositeDisposable.add(mergedObservable.scan(LoginViewState(), this::reduceState)

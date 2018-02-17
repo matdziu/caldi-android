@@ -1,6 +1,9 @@
 package com.caldi.login
 
+import com.facebook.AccessToken
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.firebase.auth.AuthCredential
+import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import io.reactivex.Completable
@@ -40,10 +43,19 @@ class LoginInteractor {
     }
 
     fun login(googleAccount: GoogleSignInAccount): Observable<PartialLoginViewState> {
-        val stateSubject: Subject<PartialLoginViewState> = PublishSubject.create()
         val credential = GoogleAuthProvider.getCredential(googleAccount.idToken, null)
+        return signInWithCredential(credential)
+    }
+
+    fun login(accessToken: AccessToken): Observable<PartialLoginViewState> {
+        val credential = FacebookAuthProvider.getCredential(accessToken.token)
+        return signInWithCredential(credential)
+    }
+
+    private fun signInWithCredential(credential: AuthCredential): Observable<PartialLoginViewState> {
+        val stateSubject: Subject<PartialLoginViewState> = PublishSubject.create()
         firebaseAuth.signInWithCredential(credential)
-                .addOnCompleteListener({ task ->
+                .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         stateSubject.onNext(PartialLoginViewState.LoginSuccess())
                     } else {
@@ -52,7 +64,7 @@ class LoginInteractor {
                                 .startWith(PartialLoginViewState.ErrorState())
                                 .subscribe(stateSubject)
                     }
-                })
+                }
         return stateSubject.observeOn(AndroidSchedulers.mainThread())
     }
 }
