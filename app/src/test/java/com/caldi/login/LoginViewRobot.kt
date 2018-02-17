@@ -1,5 +1,6 @@
 package com.caldi.login
 
+import com.facebook.AccessToken
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import io.reactivex.Completable
 import io.reactivex.Observable
@@ -14,6 +15,7 @@ class LoginViewRobot(loginViewModel: LoginViewModel) {
     private val inputObservable: Subject<InputData> = PublishSubject.create()
 
     private val loginView = object : LoginView {
+        override fun emitFacebookSignIn(): Observable<AccessToken> = Completable.complete().toObservable()
 
         override fun emitGoogleSignIn(): Observable<GoogleSignInAccount> = Completable.complete().toObservable()
 
