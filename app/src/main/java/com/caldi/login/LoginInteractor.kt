@@ -53,6 +53,6 @@ class LoginInteractor {
                                 .subscribe(stateSubject)
                     }
                 })
-        return stateSubject
+        return stateSubject.observeOn(AndroidSchedulers.mainThread())
     }
 }
