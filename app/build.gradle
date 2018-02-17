@@ -20,7 +20,7 @@ android {
         def OAUTH_CLIENT_ID = "OAUTH_CLIENT_ID"
 
         debug {
-            buildConfigField "String", OAUTH_CLIENT_ID, "\"55173729475-5rqcb6lpe2s3horpcr4i3p4ftaiaj502.apps.googleusercontent.com\""
+            buildConfigField "String", OAUTH_CLIENT_ID, "\"55173729475-h749rfo3lhob2el9mlp316bbr90gdau6.apps.googleusercontent.com\""
         }
 
         release {
