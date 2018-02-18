@@ -1,10 +1,10 @@
 package com.caldi.home
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import com.caldi.R
+import com.caldi.base.BaseDrawerActivity
 
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : BaseDrawerActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
