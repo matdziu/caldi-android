@@ -19,7 +19,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="@color/colorPrimary"
-        app:itemBackground="@drawable/green_button_background"
+        app:itemBackground="@drawable/navigation_item_background"
         app:itemIconTint="@android:color/white"
         app:itemTextColor="@android:color/white"
         app:menu="@menu/menu_navigation_items" />
