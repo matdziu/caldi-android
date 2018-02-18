@@ -9,7 +9,6 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
-import android.widget.Toast
 import com.caldi.R
 import com.caldi.login.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -45,7 +44,6 @@ open class BaseDrawerActivity : AppCompatActivity(), NavigationView.OnNavigation
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         return if (!item.isChecked) {
             when (item.itemId) {
-                R.id.events_item -> Toast.makeText(this, "selected", Toast.LENGTH_SHORT).show()
                 R.id.sign_out_item -> signOut()
             }
             drawerLayout.closeDrawers()
@@ -61,5 +59,9 @@ open class BaseDrawerActivity : AppCompatActivity(), NavigationView.OnNavigation
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent)
         finish()
+    }
+
+    fun setNavigationSelection(menuItemId: Int) {
+        navigationView.setCheckedItem(menuItemId)
     }
 }

@@ -9,5 +9,6 @@ class HomeActivity : BaseDrawerActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setContentView(R.layout.activity_home)
         super.onCreate(savedInstanceState)
+        setNavigationSelection(R.id.events_item)
     }
 }
