@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
+import android.widget.Toast
 import com.caldi.R
 import com.caldi.login.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -42,11 +43,16 @@ open class BaseDrawerActivity : AppCompatActivity(), NavigationView.OnNavigation
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.sign_out_item -> signOut()
+        return if (!item.isChecked) {
+            when (item.itemId) {
+                R.id.events_item -> Toast.makeText(this, "selected", Toast.LENGTH_SHORT).show()
+                R.id.sign_out_item -> signOut()
+            }
+            drawerLayout.closeDrawers()
+            true
+        } else {
+            false
         }
-        drawerLayout.closeDrawers()
-        return true
     }
 
     private fun signOut() {
