@@ -12,4 +12,6 @@
     <string name="repeat_password_hint">Repeat password</string>
     <string name="facebook_app_id">392822507809930</string>
     <string name="fb_login_protocol_scheme">fb392822507809930</string>
+    <string name="events_item_text">Your events</string>
+    <string name="sign_out_item_text">Sign out</string>
 </resources>
