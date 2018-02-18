@@ -21,7 +21,9 @@ import com.facebook.login.LoginResult
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes.SIGN_IN_FAILED
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.CommonStatusCodes.NETWORK_ERROR
 import com.jakewharton.rxbinding2.view.RxView
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
@@ -99,7 +101,7 @@ class LoginActivity : AppCompatActivity(), LoginView {
                     }
 
                     override fun onError(exception: FacebookException) {
-                        Log.e("FacebookSignIn", exception.message)
+                        Toast.makeText(this@LoginActivity, getString(R.string.login_error_text), Toast.LENGTH_SHORT).show()
                     }
                 })
     }
@@ -122,7 +124,9 @@ class LoginActivity : AppCompatActivity(), LoginView {
                 val account = task.getResult(ApiException::class.java)
                 googleSignInObservable.onNext(account)
             } catch (exception: ApiException) {
-                Log.e("GoogleSignIn", exception.message)
+                if (exception.statusCode == SIGN_IN_FAILED || exception.statusCode == NETWORK_ERROR) {
+                    Toast.makeText(this, getString(R.string.login_error_text), Toast.LENGTH_SHORT).show()
+                }
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
