@@ -1,9 +1,13 @@
 package com.caldi.base
 
 import android.content.Intent
+import android.os.Bundle
 import android.support.design.widget.NavigationView
+import android.support.v4.content.ContextCompat
 import android.support.v4.widget.DrawerLayout
+import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import com.caldi.R
 import com.caldi.login.LoginActivity
@@ -17,9 +21,23 @@ open class BaseDrawerActivity : AppCompatActivity(), NavigationView.OnNavigation
     private val navigationView: NavigationView by lazy {
         findViewById<NavigationView>(R.id.navigationView)
     }
+    private val toolbar: Toolbar by lazy {
+        findViewById<Toolbar>(R.id.toolbar)
+    }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+
+
+        val toggle = ActionBarDrawerToggle(this, drawerLayout, toolbar,
+                R.string.drawer_opened, R.string.drawer_closed)
+        toggle.drawerArrowDrawable.color = ContextCompat.getColor(this, android.R.color.white)
+
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
         navigationView.setNavigationItemSelectedListener(this)
     }
 

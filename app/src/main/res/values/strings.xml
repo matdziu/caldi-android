@@ -14,4 +14,6 @@
     <string name="fb_login_protocol_scheme">fb392822507809930</string>
     <string name="events_item_text">Your events</string>
     <string name="sign_out_item_text">Sign out</string>
+    <string name="drawer_opened">Drawer opened</string>
+    <string name="drawer_closed">Drawer closed</string>
 </resources>

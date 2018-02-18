@@ -7,7 +7,7 @@ import com.caldi.base.BaseDrawerActivity
 class HomeActivity : BaseDrawerActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+        super.onCreate(savedInstanceState)
     }
 }
