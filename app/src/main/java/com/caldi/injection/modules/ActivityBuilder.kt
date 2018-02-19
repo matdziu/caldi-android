@@ -1,5 +1,6 @@
 package com.caldi.injection.modules
 
+import com.caldi.home.HomeActivity
 import com.caldi.injection.ActivityScope
 import com.caldi.login.LoginActivity
 import com.caldi.signup.SignUpActivity
@@ -18,4 +19,8 @@ abstract class ActivityBuilder {
     @ActivityScope
     @ContributesAndroidInjector(modules = [SignUpActivityModule::class])
     abstract fun bindSignUpActivity(): SignUpActivity
+
+    @ActivityScope
+    @ContributesAndroidInjector(modules = [HomeActivityModule::class])
+    abstract fun bindHomeActivity(): HomeActivity
 }

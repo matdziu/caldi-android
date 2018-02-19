@@ -31,6 +31,13 @@
             android:src="@drawable/ic_add_white_24dp"
             app:elevation="4dp" />
 
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_centerInParent="true"
+            android:visibility="gone" />
+
     </RelativeLayout>
 
     <android.support.design.widget.NavigationView

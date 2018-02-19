@@ -8,6 +8,7 @@
     <string name="sign_in_with_facebook_text">Sign in with Facebook</string>
     <string name="login_error_text">Something went wrong :(</string>
     <string name="sign_up_error_text">Something went wrong :(</string>
+    <string name="event_list_fetching_error">Something went wrong :(</string>
     <string name="create_account_text">Create account</string>
     <string name="repeat_password_hint">Repeat password</string>
     <string name="facebook_app_id">392822507809930</string>

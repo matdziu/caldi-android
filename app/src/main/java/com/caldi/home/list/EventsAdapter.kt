@@ -8,7 +8,7 @@ import com.caldi.models.Event
 
 class EventsAdapter : RecyclerView.Adapter<EventViewHolder>() {
 
-    private val eventList = arrayListOf<Event>()
+    private var eventList = arrayListOf<Event>()
 
     override fun getItemCount(): Int = eventList.size
 
@@ -21,8 +21,9 @@ class EventsAdapter : RecyclerView.Adapter<EventViewHolder>() {
         holder.bindEvent(eventList[position])
     }
 
-    fun update(eventList: List<Event>) {
-        this.eventList += eventList
+    fun setEventList(eventList: List<Event>) {
+        this.eventList.clear()
+        this.eventList.addAll(eventList)
         notifyDataSetChanged()
     }
 }
