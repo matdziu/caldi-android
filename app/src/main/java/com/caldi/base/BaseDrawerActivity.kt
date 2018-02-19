@@ -31,7 +31,6 @@ open class BaseDrawerActivity : AppCompatActivity(), NavigationView.OnNavigation
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-
         val toggle = ActionBarDrawerToggle(this, drawerLayout, toolbar,
                 R.string.drawer_opened, R.string.drawer_closed)
         toggle.drawerArrowDrawable.color = ContextCompat.getColor(this, android.R.color.white)
