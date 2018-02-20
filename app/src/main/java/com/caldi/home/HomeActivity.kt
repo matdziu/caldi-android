@@ -29,6 +29,8 @@ class HomeActivity : BaseDrawerActivity(), HomeView {
     @Inject
     lateinit var homeViewModelFactory: HomeViewModelFactory
 
+    private var forceEventsFetching: Boolean = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         setContentView(R.layout.activity_home)
@@ -44,10 +46,11 @@ class HomeActivity : BaseDrawerActivity(), HomeView {
     override fun onStart() {
         super.onStart()
         homeViewModel.bind(this)
-        eventsFetchTriggerObservable.onNext(eventsAdapter.itemCount == 0)
+        eventsFetchTriggerObservable.onNext(forceEventsFetching)
     }
 
     override fun onStop() {
+        forceEventsFetching = false
         homeViewModel.unbind()
         super.onStop()
     }
