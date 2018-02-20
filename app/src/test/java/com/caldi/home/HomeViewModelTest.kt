@@ -1,6 +1,6 @@
 package com.caldi.home
 
-import com.caldi.models.Event
+import com.caldi.home.models.Event
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Observable
@@ -13,7 +13,7 @@ class HomeViewModelTest {
 
     @Test
     fun testEventsFetchingSuccess() {
-        whenever(homeInteractor.fetchEvents()).thenReturn(
+        whenever(homeInteractor.fetchUserEvents()).thenReturn(
                 Observable.just(PartialHomeViewState.FetchingSucceeded(listOf(Event()))))
         val homeViewRobot = HomeViewRobot(homeViewModel)
 
@@ -26,7 +26,7 @@ class HomeViewModelTest {
 
     @Test
     fun testEventsFetchingError() {
-        whenever(homeInteractor.fetchEvents()).thenReturn(
+        whenever(homeInteractor.fetchUserEvents()).thenReturn(
                 Observable.just(PartialHomeViewState.ErrorState()))
         val homeViewRobot = HomeViewRobot(homeViewModel)
 

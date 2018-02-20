@@ -13,7 +13,7 @@ class HomeViewModel(private val homeInteractor: HomeInteractor) : ViewModel() {
     fun bind(homeView: HomeView) {
         val eventsFetchTriggerObservable = homeView.emitEventsFetchTrigger()
                 .filter({ it })
-                .flatMap { homeInteractor.fetchEvents().startWith(PartialHomeViewState.InProgressState()) }
+                .flatMap { homeInteractor.fetchUserEvents().startWith(PartialHomeViewState.InProgressState()) }
                 .subscribeWith(stateSubject)
 
         compositeDisposable.add(eventsFetchTriggerObservable.scan(HomeViewState(), this::reduce)

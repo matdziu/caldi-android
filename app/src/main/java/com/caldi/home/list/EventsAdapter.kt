@@ -4,7 +4,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.caldi.R
-import com.caldi.models.Event
+import com.caldi.home.models.Event
 
 class EventsAdapter : RecyclerView.Adapter<EventViewHolder>() {
 

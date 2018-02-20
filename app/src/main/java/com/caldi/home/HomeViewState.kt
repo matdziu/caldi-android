@@ -1,6 +1,6 @@
 package com.caldi.home
 
-import com.caldi.models.Event
+import com.caldi.home.models.Event
 
 data class HomeViewState(val inProgress: Boolean = false,
                          val error: Boolean = false,

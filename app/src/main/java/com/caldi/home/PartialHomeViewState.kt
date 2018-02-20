@@ -1,6 +1,6 @@
 package com.caldi.home
 
-import com.caldi.models.Event
+import com.caldi.home.models.Event
 
 sealed class PartialHomeViewState {
 
@@ -8,5 +8,5 @@ sealed class PartialHomeViewState {
 
     class ErrorState(val dismissToast: Boolean = false) : PartialHomeViewState()
 
-    class FetchingSucceeded(val eventList: List<Event>) : PartialHomeViewState()
+    class FetchingSucceeded(val eventList: List<Event> = listOf()) : PartialHomeViewState()
 }
