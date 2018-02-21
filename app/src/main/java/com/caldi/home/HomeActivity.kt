@@ -1,11 +1,13 @@
 package com.caldi.home
 
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.Toast
 import com.caldi.R
+import com.caldi.addevent.AddEventActivity
 import com.caldi.base.BaseDrawerActivity
 import com.caldi.factories.HomeViewModelFactory
 import com.caldi.home.list.EventsAdapter
@@ -41,6 +43,10 @@ class HomeActivity : BaseDrawerActivity(), HomeView {
 
         eventsRecyclerView.adapter = eventsAdapter
         eventsRecyclerView.layoutManager = LinearLayoutManager(this)
+
+        addEventButton.setOnClickListener {
+            startActivity(Intent(this, AddEventActivity::class.java))
+        }
     }
 
     override fun onStart() {

@@ -17,4 +17,8 @@
     <string name="sign_out_item_text">Sign out</string>
     <string name="drawer_opened">Drawer opened</string>
     <string name="drawer_closed">Drawer closed</string>
+    <string name="add_event_prompt">Enter event code received from the organizer</string>
+    <string name="add_event_word_to_be_colored">code</string>
+    <string name="event_code_hint">What\'s your event code?</string>
+    <string name="add_new_event_button">Add new event</string>
 </resources>
