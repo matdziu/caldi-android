@@ -1,5 +1,8 @@
 package com.caldi.home
 
+import com.caldi.constants.EVENTS_NODE
+import com.caldi.constants.USERS_NODE
+import com.caldi.constants.USER_EVENTS_NODE
 import com.caldi.home.models.Event
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -13,17 +16,13 @@ import java.util.concurrent.TimeUnit
 
 class HomeInteractor {
 
-    private val eventsNode = "events"
-    private val userEventsNode = "events"
-    private val usersNode = "users"
-
     private val firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
     private val firebaseAuth = FirebaseAuth.getInstance()
 
     fun fetchUserEvents(): Observable<PartialHomeViewState> {
         val stateSubject: Subject<PartialHomeViewState> = PublishSubject.create()
         val userEventsNodeRef =
-                firebaseDatabase.getReference("$usersNode/${firebaseAuth.currentUser?.uid}/$userEventsNode")
+                firebaseDatabase.getReference("$USERS_NODE/${firebaseAuth.currentUser?.uid}/$USER_EVENTS_NODE")
 
         userEventsNodeRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -38,11 +37,12 @@ class HomeInteractor {
 
                 val eventList = arrayListOf<Event>()
                 eventIdList
-                        .map { firebaseDatabase.getReference("$eventsNode/$it") }
+                        .map { firebaseDatabase.getReference("$EVENTS_NODE/$it") }
                         .forEach { eventNodeRef ->
                             eventNodeRef.addListenerForSingleValueEvent(object : ValueEventListener {
                                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                                     dataSnapshot.getValue(Event::class.java)?.let {
+                                        it.id = dataSnapshot.key
                                         eventList.add(it)
                                     }
                                     stateSubject.onNext(PartialHomeViewState.FetchingSucceeded(eventList))

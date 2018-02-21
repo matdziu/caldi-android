@@ -11,6 +11,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
+import com.caldi.extensions.hideSoftKeyboard
 import com.caldi.factories.AddEventViewModelFactory
 import com.jakewharton.rxbinding2.view.RxView
 import dagger.android.AndroidInjection
@@ -76,6 +77,7 @@ class AddEventActivity : BaseDrawerActivity(), AddEventView {
     }
 
     override fun render(addEventViewState: AddEventViewState) {
+        hideSoftKeyboard()
         showProgressBar(addEventViewState.inProgress)
 
         if (addEventViewState.error && !addEventViewState.dismissToast) {
