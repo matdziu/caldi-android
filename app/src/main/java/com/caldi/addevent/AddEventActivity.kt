@@ -1,5 +1,6 @@
 package com.caldi.addevent
 
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.text.Spannable
@@ -9,17 +10,38 @@ import android.view.View
 import android.widget.TextView
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
+import com.caldi.factories.AddEventViewModelFactory
+import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_add_event.contentViewGroup
 import kotlinx.android.synthetic.main.activity_add_event.eventCodePromptTextView
 import kotlinx.android.synthetic.main.activity_add_event.progressBar
+import javax.inject.Inject
 
-class AddEventActivity : BaseDrawerActivity() {
+class AddEventActivity : BaseDrawerActivity(), AddEventView {
+
+    private lateinit var addEventViewModel: AddEventViewModel
+
+    @Inject
+    lateinit var addEventViewModelFactory: AddEventViewModelFactory
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         setContentView(R.layout.activity_add_event)
         super.onCreate(savedInstanceState)
         setNavigationSelection(R.id.events_item)
         setPromptText()
+
+        addEventViewModel = ViewModelProviders.of(this, addEventViewModelFactory)[AddEventViewModel::class.java]
+    }
+
+    override fun onStart() {
+        super.onStart()
+        addEventViewModel.bind(this)
+    }
+
+    override fun onStop() {
+        addEventViewModel.unbind()
+        super.onStop()
     }
 
     private fun setPromptText() {
@@ -42,5 +64,9 @@ class AddEventActivity : BaseDrawerActivity() {
             contentViewGroup.visibility = View.VISIBLE
             progressBar.visibility = View.GONE
         }
+    }
+
+    override fun render(addEventViewState: AddEventViewState) {
+
     }
 }
