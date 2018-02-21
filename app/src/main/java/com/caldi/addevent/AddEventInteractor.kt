@@ -18,6 +18,9 @@ class AddEventInteractor {
 
     private val firebaseDatabase = FirebaseDatabase.getInstance()
     private val firebaseAuth = FirebaseAuth.getInstance()
+    private val userEventsNodeRef =
+            firebaseDatabase.getReference("$USERS_NODE/${firebaseAuth.currentUser?.uid}/$USER_EVENTS_NODE")
+    private val eventsNode = firebaseDatabase.getReference(EVENTS_NODE)
 
     fun addNewEvent(eventCode: String): Observable<PartialAddEventViewState> {
         val stateSubject: Subject<PartialAddEventViewState> = PublishSubject.create()
@@ -26,8 +29,6 @@ class AddEventInteractor {
     }
 
     private fun searchInEventsNode(eventCode: String, stateSubject: Subject<PartialAddEventViewState>) {
-        val eventsNode = firebaseDatabase.getReference(EVENTS_NODE)
-
         eventsNode.orderByChild(EVENT_CODE_CHILD)
                 .equalTo(eventCode)
                 .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -46,9 +47,6 @@ class AddEventInteractor {
     }
 
     private fun searchInUserEventsNode(eventId: String, stateSubject: Subject<PartialAddEventViewState>) {
-        val userEventsNodeRef =
-                firebaseDatabase.getReference("$USERS_NODE/${firebaseAuth.currentUser?.uid}/$USER_EVENTS_NODE")
-
         userEventsNodeRef
                 .orderByValue()
                 .equalTo(eventId)
@@ -57,7 +55,7 @@ class AddEventInteractor {
                         if (dataSnapshot.hasChildren()) {
                             emitError(stateSubject)
                         } else {
-                            stateSubject.onNext(PartialAddEventViewState.SuccessState())
+                            saveEventIdToUser(eventId, stateSubject)
                         }
                     }
 
@@ -65,6 +63,15 @@ class AddEventInteractor {
                         emitError(stateSubject)
                     }
                 })
+    }
+
+    private fun saveEventIdToUser(eventId: String, stateSubject: Subject<PartialAddEventViewState>) {
+        userEventsNodeRef
+                .push()
+                .setValue(eventId)
+                .addOnCompleteListener {
+                    stateSubject.onNext(PartialAddEventViewState.SuccessState())
+                }
     }
 
     private fun emitError(stateSubject: Subject<PartialAddEventViewState>) {
