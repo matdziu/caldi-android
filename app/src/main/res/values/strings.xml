@@ -21,4 +21,6 @@
     <string name="add_event_word_to_be_colored">code</string>
     <string name="event_code_hint">What\'s your event code?</string>
     <string name="add_new_event_button">Add new event</string>
+    <string name="add_event_error">Something went wrong. Is your event code correct?</string>
+    <string name="new_event_added_text">New event added</string>
 </resources>

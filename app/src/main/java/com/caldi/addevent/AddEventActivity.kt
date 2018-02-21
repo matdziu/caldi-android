@@ -8,11 +8,16 @@ import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
 import com.caldi.factories.AddEventViewModelFactory
+import com.jakewharton.rxbinding2.view.RxView
 import dagger.android.AndroidInjection
+import io.reactivex.Observable
+import kotlinx.android.synthetic.main.activity_add_event.addEventButton
 import kotlinx.android.synthetic.main.activity_add_event.contentViewGroup
+import kotlinx.android.synthetic.main.activity_add_event.eventCodeEditText
 import kotlinx.android.synthetic.main.activity_add_event.eventCodePromptTextView
 import kotlinx.android.synthetic.main.activity_add_event.progressBar
 import javax.inject.Inject
@@ -66,7 +71,20 @@ class AddEventActivity : BaseDrawerActivity(), AddEventView {
         }
     }
 
-    override fun render(addEventViewState: AddEventViewState) {
+    override fun emitNewEventCode(): Observable<String> {
+        return RxView.clicks(addEventButton).map { eventCodeEditText.text.toString() }
+    }
 
+    override fun render(addEventViewState: AddEventViewState) {
+        showProgressBar(addEventViewState.inProgress)
+
+        if (addEventViewState.error && !addEventViewState.dismissToast) {
+            Toast.makeText(this, getString(R.string.add_event_error), Toast.LENGTH_SHORT).show()
+        }
+
+        if (addEventViewState.success) {
+            Toast.makeText(this, getString(R.string.new_event_added_text), Toast.LENGTH_SHORT).show()
+            finish()
+        }
     }
 }
