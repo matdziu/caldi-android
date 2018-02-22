@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.caldi.R
+import com.caldi.constants.SIGN_IN_REQUEST_CODE
 import com.caldi.extensions.hideSoftKeyboard
 import com.caldi.factories.LoginViewModelFactory
 import com.caldi.home.HomeActivity
@@ -42,7 +43,6 @@ import javax.inject.Inject
 
 class LoginActivity : AppCompatActivity(), LoginView {
 
-    private val requestCodeSignIn = 1
     private val googleSignInObservable: Subject<GoogleSignInAccount> = PublishSubject.create()
     private val facebookSignInObservable: Subject<AccessToken> = PublishSubject.create()
 
@@ -72,7 +72,7 @@ class LoginActivity : AppCompatActivity(), LoginView {
             startActivity(Intent(this, SignUpActivity::class.java))
         }
         loginWithGoogleButton.setOnClickListener {
-            startActivityForResult(googleSignInClient.signInIntent, requestCodeSignIn)
+            startActivityForResult(googleSignInClient.signInIntent, SIGN_IN_REQUEST_CODE)
         }
         loginWithFacebookButton.setOnClickListener {
             loginManager.logInWithReadPermissions(this, arrayListOf("email"))
@@ -118,7 +118,7 @@ class LoginActivity : AppCompatActivity(), LoginView {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         callbackManager.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == requestCodeSignIn) {
+        if (requestCode == SIGN_IN_REQUEST_CODE) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 val account = task.getResult(ApiException::class.java)

@@ -9,6 +9,7 @@ import android.widget.Toast
 import com.caldi.R
 import com.caldi.addevent.AddEventActivity
 import com.caldi.base.BaseDrawerActivity
+import com.caldi.constants.ADD_EVENT_REQUEST_CODE
 import com.caldi.factories.HomeViewModelFactory
 import com.caldi.home.list.EventsAdapter
 import dagger.android.AndroidInjection
@@ -23,7 +24,6 @@ import javax.inject.Inject
 class HomeActivity : BaseDrawerActivity(), HomeView {
 
     private val eventsAdapter: EventsAdapter = EventsAdapter()
-    private val addNewEventRequestCode = 1
 
     private lateinit var homeViewModel: HomeViewModel
 
@@ -46,7 +46,7 @@ class HomeActivity : BaseDrawerActivity(), HomeView {
         eventsRecyclerView.layoutManager = LinearLayoutManager(this)
 
         addEventButton.setOnClickListener {
-            startActivityForResult(Intent(this, AddEventActivity::class.java), addNewEventRequestCode)
+            startActivityForResult(Intent(this, AddEventActivity::class.java), ADD_EVENT_REQUEST_CODE)
         }
     }
 
@@ -64,7 +64,7 @@ class HomeActivity : BaseDrawerActivity(), HomeView {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == addNewEventRequestCode && resultCode == RESULT_OK) {
+        if (requestCode == ADD_EVENT_REQUEST_CODE && resultCode == RESULT_OK) {
             eventsFetchTriggerObservable.onNext(true)
         }
     }
