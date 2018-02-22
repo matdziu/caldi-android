@@ -1,5 +1,6 @@
 package com.caldi.eventprofile
 
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -11,9 +12,17 @@ import android.widget.TextView
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
 import com.caldi.constants.EVENT_ID_KEY
+import com.caldi.factories.EventProfileViewModelFactory
+import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_event_profile.createProfilePromptTextView
+import javax.inject.Inject
 
-class EventProfileActivity : BaseDrawerActivity() {
+class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
+
+    private lateinit var eventProfileViewModel: EventProfileViewModel
+
+    @Inject
+    lateinit var eventProfileViewModelFactory: EventProfileViewModelFactory
 
     companion object {
 
@@ -25,12 +34,24 @@ class EventProfileActivity : BaseDrawerActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         setContentView(R.layout.activity_event_profile)
         super.onCreate(savedInstanceState)
         setNavigationSelection(R.id.event_profile_item)
         setPromptText()
 
         val eventId = intent.getStringExtra(EVENT_ID_KEY)
+        eventProfileViewModel = ViewModelProviders.of(this, eventProfileViewModelFactory)[EventProfileViewModel::class.java]
+    }
+
+    override fun onStart() {
+        super.onStart()
+        eventProfileViewModel.bind(this)
+    }
+
+    override fun onStop() {
+        eventProfileViewModel.unbind()
+        super.onStop()
     }
 
     private fun setPromptText() {
@@ -44,5 +65,9 @@ class EventProfileActivity : BaseDrawerActivity() {
                     startOfColoring, endOfColoring, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             createProfilePromptTextView.setText(spannableString, TextView.BufferType.SPANNABLE)
         }
+    }
+
+    override fun render(eventProfileState: EventProfileState) {
+
     }
 }
