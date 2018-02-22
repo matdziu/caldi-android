@@ -58,6 +58,8 @@
 
         <activity android:name=".addevent.AddEventActivity" />
 
+        <activity android:name=".eventprofile.EventProfileActivity" />
+
     </application>
 
 </manifest>
