@@ -21,6 +21,8 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
 
     private lateinit var eventProfileViewModel: EventProfileViewModel
 
+    private var eventId = ""
+
     @Inject
     lateinit var eventProfileViewModelFactory: EventProfileViewModelFactory
 
@@ -40,7 +42,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
         setNavigationSelection(R.id.event_profile_item)
         setPromptText()
 
-        val eventId = intent.getStringExtra(EVENT_ID_KEY)
+        eventId = intent.getStringExtra(EVENT_ID_KEY)
         eventProfileViewModel = ViewModelProviders.of(this, eventProfileViewModelFactory)[EventProfileViewModel::class.java]
     }
 
