@@ -21,13 +21,16 @@ class LoginViewModel(private val loginInteractor: LoginInteractor) : ViewModel()
 
         val inputDataObservable = loginView.emitInput()
                 .flatMap { inputData ->
-                    val emailValid = !inputData.email.isBlank()
-                    val passwordValid = !inputData.password.isBlank()
+                    val trimmedEmail = inputData.email.trim()
+                    val trimmedPassword = inputData.password.trim()
+
+                    val emailValid = !trimmedEmail.isBlank()
+                    val passwordValid = !trimmedEmail.isBlank()
 
                     return@flatMap if (!emailValid || !passwordValid) {
                         Observable.just(PartialLoginViewState.LocalValidation(emailValid, passwordValid))
                     } else {
-                        loginInteractor.login(inputData.email, inputData.password)
+                        loginInteractor.login(trimmedEmail, trimmedPassword)
                                 .startWith(PartialLoginViewState.InProgressState())
                     }
                 }
