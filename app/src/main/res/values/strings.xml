@@ -24,4 +24,6 @@
     <string name="add_event_error">Something went wrong. Is your event code correct?</string>
     <string name="new_event_added_text">New event added</string>
     <string name="your_event_profile_text">Your event profile</string>
+    <string name="answer_here_hint">Answer here</string>
+    <string name="name_edit_text_hint">What\'s your name?</string>
 </resources>
