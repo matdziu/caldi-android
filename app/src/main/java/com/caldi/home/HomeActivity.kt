@@ -23,6 +23,7 @@ import javax.inject.Inject
 class HomeActivity : BaseDrawerActivity(), HomeView {
 
     private val eventsAdapter: EventsAdapter = EventsAdapter()
+    private val addNewEventRequestCode = 1
 
     private lateinit var homeViewModel: HomeViewModel
 
@@ -45,7 +46,7 @@ class HomeActivity : BaseDrawerActivity(), HomeView {
         eventsRecyclerView.layoutManager = LinearLayoutManager(this)
 
         addEventButton.setOnClickListener {
-            startActivity(Intent(this, AddEventActivity::class.java))
+            startActivityForResult(Intent(this, AddEventActivity::class.java), addNewEventRequestCode)
         }
     }
 
@@ -59,6 +60,13 @@ class HomeActivity : BaseDrawerActivity(), HomeView {
         forceEventsFetching = false
         homeViewModel.unbind()
         super.onStop()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == addNewEventRequestCode && resultCode == RESULT_OK) {
+            eventsFetchTriggerObservable.onNext(true)
+        }
     }
 
     override fun emitEventsFetchTrigger(): Observable<Boolean> = eventsFetchTriggerObservable

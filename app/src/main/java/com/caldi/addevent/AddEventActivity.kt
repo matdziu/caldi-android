@@ -86,6 +86,7 @@ class AddEventActivity : BaseDrawerActivity(), AddEventView {
 
         if (addEventViewState.success) {
             Toast.makeText(this, getString(R.string.new_event_added_text), Toast.LENGTH_SHORT).show()
+            setResult(RESULT_OK)
             finish()
         }
     }
