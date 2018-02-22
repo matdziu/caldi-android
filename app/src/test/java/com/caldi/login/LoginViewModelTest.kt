@@ -40,8 +40,8 @@ class LoginViewModelTest {
 
         loginViewRobot.assertViewStates(LoginViewState(),
                 LoginViewState(emailValid = false, passwordValid = false),
-                LoginViewState(passwordValid = false),
-                LoginViewState(emailValid = false))
+                LoginViewState(emailValid = true, passwordValid = false),
+                LoginViewState(emailValid = false, passwordValid = true))
     }
 
     @Test

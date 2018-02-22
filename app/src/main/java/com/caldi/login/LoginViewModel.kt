@@ -25,7 +25,7 @@ class LoginViewModel(private val loginInteractor: LoginInteractor) : ViewModel()
                     val trimmedPassword = inputData.password.trim()
 
                     val emailValid = !trimmedEmail.isBlank()
-                    val passwordValid = !trimmedEmail.isBlank()
+                    val passwordValid = !trimmedPassword.isBlank()
 
                     return@flatMap if (!emailValid || !passwordValid) {
                         Observable.just(PartialLoginViewState.LocalValidation(emailValid, passwordValid))
