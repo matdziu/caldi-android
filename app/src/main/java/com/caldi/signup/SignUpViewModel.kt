@@ -13,16 +13,20 @@ class SignUpViewModel(private val signUpInteractor: SignUpInteractor) : ViewMode
     fun bind(signUpView: SignUpView) {
         val inputDataObservable = signUpView.emitInput()
                 .flatMap { inputData ->
-                    val emailValid = !inputData.email.isBlank()
-                    val passwordValid = inputData.password.length >= 6
-                    val repeatPasswordValid = !inputData.repeatPassword.isBlank()
-                            && inputData.password == inputData.repeatPassword
+                    val trimmedEmail = inputData.email.trim()
+                    val trimmedPassword = inputData.password.trim()
+                    val trimmedRepeatPassword = inputData.repeatPassword.trim()
+
+                    val emailValid = !trimmedEmail.isBlank() && !trimmedEmail.contains(" ")
+                    val passwordValid = trimmedPassword.length >= 6 && !trimmedPassword.contains(" ")
+                    val repeatPasswordValid = !trimmedRepeatPassword.isBlank()
+                            && trimmedPassword == trimmedRepeatPassword
 
                     return@flatMap if (!emailValid || !passwordValid || !repeatPasswordValid) {
                         Observable.just(PartialSignUpViewState.LocalValidation(emailValid,
                                 passwordValid, repeatPasswordValid))
                     } else {
-                        signUpInteractor.createAccount(inputData.email, inputData.password)
+                        signUpInteractor.createAccount(trimmedEmail, trimmedPassword)
                                 .startWith(PartialSignUpViewState.InProgressState())
                     }
                 }
