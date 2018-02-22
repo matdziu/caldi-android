@@ -13,7 +13,7 @@ class AddEventViewModel(private val addEventInteractor: AddEventInteractor) : Vi
     fun bind(addEventView: AddEventView) {
         val newEventCodeObservable = addEventView.emitNewEventCode()
                 .flatMap { eventCode ->
-                    addEventInteractor.addNewEvent(eventCode)
+                    addEventInteractor.addNewEvent(eventCode.trim())
                             .startWith(PartialAddEventViewState.InProgressState())
                 }
                 .subscribeWith(stateSubject)
