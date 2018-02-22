@@ -52,9 +52,10 @@ class AddEventActivity : BaseDrawerActivity(), AddEventView {
 
     private fun setPromptText() {
         val promptString = getString(R.string.add_event_prompt)
-        val startOfColoring = promptString.indexOf(getString(R.string.add_event_word_to_be_colored))
+        val wordToBeColored = getString(R.string.add_event_word_to_be_colored)
+        val startOfColoring = promptString.indexOf(wordToBeColored)
         if (startOfColoring > 0) {
-            val endOfColoring = startOfColoring + 4
+            val endOfColoring = startOfColoring + wordToBeColored.length
             val spannableString = SpannableString(promptString)
             spannableString.setSpan(ForegroundColorSpan(ContextCompat.getColor(this, R.color.colorLightGreen)),
                     startOfColoring, endOfColoring, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)

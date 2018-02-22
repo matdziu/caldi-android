@@ -26,4 +26,8 @@
     <string name="your_event_profile_text">Your event profile</string>
     <string name="answer_here_hint">Answer here</string>
     <string name="name_edit_text_hint">What\'s your name?</string>
+    <string name="create_profile_prompt">Create your profile for this event</string>
+    <string name="create_profile_words_to_be_colored">this event</string>
+    <string name="upload_photo_text">Upload photo</string>
+    <string name="save_profile_text">Save profile</string>
 </resources>

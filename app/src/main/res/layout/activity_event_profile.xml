@@ -22,22 +22,57 @@
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/createProfilePromptTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/create_profile_prompt"
+                    android:textSize="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/profilePictureImageView"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="24dp"
+                    android:src="@drawable/profile_picture_shape"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/createProfilePromptTextView" />
+
+                <com.caldi.customviews.CaldiButton
+                    android:id="@+id/uploadPhotoButton"
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/green_button_background"
+                    android:text="@string/upload_photo_text"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/profilePictureImageView" />
 
                 <com.caldi.customviews.CaldiEditText
                     android:id="@+id/nameEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
                     android:hint="@string/name_edit_text_hint"
+                    android:maxLines="1"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@id/uploadPhotoButton" />
 
                 <TextView
                     android:id="@+id/question1TextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     android:textColor="@color/colorPrimaryText"
                     android:textSize="16dp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -59,7 +94,7 @@
                     android:id="@+id/question2TextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     android:textColor="@color/colorPrimaryText"
                     android:textSize="16dp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -81,7 +116,7 @@
                     android:id="@+id/question3TextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     android:textColor="@color/colorPrimaryText"
                     android:textSize="16dp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -98,6 +133,17 @@
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/question3TextView" />
+
+                <com.caldi.customviews.CaldiButton
+                    android:id="@+id/saveProfileButton"
+                    android:layout_width="300dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:background="@drawable/red_button_background"
+                    android:text="@string/save_profile_text"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/question3EditText" />
 
             </android.support.constraint.ConstraintLayout>
 
