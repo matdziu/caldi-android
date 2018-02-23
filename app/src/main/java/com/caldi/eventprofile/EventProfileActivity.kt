@@ -16,21 +16,25 @@ import com.caldi.constants.EVENT_ID_KEY
 import com.caldi.eventprofile.list.QuestionsAdapter
 import com.caldi.eventprofile.models.Question
 import com.caldi.factories.EventProfileViewModelFactory
+import com.jakewharton.rxbinding2.view.RxView
 import dagger.android.AndroidInjection
+import io.reactivex.Observable
 import kotlinx.android.synthetic.main.activity_event_profile.createProfilePromptTextView
 import kotlinx.android.synthetic.main.activity_event_profile.questionsRecyclerView
+import kotlinx.android.synthetic.main.activity_event_profile.saveProfileButton
 import javax.inject.Inject
 
 class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
 
     private lateinit var eventProfileViewModel: EventProfileViewModel
 
-    private val questionsAdapter = QuestionsAdapter()
-
     private var eventId = ""
 
     @Inject
     lateinit var eventProfileViewModelFactory: EventProfileViewModelFactory
+
+    @Inject
+    lateinit var questionsAdapter: QuestionsAdapter
 
     companion object {
 
@@ -48,15 +52,15 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
         setNavigationSelection(R.id.event_profile_item)
         setPromptText()
 
+        eventId = intent.getStringExtra(EVENT_ID_KEY)
+        eventProfileViewModel = ViewModelProviders.of(this, eventProfileViewModelFactory)[EventProfileViewModel::class.java]
+
         questionsRecyclerView.layoutManager = LinearLayoutManager(this)
         questionsRecyclerView.adapter = questionsAdapter
 
         questionsAdapter.setQuestionsList(listOf(Question("0", "What do you do?"),
                 Question("1", "What do you do?"),
                 Question("2", "What do you do?")))
-
-        eventId = intent.getStringExtra(EVENT_ID_KEY)
-        eventProfileViewModel = ViewModelProviders.of(this, eventProfileViewModelFactory)[EventProfileViewModel::class.java]
     }
 
     override fun onStart() {
@@ -80,6 +84,10 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
                     startOfColoring, endOfColoring, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             createProfilePromptTextView.setText(spannableString, TextView.BufferType.SPANNABLE)
         }
+    }
+
+    override fun emitInputData(): Observable<InputData> {
+        return RxView.clicks(saveProfileButton).map { InputData("la", arrayListOf()) }
     }
 
     override fun render(eventProfileState: EventProfileState) {

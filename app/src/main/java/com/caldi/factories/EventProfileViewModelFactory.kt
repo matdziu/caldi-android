@@ -6,7 +6,8 @@ import com.caldi.eventprofile.EventProfileInteractor
 import com.caldi.eventprofile.EventProfileViewModel
 
 @Suppress("UNCHECKED_CAST")
-class EventProfileViewModelFactory(private val eventProfileInteractor: EventProfileInteractor) : ViewModelProvider.Factory {
+class EventProfileViewModelFactory(private val eventProfileInteractor: EventProfileInteractor)
+    : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return EventProfileViewModel(eventProfileInteractor) as T

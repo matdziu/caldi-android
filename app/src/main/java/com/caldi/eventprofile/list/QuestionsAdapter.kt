@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import com.caldi.R
 import com.caldi.eventprofile.models.Question
 
-class QuestionsAdapter : RecyclerView.Adapter<QuestionViewHolder>() {
+class QuestionsAdapter(private val questionsViewModel: QuestionsViewModel) : RecyclerView.Adapter<QuestionViewHolder>() {
 
     private val questionsList = arrayListOf<Question>()
 
@@ -20,6 +20,7 @@ class QuestionsAdapter : RecyclerView.Adapter<QuestionViewHolder>() {
 
     override fun onBindViewHolder(holder: QuestionViewHolder, position: Int) {
         holder.bind(questionsList[position])
+        questionsViewModel.bind(holder)
     }
 
     fun setQuestionsList(questionsList: List<Question>) {
