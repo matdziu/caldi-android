@@ -6,5 +6,5 @@ interface EventProfileView {
 
     fun emitInputData(): Observable<InputData>
 
-    fun render(eventProfileState: EventProfileState)
+    fun render(eventProfileViewState: EventProfileViewState)
 }

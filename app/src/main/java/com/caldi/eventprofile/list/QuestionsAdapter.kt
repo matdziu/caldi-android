@@ -4,11 +4,16 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.caldi.R
+import com.caldi.eventprofile.models.Answer
 import com.caldi.eventprofile.models.Question
+import io.reactivex.Observable
 
-class QuestionsAdapter(private val questionsViewModel: QuestionsViewModel) : RecyclerView.Adapter<QuestionViewHolder>() {
+class QuestionsAdapter : RecyclerView.Adapter<QuestionViewHolder>() {
 
     private val questionsList = arrayListOf<Question>()
+    private var shouldEmitAnswers = false
+
+    lateinit var questionsViewModel: QuestionsViewModel
 
     override fun getItemCount(): Int = questionsList.size
 
@@ -20,12 +25,21 @@ class QuestionsAdapter(private val questionsViewModel: QuestionsViewModel) : Rec
 
     override fun onBindViewHolder(holder: QuestionViewHolder, position: Int) {
         holder.bind(questionsList[position])
-        questionsViewModel.bind(holder)
+
+        if (shouldEmitAnswers) {
+            questionsViewModel.bindToAnswerFields(holder)
+        }
     }
 
     fun setQuestionsList(questionsList: List<Question>) {
         this.questionsList.clear()
         this.questionsList.addAll(questionsList)
         notifyDataSetChanged()
+    }
+
+    fun emitAnswers(): Observable<ArrayList<Answer>> {
+        shouldEmitAnswers = true
+        notifyDataSetChanged()
+        return questionsViewModel.emitAnswersList().doOnNext({ shouldEmitAnswers = false })
     }
 }
