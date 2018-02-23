@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.support.v7.widget.LinearLayoutManager
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -12,14 +13,19 @@ import android.widget.TextView
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
 import com.caldi.constants.EVENT_ID_KEY
+import com.caldi.eventprofile.list.QuestionsAdapter
+import com.caldi.eventprofile.models.Question
 import com.caldi.factories.EventProfileViewModelFactory
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_event_profile.createProfilePromptTextView
+import kotlinx.android.synthetic.main.activity_event_profile.questionsRecyclerView
 import javax.inject.Inject
 
 class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
 
     private lateinit var eventProfileViewModel: EventProfileViewModel
+
+    private val questionsAdapter = QuestionsAdapter()
 
     private var eventId = ""
 
@@ -41,6 +47,13 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
         super.onCreate(savedInstanceState)
         setNavigationSelection(R.id.event_profile_item)
         setPromptText()
+
+        questionsRecyclerView.layoutManager = LinearLayoutManager(this)
+        questionsRecyclerView.adapter = questionsAdapter
+
+        questionsAdapter.setQuestionsList(listOf(Question("0", "What do you do?"),
+                Question("1", "What do you do?"),
+                Question("2", "What do you do?")))
 
         eventId = intent.getStringExtra(EVENT_ID_KEY)
         eventProfileViewModel = ViewModelProviders.of(this, eventProfileViewModelFactory)[EventProfileViewModel::class.java]

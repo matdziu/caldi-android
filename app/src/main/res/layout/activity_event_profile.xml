@@ -12,7 +12,7 @@
 
         <include layout="@layout/toolbar" />
 
-        <ScrollView
+        <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/toolbar"
@@ -68,71 +68,14 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/uploadPhotoButton" />
 
-                <TextView
-                    android:id="@+id/question1TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:textColor="@color/colorPrimaryText"
-                    android:textSize="16dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/nameEditText"
-                    tools:text="What do you do?" />
-
-                <com.caldi.customviews.CaldiEditText
-                    android:id="@+id/question1EditText"
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/questionsRecyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:hint="@string/answer_here_hint"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/question1TextView" />
-
-                <TextView
-                    android:id="@+id/question2TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:textColor="@color/colorPrimaryText"
-                    android:textSize="16dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/question1EditText"
-                    tools:text="What can you offer?" />
-
-                <com.caldi.customviews.CaldiEditText
-                    android:id="@+id/question2EditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:hint="@string/answer_here_hint"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/question2TextView" />
-
-                <TextView
-                    android:id="@+id/question3TextView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:textColor="@color/colorPrimaryText"
-                    android:textSize="16dp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/question2EditText"
-                    tools:text="Who is your favourite entrepreneur?" />
-
-                <com.caldi.customviews.CaldiEditText
-                    android:id="@+id/question3EditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:hint="@string/answer_here_hint"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/question3TextView" />
+                    app:layout_constraintTop_toBottomOf="@id/nameEditText" />
 
                 <com.caldi.customviews.CaldiButton
                     android:id="@+id/saveProfileButton"
@@ -143,11 +86,11 @@
                     android:text="@string/save_profile_text"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/question3EditText" />
+                    app:layout_constraintTop_toBottomOf="@id/questionsRecyclerView" />
 
             </android.support.constraint.ConstraintLayout>
 
-        </ScrollView>
+        </android.support.v4.widget.NestedScrollView>
 
     </RelativeLayout>
 
