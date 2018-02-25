@@ -2,33 +2,34 @@ package com.caldi.eventprofile.list
 
 import android.arch.lifecycle.ViewModel
 import io.reactivex.disposables.Disposable
+import io.reactivex.subjects.BehaviorSubject
 
 class QuestionsViewModel : ViewModel() {
 
+    private val stateSubjectsList = arrayListOf<BehaviorSubject<QuestionViewState>>()
     private val disposableList = arrayListOf<Disposable>()
-    private val questionItemStateList = arrayListOf<QuestionViewState>()
 
     fun bind(questionItemView: QuestionItemView, position: Int) {
         defaultRender(questionItemView, position)
 
+        val stateSubject = stateSubjectsList[position]
+
         disposableList.add(questionItemView.emitUserInput()
-                .map { questionItemStateList[position].copy(answerText = it) }
-                .subscribe { questionItemStateList[position] = it })
+                .map { BehaviorSubject.createDefault(stateSubject.value.copy(answerText = it)) }
+                .subscribe { stateSubjectsList[position] = it })
     }
 
-
     private fun defaultRender(questionItemView: QuestionItemView, position: Int) {
-        val currentQuestionItemState = questionItemStateList[position]
-        questionItemView.render(currentQuestionItemState)
+        questionItemView.render(stateSubjectsList[position].value)
     }
 
     fun setQuestionItemStateList(questionItemStateList: List<QuestionViewState>) {
-        if (this.questionItemStateList.size == 0) {
-            this.questionItemStateList.addAll(questionItemStateList)
+        if (stateSubjectsList.size == 0) {
+            questionItemStateList.mapTo(stateSubjectsList) { BehaviorSubject.createDefault(it) }
         }
     }
 
-    fun getItemCount(): Int = questionItemStateList.size
+    fun getItemCount(): Int = stateSubjectsList.size
 
     fun unbindAll() {
         for (disposable in disposableList) {
