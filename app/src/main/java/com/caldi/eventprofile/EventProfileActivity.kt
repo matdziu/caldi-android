@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.support.v4.view.ViewCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.text.Spannable
 import android.text.SpannableString
@@ -67,6 +68,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
         questionsAdapter = QuestionsAdapter(questionsViewModel)
         questionsRecyclerView.layoutManager = LinearLayoutManager(this)
         questionsRecyclerView.adapter = questionsAdapter
+        ViewCompat.setNestedScrollingEnabled(questionsRecyclerView, false)
     }
 
     override fun onStart() {
