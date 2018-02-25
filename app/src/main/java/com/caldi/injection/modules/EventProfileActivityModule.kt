@@ -2,7 +2,6 @@ package com.caldi.injection.modules
 
 import com.caldi.eventprofile.EventProfileInteractor
 import com.caldi.factories.EventProfileViewModelFactory
-import com.caldi.factories.QuestionsViewModelFactory
 import com.caldi.injection.ActivityScope
 import dagger.Module
 import dagger.Provides
@@ -21,11 +20,5 @@ class EventProfileActivityModule {
     @ActivityScope
     fun provideEventProfileInteractor(): EventProfileInteractor {
         return EventProfileInteractor()
-    }
-
-    @Provides
-    @ActivityScope
-    fun provideQuestionsViewModelFactory(): QuestionsViewModelFactory {
-        return QuestionsViewModelFactory()
     }
 }
