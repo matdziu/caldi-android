@@ -17,6 +17,7 @@ import com.caldi.base.BaseDrawerActivity
 import com.caldi.constants.EVENT_ID_KEY
 import com.caldi.eventprofile.list.QuestionsAdapter
 import com.caldi.eventprofile.list.QuestionsViewModel
+import com.caldi.extensions.hideSoftKeyboard
 import com.caldi.factories.EventProfileViewModelFactory
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
@@ -76,7 +77,9 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
 
     override fun onStop() {
         fetchQuestions = false
+        hideSoftKeyboard()
         eventProfileViewModel.unbind()
+        questionsViewModel.unbindAll()
         super.onStop()
     }
 

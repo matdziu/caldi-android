@@ -1,32 +1,39 @@
 package com.caldi.eventprofile.list
 
 import android.arch.lifecycle.ViewModel
-import com.caldi.eventprofile.models.Answer
-import io.reactivex.Observable
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.subjects.PublishSubject
-import io.reactivex.subjects.Subject
+import io.reactivex.disposables.Disposable
 
 class QuestionsViewModel : ViewModel() {
 
-    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
-    private val answersList: ArrayList<Answer> = arrayListOf()
-    private val answersSubject: Subject<ArrayList<Answer>> = PublishSubject.create()
+    private val disposableList = arrayListOf<Disposable>()
+    private val questionItemStateList = arrayListOf<QuestionViewState>()
 
-    fun bindToAnswerFields(questionItemView: QuestionItemView) {
-        compositeDisposable.add(questionItemView.emitAnswer()
-                .subscribe({
-                    answersList.add(it)
-                    if (answersList.size == 3) {
-                        answersSubject.onNext(answersList)
-                        answersList.clear()
-                    }
-                }))
+    fun bind(questionItemView: QuestionItemView, position: Int) {
+        defaultRender(questionItemView, position)
+
+        disposableList.add(questionItemView.emitUserInput()
+                .map { questionItemStateList[position].copy(answerText = it) }
+                .subscribe { questionItemStateList[position] = it })
     }
 
-    fun unbind() {
-        compositeDisposable.clear()
+
+    private fun defaultRender(questionItemView: QuestionItemView, position: Int) {
+        val currentQuestionItemState = questionItemStateList[position]
+        questionItemView.render(currentQuestionItemState)
     }
 
-    fun emitAnswersList(): Observable<ArrayList<Answer>> = answersSubject
+    fun setQuestionItemStateList(questionItemStateList: List<QuestionViewState>) {
+        if (this.questionItemStateList.size == 0) {
+            this.questionItemStateList.addAll(questionItemStateList)
+        }
+    }
+
+    fun getItemCount(): Int = questionItemStateList.size
+
+    fun unbindAll() {
+        for (disposable in disposableList) {
+            disposable.dispose()
+        }
+        disposableList.clear()
+    }
 }
