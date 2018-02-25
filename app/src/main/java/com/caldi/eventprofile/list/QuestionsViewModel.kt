@@ -10,17 +10,12 @@ class QuestionsViewModel : ViewModel() {
     private val disposableList = arrayListOf<Disposable>()
 
     fun bind(questionItemView: QuestionItemView, position: Int) {
-        defaultRender(questionItemView, position)
-
         val stateSubject = stateSubjectsList[position]
+        questionItemView.defaultRender(stateSubject.value)
 
         disposableList.add(questionItemView.emitUserInput()
                 .map { BehaviorSubject.createDefault(stateSubject.value.copy(answerText = it)) }
                 .subscribe { stateSubjectsList[position] = it })
-    }
-
-    private fun defaultRender(questionItemView: QuestionItemView, position: Int) {
-        questionItemView.render(stateSubjectsList[position].value)
     }
 
     fun setQuestionItemStateList(questionItemStateList: List<QuestionViewState>) {

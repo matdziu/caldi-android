@@ -9,7 +9,7 @@ import kotlinx.android.synthetic.main.item_question.view.questionTextView
 
 class QuestionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), QuestionItemView {
 
-    override fun render(questionViewState: QuestionViewState) {
+    override fun defaultRender(questionViewState: QuestionViewState) {
         itemView.questionTextView.text = questionViewState.questionText
         itemView.questionEditText.setText(questionViewState.answerText)
     }
