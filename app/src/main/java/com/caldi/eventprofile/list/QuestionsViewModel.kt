@@ -2,29 +2,28 @@ package com.caldi.eventprofile.list
 
 import android.arch.lifecycle.ViewModel
 import io.reactivex.disposables.Disposable
-import io.reactivex.subjects.BehaviorSubject
 
 class QuestionsViewModel : ViewModel() {
 
-    private val stateSubjectsList = arrayListOf<BehaviorSubject<QuestionViewState>>()
+    private val defaultViewStateList = arrayListOf<QuestionViewState>()
     private val disposableList = arrayListOf<Disposable>()
 
     fun bind(questionItemView: QuestionItemView, position: Int) {
-        val stateSubject = stateSubjectsList[position]
-        questionItemView.defaultRender(stateSubject.value)
+        val defaultViewState = defaultViewStateList[position]
+        questionItemView.defaultRender(defaultViewState)
 
         disposableList.add(questionItemView.emitUserInput()
-                .map { BehaviorSubject.createDefault(stateSubject.value.copy(answerText = it)) }
-                .subscribe { stateSubjectsList[position] = it })
+                .map { defaultViewState.copy(answerText = it) }
+                .subscribe { defaultViewStateList[position] = it })
     }
 
     fun setQuestionItemStateList(questionItemStateList: List<QuestionViewState>) {
-        if (stateSubjectsList.size == 0) {
-            questionItemStateList.mapTo(stateSubjectsList) { BehaviorSubject.createDefault(it) }
+        if (defaultViewStateList.size == 0) {
+            defaultViewStateList.addAll(questionItemStateList)
         }
     }
 
-    fun getItemCount(): Int = stateSubjectsList.size
+    fun getItemCount(): Int = defaultViewStateList.size
 
     fun unbindAll() {
         for (disposable in disposableList) {
