@@ -107,7 +107,8 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
 
     override fun emitInputData(): Observable<Pair<String, EventProfileData>> {
         return RxView.clicks(saveProfileButton).map {
-            Pair(eventId, EventProfileData(eventUserNameEditText.text.toString(), questionsViewModel.getAnswerList()))
+            Pair(eventId, EventProfileData(eventUserNameEditText.text.toString(), questionsViewModel.getAnswerList(),
+                    questionsViewModel.getQuestionList()))
         }
     }
 

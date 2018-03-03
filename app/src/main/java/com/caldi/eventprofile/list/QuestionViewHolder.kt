@@ -12,6 +12,7 @@ class QuestionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), Qu
     override fun defaultRender(questionViewState: QuestionViewState) {
         itemView.questionTextView.text = questionViewState.questionText
         itemView.questionEditText.setText(questionViewState.answerText)
+        itemView.questionEditText.showError(!questionViewState.answerValid)
     }
 
     override fun emitUserInput(): Observable<String> {

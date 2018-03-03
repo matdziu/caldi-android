@@ -1,6 +1,8 @@
 package com.caldi.eventprofile
 
+import com.caldi.eventprofile.models.Answer
 import com.caldi.eventprofile.models.EventProfileData
+import com.caldi.eventprofile.models.Question
 
 sealed class PartialEventProfileViewState {
 
@@ -13,5 +15,6 @@ sealed class PartialEventProfileViewState {
 
     class ErrorState(val dismissToast: Boolean = false) : PartialEventProfileViewState()
 
-    class LocalValidation(val eventUserNameValid: Boolean) : PartialEventProfileViewState()
+    class LocalValidation(val eventUserNameValid: Boolean, val answerList: List<Answer>,
+                          val questionList: List<Question>) : PartialEventProfileViewState()
 }

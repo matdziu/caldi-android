@@ -27,9 +27,16 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
                     val eventProfileData = it.second
 
                     val eventUserNameValid = !eventProfileData.eventUserName.isBlank()
+                    var eachAnswerValid = true
 
-                    if (!eventUserNameValid) {
-                        Observable.just(PartialEventProfileViewState.LocalValidation(eventUserNameValid))
+                    for (answer in eventProfileData.answerList) {
+                        answer.valid = !answer.answer.isBlank()
+                        if (!answer.valid) eachAnswerValid = false
+                    }
+
+                    if (!eventUserNameValid || !eachAnswerValid) {
+                        Observable.just(PartialEventProfileViewState.LocalValidation(eventUserNameValid,
+                                eventProfileData.answerList, eventProfileData.questionList))
                     } else {
                         eventProfileInteractor.updateEventProfile(eventId, eventProfileData)
                                 .startWith(PartialEventProfileViewState.ProgressState())
@@ -62,15 +69,18 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
                         successUpload = true,
                         dismissToast = partialState.dismissToast)
             is PartialEventProfileViewState.LocalValidation ->
-                previousState.copy(eventUserNameValid = partialState.eventUserNameValid)
+                previousState.copy(eventUserNameValid = partialState.eventUserNameValid,
+                        questionViewStateList = convertToQuestionViewStateList(partialState.questionList,
+                                partialState.answerList))
         }
     }
 
     private fun convertToQuestionViewStateList(questionList: List<Question>, answerList: List<Answer>)
             : List<QuestionViewState> {
-        val answersMap = answerList.map { it.questionId to it.answer }.toMap()
+        val answersMap = answerList.map { it.questionId to it }.toMap()
         return questionList.map {
-            QuestionViewState(it.question, answersMap.getOrDefault(it.id, ""), it.id)
+            val currentAnswer = answersMap.getOrDefault(it.id, Answer())
+            QuestionViewState(it.question, currentAnswer.answer, currentAnswer.questionId, currentAnswer.valid)
         }
     }
 
