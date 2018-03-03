@@ -15,10 +15,13 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
     private val stateSubject = BehaviorSubject.create<PartialEventProfileViewState>()
 
     fun bind(eventProfileView: EventProfileView) {
-        val fetchQuestionsObservable = eventProfileView.emitQuestionFetchingTrigger()
-                .flatMap { eventProfileInteractor.fetchEventProfile(it).startWith(PartialEventProfileViewState.ProgressState()) }
+        val fetchEventProfileObservable = eventProfileView.emitEventProfileFetchingTrigger()
+                .flatMap {
+                    eventProfileInteractor.fetchEventProfile(it)
+                            .startWith(PartialEventProfileViewState.ProgressState())
+                }
 
-        val updateAnswersObservable = eventProfileView.emitInputData()
+        val updateProfileObservable = eventProfileView.emitInputData()
                 .flatMap {
                     val eventId = it.first
                     val eventProfileData = it.second
@@ -33,8 +36,8 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
                     }
                 }
 
-        val mergedObservable = Observable.merge(listOf(fetchQuestionsObservable,
-                updateAnswersObservable)).subscribeWith(stateSubject)
+        val mergedObservable = Observable.merge(listOf(fetchEventProfileObservable,
+                updateProfileObservable)).subscribeWith(stateSubject)
 
         compositeDisposable.add(mergedObservable.scan(EventProfileViewState(), this::reduce)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -46,14 +49,20 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
         return when (partialState) {
             is PartialEventProfileViewState.ProgressState -> EventProfileViewState(progress = true)
             is PartialEventProfileViewState.ErrorState -> EventProfileViewState(error = true)
-            is PartialEventProfileViewState.SuccessfulFetchState -> EventProfileViewState(successFetch = true,
-                    eventUserName = partialState.eventProfileData.eventUserName,
-                    questionViewStateList = convertToQuestionViewStateList(partialState.eventProfileData.questionList,
-                            partialState.eventProfileData.answerList))
+            is PartialEventProfileViewState.SuccessfulFetchState ->
+                EventProfileViewState(
+                        eventUserName = partialState.eventProfileData.eventUserName,
+                        questionViewStateList = convertToQuestionViewStateList(partialState.eventProfileData.questionList,
+                                partialState.eventProfileData.answerList),
+                        renderEventName = partialState.renderEventName)
             is PartialEventProfileViewState.SuccessfulUpdateState ->
-                previousState.copy(progress = false, error = false, successUpload = true, dismissToast = partialState.dismissToast)
+                previousState.copy(
+                        progress = false,
+                        error = false,
+                        successUpload = true,
+                        dismissToast = partialState.dismissToast)
             is PartialEventProfileViewState.LocalValidation ->
-                previousState.copy(eventUserName = "", eventUserNameValid = partialState.eventUserNameValid)
+                previousState.copy(eventUserNameValid = partialState.eventUserNameValid)
         }
     }
 

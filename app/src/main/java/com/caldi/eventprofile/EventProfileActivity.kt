@@ -22,6 +22,7 @@ import com.caldi.eventprofile.models.EventProfileData
 import com.caldi.extensions.hideSoftKeyboard
 import com.caldi.factories.EventProfileViewModelFactory
 import com.jakewharton.rxbinding2.view.RxView
+import com.jakewharton.rxbinding2.widget.RxTextView
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
@@ -42,8 +43,8 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
 
     private lateinit var questionsAdapter: QuestionsAdapter
 
-    private var fetchQuestions = true
-    private val triggerQuestionsFetchSubject = PublishSubject.create<String>()
+    private var fetchEventProfile = true
+    private val triggerEventProfileFetchSubject = PublishSubject.create<String>()
 
     @Inject
     lateinit var eventProfileViewModelFactory: EventProfileViewModelFactory
@@ -78,11 +79,11 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
     override fun onStart() {
         super.onStart()
         eventProfileViewModel.bind(this)
-        if (fetchQuestions) triggerQuestionsFetchSubject.onNext(eventId)
+        if (fetchEventProfile) triggerEventProfileFetchSubject.onNext(eventId)
     }
 
     override fun onStop() {
-        fetchQuestions = false
+        fetchEventProfile = false
         hideSoftKeyboard()
         eventProfileViewModel.unbind()
         questionsViewModel.unbindAll()
@@ -102,7 +103,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
         }
     }
 
-    override fun emitQuestionFetchingTrigger(): Observable<String> = triggerQuestionsFetchSubject
+    override fun emitEventProfileFetchingTrigger(): Observable<String> = triggerEventProfileFetchSubject
 
     override fun emitInputData(): Observable<Pair<String, EventProfileData>> {
         return RxView.clicks(saveProfileButton).map {
@@ -110,16 +111,17 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
         }
     }
 
+    override fun emitUserNameInput(): Observable<String> {
+        return RxTextView.textChanges(eventUserNameEditText).map { it.toString() }
+    }
+
     override fun render(eventProfileViewState: EventProfileViewState) {
         with(eventProfileViewState) {
             showProgressBar(progress)
             showError(error, dismissToast)
             eventUserNameEditText.showError(!eventUserNameValid)
-
-            if (successFetch) {
-                questionsAdapter.setQuestionsList(questionViewStateList)
-                eventUserNameEditText.setText(eventUserName)
-            }
+            questionsAdapter.setQuestionsList(questionViewStateList)
+            if (eventProfileViewState.renderEventName) eventUserNameEditText.setText(eventUserName)
 
             if (successUpload && !dismissToast) {
                 Toast.makeText(this@EventProfileActivity, getString(R.string.profile_updated), Toast.LENGTH_SHORT).show()

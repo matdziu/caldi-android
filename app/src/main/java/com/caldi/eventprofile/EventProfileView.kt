@@ -5,9 +5,11 @@ import io.reactivex.Observable
 
 interface EventProfileView {
 
-    fun emitQuestionFetchingTrigger(): Observable<String>
+    fun emitEventProfileFetchingTrigger(): Observable<String>
 
     fun emitInputData(): Observable<Pair<String, EventProfileData>>
+
+    fun emitUserNameInput(): Observable<String>
 
     fun render(eventProfileViewState: EventProfileViewState)
 }

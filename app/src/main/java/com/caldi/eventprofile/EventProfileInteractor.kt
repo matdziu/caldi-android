@@ -31,7 +31,7 @@ class EventProfileInteractor {
                 Function3<List<Question>, List<Answer>, String, EventProfileData> { questionList, answerList, eventUserName ->
                     EventProfileData(eventUserName, answerList, questionList)
                 })
-                .map { PartialEventProfileViewState.SuccessfulFetchState(it) }
+                .flatMap { emitSuccessfulFetchState(it) }
     }
 
     private fun fetchQuestions(eventId: String): Observable<List<Question>> {
@@ -133,6 +133,13 @@ class EventProfileInteractor {
 
     private fun getEventQuestionsNodeRef(eventId: String): DatabaseReference {
         return firebaseDatabase.getReference("$EVENTS_NODE/$eventId/$QUESTIONS_NODE")
+    }
+
+    private fun emitSuccessfulFetchState(eventProfileData: EventProfileData): Observable<PartialEventProfileViewState> {
+        return Observable.timer(100, TimeUnit.MILLISECONDS)
+                .map { PartialEventProfileViewState.SuccessfulFetchState(eventProfileData, false) }
+                .startWith(PartialEventProfileViewState.SuccessfulFetchState(eventProfileData, true))
+                as Observable<PartialEventProfileViewState>
     }
 
     private fun emitSuccessfulUpdateState(): Observable<PartialEventProfileViewState> {
