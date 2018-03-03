@@ -114,6 +114,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
         with(eventProfileViewState) {
             showProgressBar(progress)
             showError(error, dismissToast)
+            eventUserNameEditText.showError(!eventUserNameValid)
 
             if (successFetch) {
                 questionsAdapter.setQuestionsList(questionViewStateList)

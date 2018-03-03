@@ -5,6 +5,7 @@ import com.caldi.eventprofile.list.QuestionViewState
 import com.caldi.eventprofile.models.Answer
 import com.caldi.eventprofile.models.Question
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
 
@@ -19,14 +20,24 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
 
         val updateAnswersObservable = eventProfileView.emitInputData()
                 .flatMap {
-                    eventProfileInteractor.updateEventProfile(it.first, it.second)
-                            .startWith(PartialEventProfileViewState.ProgressState())
+                    val eventId = it.first
+                    val eventProfileData = it.second
+
+                    val eventUserNameValid = !eventProfileData.eventUserName.isBlank()
+
+                    if (!eventUserNameValid) {
+                        Observable.just(PartialEventProfileViewState.LocalValidation(eventUserNameValid))
+                    } else {
+                        eventProfileInteractor.updateEventProfile(eventId, eventProfileData)
+                                .startWith(PartialEventProfileViewState.ProgressState())
+                    }
                 }
 
         val mergedObservable = Observable.merge(listOf(fetchQuestionsObservable,
                 updateAnswersObservable)).subscribeWith(stateSubject)
 
         compositeDisposable.add(mergedObservable.scan(EventProfileViewState(), this::reduce)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ eventProfileView.render(it) }))
     }
 
@@ -41,6 +52,8 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
                             partialState.eventProfileData.answerList))
             is PartialEventProfileViewState.SuccessfulUpdateState ->
                 previousState.copy(progress = false, error = false, successUpload = true, dismissToast = partialState.dismissToast)
+            is PartialEventProfileViewState.LocalValidation ->
+                previousState.copy(eventUserName = "", eventUserNameValid = partialState.eventUserNameValid)
         }
     }
 

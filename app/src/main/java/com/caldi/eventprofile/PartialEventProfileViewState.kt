@@ -11,4 +11,6 @@ sealed class PartialEventProfileViewState {
     class ProgressState : PartialEventProfileViewState()
 
     class SuccessfulUpdateState(val dismissToast: Boolean = false) : PartialEventProfileViewState()
+
+    class LocalValidation(val eventUserNameValid: Boolean) : PartialEventProfileViewState()
 }
