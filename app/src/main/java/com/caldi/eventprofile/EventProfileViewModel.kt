@@ -27,8 +27,10 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
         return when (partialState) {
             is PartialEventProfileViewState.ProgressState -> EventProfileViewState(progress = true)
             is PartialEventProfileViewState.ErrorState -> EventProfileViewState(error = true)
-            is PartialEventProfileViewState.SuccessState -> EventProfileViewState(success = true,
+            is PartialEventProfileViewState.SuccessfulFetchState -> EventProfileViewState(successFetch = true,
                     questionViewStateList = convertToQuestionViewStateList(partialState.questionsList))
+            is PartialEventProfileViewState.SuccessfulAnswersUpdateState ->
+                previousState.copy(progress = false, error = false, successUpload = true)
         }
     }
 

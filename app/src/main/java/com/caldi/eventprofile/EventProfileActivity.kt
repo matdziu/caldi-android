@@ -105,8 +105,12 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
             showProgressBar(progress)
             showError(error, dismissToast)
 
-            if (success) {
+            if (successFetch) {
                 questionsAdapter.setQuestionsList(questionViewStateList)
+            }
+
+            if (successUpload && !dismissToast) {
+                Toast.makeText(this@EventProfileActivity, getString(R.string.answers_updated), Toast.LENGTH_SHORT).show()
             }
         }
     }

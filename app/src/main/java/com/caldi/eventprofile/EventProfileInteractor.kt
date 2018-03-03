@@ -1,7 +1,9 @@
 package com.caldi.eventprofile
 
+import com.caldi.constants.ANSWERS_NODE
 import com.caldi.constants.EVENTS_NODE
 import com.caldi.constants.QUESTIONS_NODE
+import com.caldi.eventprofile.models.Answer
 import com.caldi.eventprofile.models.Question
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -28,7 +30,7 @@ class EventProfileInteractor {
                         questionList.add(it)
                     }
                 }
-                stateSubject.onNext(PartialEventProfileViewState.SuccessState(questionList))
+                stateSubject.onNext(PartialEventProfileViewState.SuccessfulFetchState(questionList))
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -36,6 +38,31 @@ class EventProfileInteractor {
             }
         })
         return stateSubject
+    }
+
+    fun updateAnswers(eventId: String, answerList: List<Answer>): Observable<PartialEventProfileViewState> {
+        val stateSubject = PublishSubject.create<PartialEventProfileViewState>()
+        val questionsNodeRef = firebaseDatabase.getReference("$EVENTS_NODE/$eventId/$QUESTIONS_NODE")
+
+        val requiredSuccessfulUploads = answerList.size
+        var currentSuccessfulUploads = 0
+        for (answer in answerList) {
+            questionsNodeRef.child(answer.questionId).child(ANSWERS_NODE).setValue(answer.answer)
+                    .addOnCompleteListener {
+                        currentSuccessfulUploads++
+                        if (currentSuccessfulUploads == requiredSuccessfulUploads) {
+                            emitSuccessfulUpdateState(stateSubject)
+                        }
+                    }
+        }
+        return stateSubject
+    }
+
+    private fun emitSuccessfulUpdateState(stateSubject: Subject<PartialEventProfileViewState>) {
+        Observable.timer(100, TimeUnit.MILLISECONDS)
+                .map { PartialEventProfileViewState.SuccessfulAnswersUpdateState(true) }
+                .startWith(PartialEventProfileViewState.SuccessfulAnswersUpdateState())
+                .subscribe(stateSubject)
     }
 
     private fun emitError(stateSubject: Subject<PartialEventProfileViewState>) {
