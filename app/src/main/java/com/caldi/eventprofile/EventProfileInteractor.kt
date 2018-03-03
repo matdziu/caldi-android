@@ -28,7 +28,7 @@ class EventProfileInteractor {
         questionsNodeRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val questionList = dataSnapshot.children.map { Question(it.key, it.value as String) }
-                stateSubject.onNext(PartialEventProfileViewState.SuccessfulFetchState(questionList))
+                fetchAnswers(eventId, questionList, stateSubject)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -36,6 +36,29 @@ class EventProfileInteractor {
             }
         })
         return stateSubject.observeOn(AndroidSchedulers.mainThread())
+    }
+
+    private fun fetchAnswers(eventId: String, questionList: List<Question>,
+                             stateSubject: Subject<PartialEventProfileViewState>) {
+        val userEventAnswersNode
+                = firebaseDatabase.getReference("$USERS_NODE/${firebaseAuth.currentUser?.uid}/$ANSWERS_NODE/$eventId")
+        val requiredSuccessfulReads = questionList.size
+        var currentSuccessfulReads = 0
+        for (question in questionList) {
+            userEventAnswersNode.child(question.id).addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot?) {
+                    currentSuccessfulReads++
+                    dataSnapshot?.value?.let { question.answer = it as String }
+                    if (currentSuccessfulReads == requiredSuccessfulReads) {
+                        stateSubject.onNext(PartialEventProfileViewState.SuccessfulFetchState(questionList))
+                    }
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    emitError(stateSubject)
+                }
+            })
+        }
     }
 
     fun updateAnswers(eventId: String, answerList: List<Answer>): Observable<PartialEventProfileViewState> {
