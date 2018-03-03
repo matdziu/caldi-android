@@ -16,7 +16,14 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
         val fetchQuestionsObservable = eventProfileView.emitQuestionFetchingTrigger()
                 .flatMap { eventProfileInteractor.fetchQuestions(it).startWith(PartialEventProfileViewState.ProgressState()) }
 
-        val mergedObservable = Observable.merge(listOf(fetchQuestionsObservable)).subscribeWith(stateSubject)
+        val updateAnswersObservable = eventProfileView.emitAnswers()
+                .flatMap {
+                    eventProfileInteractor.updateAnswers(it.first, it.second)
+                            .startWith(PartialEventProfileViewState.ProgressState())
+                }
+
+        val mergedObservable = Observable.merge(listOf(fetchQuestionsObservable,
+                updateAnswersObservable)).subscribeWith(stateSubject)
 
         compositeDisposable.add(mergedObservable.scan(EventProfileViewState(), this::reduce)
                 .subscribe({ eventProfileView.render(it) }))
@@ -30,7 +37,7 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
             is PartialEventProfileViewState.SuccessfulFetchState -> EventProfileViewState(successFetch = true,
                     questionViewStateList = convertToQuestionViewStateList(partialState.questionsList))
             is PartialEventProfileViewState.SuccessfulAnswersUpdateState ->
-                previousState.copy(progress = false, error = false, successUpload = true)
+                previousState.copy(progress = false, error = false, successUpload = true, dismissToast = partialState.dismissToast)
         }
     }
 

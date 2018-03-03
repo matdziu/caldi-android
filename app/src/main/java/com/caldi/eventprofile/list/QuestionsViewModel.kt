@@ -1,6 +1,7 @@
 package com.caldi.eventprofile.list
 
 import android.arch.lifecycle.ViewModel
+import com.caldi.eventprofile.models.Answer
 import io.reactivex.disposables.Disposable
 
 class QuestionsViewModel : ViewModel() {
@@ -21,6 +22,10 @@ class QuestionsViewModel : ViewModel() {
         if (defaultViewStateList.size == 0) {
             defaultViewStateList.addAll(questionItemStateList)
         }
+    }
+
+    fun getAnswerList(): List<Answer> {
+        return defaultViewStateList.map { Answer(it.questionId, it.answerText) }
     }
 
     fun getItemCount(): Int = defaultViewStateList.size

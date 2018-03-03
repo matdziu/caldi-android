@@ -12,6 +12,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import java.util.concurrent.TimeUnit
@@ -34,13 +35,13 @@ class EventProfileInteractor {
                 emitError(stateSubject)
             }
         })
-        return stateSubject
+        return stateSubject.observeOn(AndroidSchedulers.mainThread())
     }
 
     fun updateAnswers(eventId: String, answerList: List<Answer>): Observable<PartialEventProfileViewState> {
         val stateSubject = PublishSubject.create<PartialEventProfileViewState>()
         val userEventAnswersNode
-                = firebaseDatabase.getReference("$USERS_NODE/${firebaseAuth.currentUser?.uid}/$ANSWERS_NODE")
+                = firebaseDatabase.getReference("$USERS_NODE/${firebaseAuth.currentUser?.uid}/$ANSWERS_NODE/$eventId")
 
         val requiredSuccessfulUploads = answerList.size
         var currentSuccessfulUploads = 0
@@ -53,7 +54,7 @@ class EventProfileInteractor {
                         }
                     }
         }
-        return stateSubject
+        return stateSubject.observeOn(AndroidSchedulers.mainThread())
     }
 
     private fun emitSuccessfulUpdateState(stateSubject: Subject<PartialEventProfileViewState>) {
