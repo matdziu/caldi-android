@@ -1,14 +1,14 @@
 package com.caldi.eventprofile
 
-import com.caldi.eventprofile.models.Question
+import com.caldi.eventprofile.models.EventProfileData
 
 sealed class PartialEventProfileViewState {
 
-    class SuccessfulFetchState(val questionsList: List<Question>) : PartialEventProfileViewState()
+    class SuccessfulFetchState(val eventProfileData: EventProfileData) : PartialEventProfileViewState()
 
     class ErrorState(val dismissToast: Boolean = false) : PartialEventProfileViewState()
 
     class ProgressState : PartialEventProfileViewState()
 
-    class SuccessfulAnswersUpdateState(val dismissToast: Boolean = false) : PartialEventProfileViewState()
+    class SuccessfulUpdateState(val dismissToast: Boolean = false) : PartialEventProfileViewState()
 }

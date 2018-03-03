@@ -18,7 +18,7 @@ import com.caldi.base.BaseDrawerActivity
 import com.caldi.constants.EVENT_ID_KEY
 import com.caldi.eventprofile.list.QuestionsAdapter
 import com.caldi.eventprofile.list.QuestionsViewModel
-import com.caldi.eventprofile.models.Answer
+import com.caldi.eventprofile.models.EventProfileData
 import com.caldi.extensions.hideSoftKeyboard
 import com.caldi.factories.EventProfileViewModelFactory
 import com.jakewharton.rxbinding2.view.RxView
@@ -27,6 +27,7 @@ import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_event_profile.contentViewGroup
 import kotlinx.android.synthetic.main.activity_event_profile.createProfilePromptTextView
+import kotlinx.android.synthetic.main.activity_event_profile.nameEditText
 import kotlinx.android.synthetic.main.activity_event_profile.progressBar
 import kotlinx.android.synthetic.main.activity_event_profile.questionsRecyclerView
 import kotlinx.android.synthetic.main.activity_event_profile.saveProfileButton
@@ -103,8 +104,10 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
 
     override fun emitQuestionFetchingTrigger(): Observable<String> = triggerQuestionsFetchSubject
 
-    override fun emitAnswers(): Observable<Pair<String, List<Answer>>> {
-        return RxView.clicks(saveProfileButton).map { Pair(eventId, questionsViewModel.getAnswerList()) }
+    override fun emitInputData(): Observable<Pair<String, EventProfileData>> {
+        return RxView.clicks(saveProfileButton).map {
+            Pair(eventId, EventProfileData(nameEditText.text.toString(), questionsViewModel.getAnswerList()))
+        }
     }
 
     override fun render(eventProfileViewState: EventProfileViewState) {

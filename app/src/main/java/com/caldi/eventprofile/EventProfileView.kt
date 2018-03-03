@@ -1,13 +1,13 @@
 package com.caldi.eventprofile
 
-import com.caldi.eventprofile.models.Answer
+import com.caldi.eventprofile.models.EventProfileData
 import io.reactivex.Observable
 
 interface EventProfileView {
 
     fun emitQuestionFetchingTrigger(): Observable<String>
 
-    fun emitAnswers(): Observable<Pair<String, List<Answer>>>
+    fun emitInputData(): Observable<Pair<String, EventProfileData>>
 
     fun render(eventProfileViewState: EventProfileViewState)
 }

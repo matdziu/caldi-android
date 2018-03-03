@@ -2,6 +2,7 @@ package com.caldi.eventprofile
 
 import android.arch.lifecycle.ViewModel
 import com.caldi.eventprofile.list.QuestionViewState
+import com.caldi.eventprofile.models.Answer
 import com.caldi.eventprofile.models.Question
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
@@ -14,11 +15,11 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
 
     fun bind(eventProfileView: EventProfileView) {
         val fetchQuestionsObservable = eventProfileView.emitQuestionFetchingTrigger()
-                .flatMap { eventProfileInteractor.fetchQuestions(it).startWith(PartialEventProfileViewState.ProgressState()) }
+                .flatMap { eventProfileInteractor.fetchEventProfile(it).startWith(PartialEventProfileViewState.ProgressState()) }
 
-        val updateAnswersObservable = eventProfileView.emitAnswers()
+        val updateAnswersObservable = eventProfileView.emitInputData()
                 .flatMap {
-                    eventProfileInteractor.updateAnswers(it.first, it.second)
+                    eventProfileInteractor.updateEventProfile(it.first, it.second)
                             .startWith(PartialEventProfileViewState.ProgressState())
                 }
 
@@ -35,16 +36,18 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
             is PartialEventProfileViewState.ProgressState -> EventProfileViewState(progress = true)
             is PartialEventProfileViewState.ErrorState -> EventProfileViewState(error = true)
             is PartialEventProfileViewState.SuccessfulFetchState -> EventProfileViewState(successFetch = true,
-                    questionViewStateList = convertToQuestionViewStateList(partialState.questionsList))
-            is PartialEventProfileViewState.SuccessfulAnswersUpdateState ->
+                    questionViewStateList = convertToQuestionViewStateList(partialState.eventProfileData.questionList,
+                            partialState.eventProfileData.answerList))
+            is PartialEventProfileViewState.SuccessfulUpdateState ->
                 previousState.copy(progress = false, error = false, successUpload = true, dismissToast = partialState.dismissToast)
         }
     }
 
-    private fun convertToQuestionViewStateList(questionList: List<Question>): List<QuestionViewState> {
+    private fun convertToQuestionViewStateList(questionList: List<Question>, answerList: List<Answer>)
+            : List<QuestionViewState> {
+        val answersMap = answerList.map { it.questionId to it.answer }.toMap()
         return questionList.map {
-            QuestionViewState(questionText = it.question, questionId = it.id,
-                    answerText = it.answer)
+            QuestionViewState(it.question, answersMap.getOrDefault(it.id, ""), it.id)
         }
     }
 
