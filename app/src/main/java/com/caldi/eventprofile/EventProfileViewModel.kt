@@ -36,6 +36,7 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
             is PartialEventProfileViewState.ProgressState -> EventProfileViewState(progress = true)
             is PartialEventProfileViewState.ErrorState -> EventProfileViewState(error = true)
             is PartialEventProfileViewState.SuccessfulFetchState -> EventProfileViewState(successFetch = true,
+                    eventUserName = partialState.eventProfileData.eventUserName,
                     questionViewStateList = convertToQuestionViewStateList(partialState.eventProfileData.questionList,
                             partialState.eventProfileData.answerList))
             is PartialEventProfileViewState.SuccessfulUpdateState ->

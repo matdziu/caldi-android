@@ -7,4 +7,5 @@ data class EventProfileViewState(val successFetch: Boolean = false,
                                  val error: Boolean = false,
                                  val progress: Boolean = false,
                                  val dismissToast: Boolean = false,
+                                 val eventUserName: String = "",
                                  val questionViewStateList: List<QuestionViewState> = arrayListOf())

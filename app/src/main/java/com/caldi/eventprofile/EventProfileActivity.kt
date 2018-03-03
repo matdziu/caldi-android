@@ -27,7 +27,7 @@ import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_event_profile.contentViewGroup
 import kotlinx.android.synthetic.main.activity_event_profile.createProfilePromptTextView
-import kotlinx.android.synthetic.main.activity_event_profile.nameEditText
+import kotlinx.android.synthetic.main.activity_event_profile.eventUserNameEditText
 import kotlinx.android.synthetic.main.activity_event_profile.progressBar
 import kotlinx.android.synthetic.main.activity_event_profile.questionsRecyclerView
 import kotlinx.android.synthetic.main.activity_event_profile.saveProfileButton
@@ -106,7 +106,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
 
     override fun emitInputData(): Observable<Pair<String, EventProfileData>> {
         return RxView.clicks(saveProfileButton).map {
-            Pair(eventId, EventProfileData(nameEditText.text.toString(), questionsViewModel.getAnswerList()))
+            Pair(eventId, EventProfileData(eventUserNameEditText.text.toString(), questionsViewModel.getAnswerList()))
         }
     }
 
@@ -117,10 +117,11 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
 
             if (successFetch) {
                 questionsAdapter.setQuestionsList(questionViewStateList)
+                eventUserNameEditText.setText(eventUserName)
             }
 
             if (successUpload && !dismissToast) {
-                Toast.makeText(this@EventProfileActivity, getString(R.string.answers_updated), Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@EventProfileActivity, getString(R.string.profile_updated), Toast.LENGTH_SHORT).show()
                 finish()
             }
         }
