@@ -3,8 +3,10 @@ package com.caldi.eventprofile
 import com.caldi.constants.ANSWERS_NODE
 import com.caldi.constants.EVENTS_NODE
 import com.caldi.constants.QUESTIONS_NODE
+import com.caldi.constants.USERS_NODE
 import com.caldi.eventprofile.models.Answer
 import com.caldi.eventprofile.models.Question
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -17,19 +19,14 @@ import java.util.concurrent.TimeUnit
 class EventProfileInteractor {
 
     private val firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
+    private val firebaseAuth = FirebaseAuth.getInstance()
 
     fun fetchQuestions(eventId: String): Observable<PartialEventProfileViewState> {
         val stateSubject = PublishSubject.create<PartialEventProfileViewState>()
         val questionsNodeRef = firebaseDatabase.getReference("$EVENTS_NODE/$eventId/$QUESTIONS_NODE")
         questionsNodeRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val questionList = arrayListOf<Question>()
-                for (childSnapshot in dataSnapshot.children) {
-                    childSnapshot.getValue(Question::class.java)?.let {
-                        it.id = childSnapshot.key
-                        questionList.add(it)
-                    }
-                }
+                val questionList = dataSnapshot.children.map { Question(it.key, it.value as String) }
                 stateSubject.onNext(PartialEventProfileViewState.SuccessfulFetchState(questionList))
             }
 
@@ -42,12 +39,13 @@ class EventProfileInteractor {
 
     fun updateAnswers(eventId: String, answerList: List<Answer>): Observable<PartialEventProfileViewState> {
         val stateSubject = PublishSubject.create<PartialEventProfileViewState>()
-        val questionsNodeRef = firebaseDatabase.getReference("$EVENTS_NODE/$eventId/$QUESTIONS_NODE")
+        val userEventAnswersNode
+                = firebaseDatabase.getReference("$USERS_NODE/${firebaseAuth.currentUser?.uid}/$ANSWERS_NODE")
 
         val requiredSuccessfulUploads = answerList.size
         var currentSuccessfulUploads = 0
         for (answer in answerList) {
-            questionsNodeRef.child(answer.questionId).child(ANSWERS_NODE).setValue(answer.answer)
+            userEventAnswersNode.child(answer.questionId).setValue(answer.answer)
                     .addOnCompleteListener {
                         currentSuccessfulUploads++
                         if (currentSuccessfulUploads == requiredSuccessfulUploads) {
