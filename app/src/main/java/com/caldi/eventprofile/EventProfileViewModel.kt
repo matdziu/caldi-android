@@ -33,7 +33,7 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
     }
 
     private fun convertToQuestionViewStateList(questionList: List<Question>): List<QuestionViewState> {
-        return questionList.map { QuestionViewState(questionText = it.text, questionId = it.id) }
+        return questionList.map { QuestionViewState(questionText = it.question, questionId = it.id) }
     }
 
     fun unbind() {
