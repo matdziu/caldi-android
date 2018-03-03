@@ -6,7 +6,7 @@ sealed class PartialEventProfileViewState {
 
     class SuccessState(val questionsList: List<Question>) : PartialEventProfileViewState()
 
-    class ErrorState(val dismissToast: Boolean) : PartialEventProfileViewState()
+    class ErrorState(val dismissToast: Boolean = false) : PartialEventProfileViewState()
 
     class ProgressState : PartialEventProfileViewState()
 }

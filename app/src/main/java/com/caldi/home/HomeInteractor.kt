@@ -44,7 +44,7 @@ class HomeInteractor {
                 }
             }
 
-            override fun onCancelled(dataSnapshot: DatabaseError) {
+            override fun onCancelled(databaseError: DatabaseError) {
                 emitError(stateSubject)
             }
         })
@@ -64,7 +64,7 @@ class HomeInteractor {
                             stateSubject.onNext(PartialHomeViewState.FetchingSucceeded(eventList))
                         }
 
-                        override fun onCancelled(dataSnapshot: DatabaseError) {
+                        override fun onCancelled(databaseError: DatabaseError) {
                             emitError(stateSubject)
                         }
                     })

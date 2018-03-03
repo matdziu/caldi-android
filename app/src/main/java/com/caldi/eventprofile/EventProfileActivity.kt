@@ -39,7 +39,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
     private lateinit var questionsAdapter: QuestionsAdapter
 
     private var fetchQuestions = true
-    private val triggerQuestionsFetchSubject = PublishSubject.create<Boolean>()
+    private val triggerQuestionsFetchSubject = PublishSubject.create<String>()
 
     @Inject
     lateinit var eventProfileViewModelFactory: EventProfileViewModelFactory
@@ -74,7 +74,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
     override fun onStart() {
         super.onStart()
         eventProfileViewModel.bind(this)
-        triggerQuestionsFetchSubject.onNext(fetchQuestions)
+        if (fetchQuestions) triggerQuestionsFetchSubject.onNext(eventId)
     }
 
     override fun onStop() {
@@ -98,7 +98,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
         }
     }
 
-    override fun emitQuestionFetchingTrigger(): Observable<Boolean> = triggerQuestionsFetchSubject
+    override fun emitQuestionFetchingTrigger(): Observable<String> = triggerQuestionsFetchSubject
 
     override fun render(eventProfileViewState: EventProfileViewState) {
         with(eventProfileViewState) {

@@ -14,7 +14,7 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
 
     fun bind(eventProfileView: EventProfileView) {
         val fetchQuestionsObservable = eventProfileView.emitQuestionFetchingTrigger()
-                .flatMap { eventProfileInteractor.fetchQuestions() }
+                .flatMap { eventProfileInteractor.fetchQuestions(it).startWith(PartialEventProfileViewState.ProgressState()) }
 
         val mergedObservable = Observable.merge(listOf(fetchQuestionsObservable)).subscribeWith(stateSubject)
 
