@@ -20,6 +20,7 @@ class QuestionsViewModel : ViewModel() {
     }
 
     fun setQuestionItemStateList(questionItemStateList: List<QuestionViewState>) {
+        unbindAll()
         defaultViewStateList.clear()
         defaultViewStateList.addAll(questionItemStateList)
     }
