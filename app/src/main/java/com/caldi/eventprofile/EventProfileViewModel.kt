@@ -69,7 +69,8 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
                         successUpload = true,
                         dismissToast = partialState.dismissToast)
             is PartialEventProfileViewState.LocalValidation ->
-                previousState.copy(eventUserNameValid = partialState.eventUserNameValid,
+                previousState.copy(
+                        eventUserNameValid = partialState.eventUserNameValid,
                         questionViewStateList = convertToQuestionViewStateList(partialState.questionList,
                                 partialState.answerList))
         }

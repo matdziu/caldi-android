@@ -8,8 +8,6 @@ interface EventProfileView {
     fun emitEventProfileFetchingTrigger(): Observable<String>
 
     fun emitInputData(): Observable<Pair<String, EventProfileData>>
-
-    fun emitUserNameInput(): Observable<String>
-
+    
     fun render(eventProfileViewState: EventProfileViewState)
 }

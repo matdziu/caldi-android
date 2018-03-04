@@ -7,26 +7,29 @@ import io.reactivex.disposables.Disposable
 
 class QuestionsViewModel : ViewModel() {
 
-    private val defaultViewStateList = arrayListOf<QuestionViewState>()
+    val defaultViewStateList = arrayListOf<QuestionViewState>()
+    private val answerList = arrayListOf<Answer>()
     private val disposableList = arrayListOf<Disposable>()
 
     fun bind(questionItemView: QuestionItemView, position: Int) {
-        val defaultViewState = defaultViewStateList[position]
-        questionItemView.defaultRender(defaultViewState)
+        questionItemView.defaultRender(defaultViewStateList[position])
 
+        val answer = answerList[position]
         disposableList.add(questionItemView.emitUserInput()
-                .map { defaultViewState.copy(answerText = it) }
-                .subscribe { defaultViewStateList[position] = it })
+                .map { answer.copy(answer = it) }
+                .subscribe { answerList[position] = it })
     }
 
     fun setQuestionItemStateList(questionItemStateList: List<QuestionViewState>) {
         unbindAll()
         defaultViewStateList.clear()
+        answerList.clear()
         defaultViewStateList.addAll(questionItemStateList)
+        questionItemStateList.mapTo(answerList) { Answer(it.questionId, it.answerText, it.answerValid) }
     }
 
     fun getAnswerList(): List<Answer> {
-        return defaultViewStateList.map { Answer(it.questionId, it.answerText) }
+        return answerList
     }
 
     fun getQuestionList(): List<Question> {
@@ -35,7 +38,7 @@ class QuestionsViewModel : ViewModel() {
 
     fun getItemCount(): Int = defaultViewStateList.size
 
-    fun unbindAll() {
+    private fun unbindAll() {
         for (disposable in disposableList) {
             disposable.dispose()
         }

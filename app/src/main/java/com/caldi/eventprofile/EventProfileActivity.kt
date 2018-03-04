@@ -22,7 +22,6 @@ import com.caldi.eventprofile.models.EventProfileData
 import com.caldi.extensions.hideSoftKeyboard
 import com.caldi.factories.EventProfileViewModelFactory
 import com.jakewharton.rxbinding2.view.RxView
-import com.jakewharton.rxbinding2.widget.RxTextView
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
@@ -86,7 +85,6 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
         fetchEventProfile = false
         hideSoftKeyboard()
         eventProfileViewModel.unbind()
-        questionsViewModel.unbindAll()
         super.onStop()
     }
 
@@ -112,10 +110,6 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
         }
     }
 
-    override fun emitUserNameInput(): Observable<String> {
-        return RxTextView.textChanges(eventUserNameEditText).map { it.toString() }
-    }
-
     override fun render(eventProfileViewState: EventProfileViewState) {
         with(eventProfileViewState) {
             showProgressBar(progress)
@@ -128,6 +122,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
                 Toast.makeText(this@EventProfileActivity, getString(R.string.profile_updated), Toast.LENGTH_SHORT).show()
                 finish()
             }
+            eventUserNameEditText.clearFocus()
         }
     }
 

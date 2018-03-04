@@ -21,7 +21,9 @@ class QuestionsAdapter(private val questionsViewModel: QuestionsViewModel)
     }
 
     fun setQuestionsList(questionViewStatesList: List<QuestionViewState>) {
-        questionsViewModel.setQuestionItemStateList(questionViewStatesList)
-        notifyDataSetChanged()
+        if (questionViewStatesList.isNotEmpty() && questionViewStatesList != questionsViewModel.defaultViewStateList) {
+            questionsViewModel.setQuestionItemStateList(questionViewStatesList)
+            notifyDataSetChanged()
+        }
     }
 }
