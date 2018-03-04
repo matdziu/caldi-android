@@ -81,7 +81,7 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
         val answersMap = answerList.map { it.questionId to it }.toMap()
         return questionList.map {
             val currentAnswer = answersMap.getOrDefault(it.id, Answer())
-            QuestionViewState(it.question, currentAnswer.answer, currentAnswer.questionId, currentAnswer.valid)
+            QuestionViewState(it.question, currentAnswer.answer, it.id, currentAnswer.valid)
         }
     }
 
