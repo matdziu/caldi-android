@@ -7,7 +7,7 @@ import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import junit.framework.Assert
 
-class QuestionItemViewRobot(questionsViewModel: QuestionsViewModel) {
+class QuestionItemViewRobot(private val questionsViewModel: QuestionsViewModel) {
 
     private val renderedStates = arrayListOf<QuestionViewState>()
 
@@ -22,7 +22,8 @@ class QuestionItemViewRobot(questionsViewModel: QuestionsViewModel) {
         override fun emitUserInput(): Observable<String> = userInputObservable
     }
 
-    init {
+    fun init(defaultState: QuestionViewState) {
+        questionsViewModel.setQuestionItemStateList(listOf(defaultState))
         questionsViewModel.bind(questionItemView, 0)
     }
 
