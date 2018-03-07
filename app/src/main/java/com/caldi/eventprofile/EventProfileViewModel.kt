@@ -43,8 +43,11 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
                     }
                 }
 
+        val profilePictureFileObservable = eventProfileView.emitProfilePictureFile()
+                .flatMap { eventProfileInteractor.uploadProfilePicture(it).startWith(PartialEventProfileViewState.ProgressState()) }
+
         val mergedObservable = Observable.merge(listOf(fetchEventProfileObservable,
-                updateProfileObservable)).subscribeWith(stateSubject)
+                updateProfileObservable, profilePictureFileObservable)).subscribeWith(stateSubject)
 
         compositeDisposable.add(mergedObservable.scan(EventProfileViewState(), this::reduce)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -74,6 +77,11 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
                         eventUserNameValid = partialState.eventUserNameValid,
                         questionViewStateList = convertToQuestionViewStateList(partialState.questionList,
                                 partialState.answerList))
+            is PartialEventProfileViewState.SuccessfulPictureUploadState ->
+                previousState.copy(
+                        progress = false,
+                        profilePictureUrl = partialState.pictureUrl
+                )
         }
     }
 

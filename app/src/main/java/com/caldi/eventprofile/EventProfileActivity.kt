@@ -13,6 +13,7 @@ import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import com.bumptech.glide.Glide
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
 import com.caldi.constants.EVENT_ID_KEY
@@ -28,9 +29,11 @@ import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_event_profile.contentViewGroup
 import kotlinx.android.synthetic.main.activity_event_profile.createProfilePromptTextView
 import kotlinx.android.synthetic.main.activity_event_profile.eventUserNameEditText
+import kotlinx.android.synthetic.main.activity_event_profile.profilePictureImageView
 import kotlinx.android.synthetic.main.activity_event_profile.progressBar
 import kotlinx.android.synthetic.main.activity_event_profile.questionsRecyclerView
 import kotlinx.android.synthetic.main.activity_event_profile.saveProfileButton
+import java.io.File
 import javax.inject.Inject
 
 class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
@@ -44,6 +47,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
 
     private var fetchEventProfile = true
     private val triggerEventProfileFetchSubject = PublishSubject.create<String>()
+    private val profilePictureFileSubject = PublishSubject.create<File>()
 
     @Inject
     lateinit var eventProfileViewModelFactory: EventProfileViewModelFactory
@@ -110,8 +114,11 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
         }
     }
 
+    override fun emitProfilePictureFile(): Observable<File> = profilePictureFileSubject
+
     override fun render(eventProfileViewState: EventProfileViewState) {
         with(eventProfileViewState) {
+            profilePictureUrl?.let { Glide.with(this@EventProfileActivity).load(it).into(profilePictureImageView) }
             showProgressBar(progress)
             showError(error, dismissToast)
             eventUserNameEditText.showError(!eventUserNameValid)
