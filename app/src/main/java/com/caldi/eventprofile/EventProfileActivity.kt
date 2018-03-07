@@ -83,6 +83,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
         uploadPhotoButton.setOnClickListener {
             CropImage.activity()
                     .setAspectRatio(1, 1)
+                    .setMaxCropResultSize(600, 600)
                     .start(this)
         }
     }
