@@ -95,6 +95,23 @@ class EventProfileViewModelTest {
 
     @Test
     fun testEventProfileUpdateValid() {
+        val eventProfileData = EventProfileData("Matt the Android Dev",
+                listOf(Answer("1", "Looking for party!", true)),
+                listOf(Question("1", "What are you looking for here?")))
+        whenever(eventProfileInteractor.updateEventProfile(any(), any())).thenReturn(
+                Observable.timer(100, TimeUnit.MILLISECONDS)
+                        .map { PartialEventProfileViewState.SuccessfulUpdateState(true) }
+                        .startWith(PartialEventProfileViewState.SuccessfulUpdateState()) as Observable<PartialEventProfileViewState>
+        )
 
+        val eventProfileViewRobot = EventProfileViewRobot(eventProfileViewModel)
+
+        eventProfileViewRobot.emitInputData("programistok", eventProfileData)
+        eventProfileViewRobot.assertViewStates(
+                EventProfileViewState(),
+                EventProfileViewState(progress = true),
+                EventProfileViewState(successUpload = true, dismissToast = false),
+                EventProfileViewState(successUpload = true, dismissToast = true)
+        )
     }
 }
