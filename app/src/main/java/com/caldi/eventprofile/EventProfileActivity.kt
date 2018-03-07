@@ -23,6 +23,8 @@ import com.caldi.eventprofile.models.EventProfileData
 import com.caldi.extensions.hideSoftKeyboard
 import com.caldi.factories.EventProfileViewModelFactory
 import com.jakewharton.rxbinding2.view.RxView
+import com.theartofdev.edmodo.cropper.CropImage
+import com.theartofdev.edmodo.cropper.CropImageView
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
@@ -33,6 +35,7 @@ import kotlinx.android.synthetic.main.activity_event_profile.profilePictureImage
 import kotlinx.android.synthetic.main.activity_event_profile.progressBar
 import kotlinx.android.synthetic.main.activity_event_profile.questionsRecyclerView
 import kotlinx.android.synthetic.main.activity_event_profile.saveProfileButton
+import kotlinx.android.synthetic.main.activity_event_profile.uploadPhotoButton
 import java.io.File
 import javax.inject.Inject
 
@@ -77,6 +80,12 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
         questionsRecyclerView.layoutManager = LinearLayoutManager(this)
         questionsRecyclerView.adapter = questionsAdapter
         ViewCompat.setNestedScrollingEnabled(questionsRecyclerView, false)
+
+        uploadPhotoButton.setOnClickListener {
+            CropImage.activity()
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .start(this)
+        }
     }
 
     override fun onStart() {
@@ -90,6 +99,17 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
         hideSoftKeyboard()
         eventProfileViewModel.unbind()
         super.onStop()
+    }
+
+    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent) {
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            val result = CropImage.getActivityResult(data)
+            if (resultCode == RESULT_OK) {
+                profilePictureFileSubject.onNext(File(result.uri.path))
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                showError(true)
+            }
+        }
     }
 
     private fun setPromptText() {
@@ -143,7 +163,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
         }
     }
 
-    private fun showError(show: Boolean, dismissToast: Boolean) {
+    private fun showError(show: Boolean, dismissToast: Boolean = false) {
         if (show && !dismissToast) {
             Toast.makeText(this, getString(R.string.error_event_profile_text), Toast.LENGTH_SHORT).show()
         }
