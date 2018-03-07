@@ -22,6 +22,7 @@ import com.caldi.eventprofile.models.EventProfileData
 import com.caldi.extensions.hideSoftKeyboard
 import com.caldi.factories.EventProfileViewModelFactory
 import com.jakewharton.rxbinding2.view.RxView
+import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import com.theartofdev.edmodo.cropper.CropImage
 import dagger.android.AndroidInjection
@@ -36,6 +37,7 @@ import kotlinx.android.synthetic.main.activity_event_profile.questionsRecyclerVi
 import kotlinx.android.synthetic.main.activity_event_profile.saveProfileButton
 import kotlinx.android.synthetic.main.activity_event_profile.uploadPhotoButton
 import java.io.File
+import java.lang.Exception
 import javax.inject.Inject
 
 class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
@@ -139,8 +141,17 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
     override fun render(eventProfileViewState: EventProfileViewState) {
         with(eventProfileViewState) {
             if (!profilePictureUrl.isBlank()) {
-                Picasso.get().load(profilePictureUrl).into(profilePictureImageView)
-                profilePictureImageView.adjustViewBounds = true
+                Picasso.get().load(profilePictureUrl).placeholder(R.drawable.profile_picture_shape)
+                        .into(profilePictureImageView, object : Callback {
+                            override fun onSuccess() {
+                                profilePictureImageView.adjustViewBounds = true
+                            }
+
+                            override fun onError(e: Exception?) {
+                                profilePictureImageView.adjustViewBounds = false
+                                profilePictureImageView.setImageResource(R.drawable.profile_picture_shape)
+                            }
+                        })
             }
             showProgressBar(progress)
             showError(error, dismissToast)
