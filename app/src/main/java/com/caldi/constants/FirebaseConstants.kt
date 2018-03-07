@@ -9,3 +9,4 @@ const val ANSWERS_NODE = "answers"
 
 const val EVENT_CODE_CHILD = "code"
 const val EVENT_USER_NAME_CHILD = "eventUserName"
+const val PROFILE_PICTURES_CHILD = "profilePictures"
