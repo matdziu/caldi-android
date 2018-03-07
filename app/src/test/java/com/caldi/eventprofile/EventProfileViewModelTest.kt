@@ -25,7 +25,7 @@ class EventProfileViewModelTest {
     }
 
     @Test
-    fun testEventProfileDataFetching() {
+    fun testEventProfileDataFetchingSuccess() {
         val eventProfileData = EventProfileData("Matt the Android Dev",
                 listOf(Answer("1", "Looking for party!", true)),
                 listOf(Question("1", "What are you looking for here?")))
@@ -43,9 +43,58 @@ class EventProfileViewModelTest {
                 EventProfileViewState(),
                 EventProfileViewState(progress = true),
                 EventProfileViewState(eventUserName = "Matt the Android Dev", renderEventName = true,
-                        questionViewStateList = listOf(QuestionViewState("What are you looking for here?", "Looking for party!", "1"))),
+                        questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
+                                "Looking for party!", "1"))),
                 EventProfileViewState(eventUserName = "Matt the Android Dev", renderEventName = false,
-                        questionViewStateList = listOf(QuestionViewState("What are you looking for here?", "Looking for party!", "1")))
+                        questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
+                                "Looking for party!", "1")))
         )
+    }
+
+    @Test
+    fun testEventProfileUpdateInvalid() {
+        val eventProfileData = EventProfileData("Matt the Android Dev",
+                listOf(Answer("1", "Looking for party!", true)),
+                listOf(Question("1", "What are you looking for here?")))
+        whenever(eventProfileInteractor.fetchEventProfile(any())).thenReturn(
+                Observable.timer(100, TimeUnit.MILLISECONDS)
+                        .map { PartialEventProfileViewState.SuccessfulFetchState(eventProfileData, false) }
+                        .startWith(PartialEventProfileViewState.SuccessfulFetchState(eventProfileData, true))
+                        as Observable<PartialEventProfileViewState>
+        )
+        val eventProfileDataEmptyAnswer = EventProfileData("Matt the Android Dev",
+                listOf(Answer("1", " ", true)),
+                listOf(Question("1", "What are you looking for here?")))
+
+        val eventProfileDataEmptyName = EventProfileData(" ",
+                listOf(Answer("1", "Looking for a party!", true)),
+                listOf(Question("1", "What are you looking for here?")))
+
+        val eventProfileViewRobot = EventProfileViewRobot(eventProfileViewModel)
+
+        eventProfileViewRobot.fetchEventProfile("droidcon")
+        eventProfileViewRobot.emitInputData("droidcon", eventProfileDataEmptyAnswer)
+        eventProfileViewRobot.emitInputData("droidcon", eventProfileDataEmptyName)
+        eventProfileViewRobot.assertViewStates(
+                EventProfileViewState(),
+                EventProfileViewState(progress = true),
+                EventProfileViewState(eventUserName = "Matt the Android Dev", renderEventName = true,
+                        questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
+                                "Looking for party!", "1"))),
+                EventProfileViewState(eventUserName = "Matt the Android Dev", renderEventName = false,
+                        questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
+                                "Looking for party!", "1"))),
+                EventProfileViewState(eventUserName = "Matt the Android Dev", renderEventName = false,
+                        questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
+                                " ", "1", false))),
+                EventProfileViewState(eventUserName = " ", renderEventName = false, eventUserNameValid = false,
+                        questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
+                                "Looking for a party!", "1", true)))
+        )
+    }
+
+    @Test
+    fun testEventProfileUpdateValid() {
+
     }
 }

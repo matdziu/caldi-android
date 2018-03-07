@@ -35,8 +35,8 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
                     }
 
                     if (!eventUserNameValid || !eachAnswerValid) {
-                        Observable.just(PartialEventProfileViewState.LocalValidation(eventUserNameValid,
-                                eventProfileData.answerList, eventProfileData.questionList))
+                        Observable.just(PartialEventProfileViewState.LocalValidation(eventProfileData.eventUserName,
+                                eventUserNameValid, eventProfileData.answerList, eventProfileData.questionList))
                     } else {
                         eventProfileInteractor.updateEventProfile(eventId, eventProfileData)
                                 .startWith(PartialEventProfileViewState.ProgressState())
@@ -70,6 +70,7 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
                         dismissToast = partialState.dismissToast)
             is PartialEventProfileViewState.LocalValidation ->
                 previousState.copy(
+                        eventUserName = partialState.eventUserName,
                         eventUserNameValid = partialState.eventUserNameValid,
                         questionViewStateList = convertToQuestionViewStateList(partialState.questionList,
                                 partialState.answerList))
