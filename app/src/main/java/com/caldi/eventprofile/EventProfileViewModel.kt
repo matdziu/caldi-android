@@ -13,7 +13,7 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
 
     private val compositeDisposable = CompositeDisposable()
     private val stateSubject = BehaviorSubject.create<PartialEventProfileViewState>()
-    private lateinit var eventId: String
+    private var eventId: String = ""
 
     fun bind(eventProfileView: EventProfileView) {
         val fetchEventProfileObservable = eventProfileView.emitEventProfileFetchingTrigger()

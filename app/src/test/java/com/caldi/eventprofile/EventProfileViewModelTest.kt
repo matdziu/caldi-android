@@ -74,8 +74,8 @@ class EventProfileViewModelTest {
         val eventProfileViewRobot = EventProfileViewRobot(eventProfileViewModel)
 
         eventProfileViewRobot.fetchEventProfile("droidcon")
-        eventProfileViewRobot.emitInputData("droidcon", eventProfileDataEmptyAnswer)
-        eventProfileViewRobot.emitInputData("droidcon", eventProfileDataEmptyName)
+        eventProfileViewRobot.emitInputData(eventProfileDataEmptyAnswer)
+        eventProfileViewRobot.emitInputData(eventProfileDataEmptyName)
         eventProfileViewRobot.assertViewStates(
                 EventProfileViewState(),
                 EventProfileViewState(progress = true),
@@ -107,7 +107,7 @@ class EventProfileViewModelTest {
 
         val eventProfileViewRobot = EventProfileViewRobot(eventProfileViewModel)
 
-        eventProfileViewRobot.emitInputData("programistok", eventProfileData)
+        eventProfileViewRobot.emitInputData(eventProfileData)
         eventProfileViewRobot.assertViewStates(
                 EventProfileViewState(),
                 EventProfileViewState(progress = true),
@@ -118,7 +118,7 @@ class EventProfileViewModelTest {
 
     @Test
     fun testProfilePictureUploadSuccess() {
-        whenever(eventProfileInteractor.uploadProfilePicture(any())).thenReturn(Observable.just(
+        whenever(eventProfileInteractor.uploadProfilePicture(any(), any())).thenReturn(Observable.just(
                 PartialEventProfileViewState.SuccessfulPictureUploadState("this/is/pic/url")
         ))
 
@@ -134,7 +134,7 @@ class EventProfileViewModelTest {
 
     @Test
     fun testProfilePictureUploadError() {
-        whenever(eventProfileInteractor.uploadProfilePicture(any())).thenReturn(
+        whenever(eventProfileInteractor.uploadProfilePicture(any(), any())).thenReturn(
                 Observable.timer(100, TimeUnit.MILLISECONDS)
                         .map { PartialEventProfileViewState.ErrorState(true) }
                         .startWith(PartialEventProfileViewState.ErrorState())

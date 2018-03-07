@@ -14,7 +14,7 @@ class EventProfileViewRobot(eventProfileViewModel: EventProfileViewModel) {
 
     private val profilePictureFileObservable = PublishSubject.create<File>()
 
-    private val inputDataObservable = PublishSubject.create<Pair<String, EventProfileData>>()
+    private val inputDataObservable = PublishSubject.create<EventProfileData>()
 
     private val eventProfileView = object : EventProfileView {
 
@@ -41,8 +41,8 @@ class EventProfileViewRobot(eventProfileViewModel: EventProfileViewModel) {
         profileFetchingTriggerObservable.onNext(eventId)
     }
 
-    fun emitInputData(eventId: String, eventProfileData: EventProfileData) {
-        inputDataObservable.onNext(Pair(eventId, eventProfileData))
+    fun emitInputData(eventProfileData: EventProfileData) {
+        inputDataObservable.onNext(eventProfileData)
     }
 
     fun assertViewStates(vararg expectedStates: EventProfileViewState) {
