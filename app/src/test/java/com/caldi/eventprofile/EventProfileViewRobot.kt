@@ -22,7 +22,7 @@ class EventProfileViewRobot(eventProfileViewModel: EventProfileViewModel) {
 
         override fun emitEventProfileFetchingTrigger(): Observable<String> = profileFetchingTriggerObservable
 
-        override fun emitInputData(): Observable<Pair<String, EventProfileData>> = inputDataObservable
+        override fun emitInputData(): Observable<EventProfileData> = inputDataObservable
 
         override fun render(eventProfileViewState: EventProfileViewState) {
             renderedStates.add(eventProfileViewState)

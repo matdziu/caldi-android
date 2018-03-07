@@ -13,39 +13,38 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
 
     private val compositeDisposable = CompositeDisposable()
     private val stateSubject = BehaviorSubject.create<PartialEventProfileViewState>()
+    private lateinit var eventId: String
 
     fun bind(eventProfileView: EventProfileView) {
         val fetchEventProfileObservable = eventProfileView.emitEventProfileFetchingTrigger()
                 .flatMap {
+                    eventId = it
                     eventProfileInteractor.fetchEventProfile(it)
                             .startWith(PartialEventProfileViewState.ProgressState())
                 }
 
         val updateProfileObservable = eventProfileView.emitInputData()
                 .flatMap {
-                    val eventId = it.first
-                    val eventProfileData = it.second
-
-                    val eventUserNameValid = !eventProfileData.eventUserName.isBlank()
+                    val eventUserNameValid = !it.eventUserName.isBlank()
                     var eachAnswerValid = true
 
-                    for (answer in eventProfileData.answerList) {
+                    for (answer in it.answerList) {
                         answer.valid = !answer.answer.isBlank()
                         if (!answer.valid) eachAnswerValid = false
                     }
 
                     if (!eventUserNameValid || !eachAnswerValid) {
-                        Observable.just(PartialEventProfileViewState.LocalValidation(eventProfileData.eventUserName,
-                                eventUserNameValid, eventProfileData.answerList, eventProfileData.questionList))
+                        Observable.just(PartialEventProfileViewState.LocalValidation(it.eventUserName,
+                                eventUserNameValid, it.answerList, it.questionList))
                     } else {
-                        eventProfileInteractor.updateEventProfile(eventId, eventProfileData)
+                        eventProfileInteractor.updateEventProfile(eventId, it)
                                 .startWith(PartialEventProfileViewState.ProgressState())
                     }
                 }
 
         val profilePictureFileObservable = eventProfileView.emitProfilePictureFile()
                 .flatMap {
-                    eventProfileInteractor.uploadProfilePicture(it.first, it.second)
+                    eventProfileInteractor.uploadProfilePicture(eventId, it)
                             .startWith(PartialEventProfileViewState.ProgressState())
                 }
 

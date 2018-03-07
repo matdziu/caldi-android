@@ -50,7 +50,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
 
     private var fetchEventProfile = true
     private val triggerEventProfileFetchSubject = PublishSubject.create<String>()
-    private val profilePictureFileSubject = PublishSubject.create<Pair<String, File>>()
+    private val profilePictureFileSubject = PublishSubject.create<File>()
 
     @Inject
     lateinit var eventProfileViewModelFactory: EventProfileViewModelFactory
@@ -105,7 +105,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             val result = CropImage.getActivityResult(data)
             if (resultCode == RESULT_OK) {
-                profilePictureFileSubject.onNext(Pair(eventId, File(result.uri.path)))
+                profilePictureFileSubject.onNext(File(result.uri.path))
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 showError(true)
             }
@@ -127,14 +127,14 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
 
     override fun emitEventProfileFetchingTrigger(): Observable<String> = triggerEventProfileFetchSubject
 
-    override fun emitInputData(): Observable<Pair<String, EventProfileData>> {
+    override fun emitInputData(): Observable<EventProfileData> {
         return RxView.clicks(saveProfileButton).map {
-            Pair(eventId, EventProfileData(eventUserNameEditText.text.toString(), questionsViewModel.getAnswerList(),
-                    questionsViewModel.getQuestionList()))
+            EventProfileData(eventUserNameEditText.text.toString(), questionsViewModel.getAnswerList(),
+                    questionsViewModel.getQuestionList())
         }
     }
 
-    override fun emitProfilePictureFile(): Observable<Pair<String, File>> = profilePictureFileSubject
+    override fun emitProfilePictureFile(): Observable<File> = profilePictureFileSubject
 
     override fun render(eventProfileViewState: EventProfileViewState) {
         with(eventProfileViewState) {
