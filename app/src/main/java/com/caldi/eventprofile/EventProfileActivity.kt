@@ -50,7 +50,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
 
     private var fetchEventProfile = true
     private val triggerEventProfileFetchSubject = PublishSubject.create<String>()
-    private val profilePictureFileSubject = PublishSubject.create<File>()
+    private val profilePictureFileSubject = PublishSubject.create<Pair<String, File>>()
 
     @Inject
     lateinit var eventProfileViewModelFactory: EventProfileViewModelFactory
@@ -105,7 +105,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             val result = CropImage.getActivityResult(data)
             if (resultCode == RESULT_OK) {
-                profilePictureFileSubject.onNext(File(result.uri.path))
+                profilePictureFileSubject.onNext(Pair(eventId, File(result.uri.path)))
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 showError(true)
             }
@@ -134,11 +134,13 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
         }
     }
 
-    override fun emitProfilePictureFile(): Observable<File> = profilePictureFileSubject
+    override fun emitProfilePictureFile(): Observable<Pair<String, File>> = profilePictureFileSubject
 
     override fun render(eventProfileViewState: EventProfileViewState) {
         with(eventProfileViewState) {
-            profilePictureUrl?.let { Glide.with(this@EventProfileActivity).load(it).into(profilePictureImageView) }
+            if (!profilePictureUrl.isBlank()) {
+                Glide.with(this@EventProfileActivity).load(profilePictureUrl).into(profilePictureImageView)
+            }
             showProgressBar(progress)
             showError(error, dismissToast)
             eventUserNameEditText.showError(!eventUserNameValid)

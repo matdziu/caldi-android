@@ -5,7 +5,7 @@ import com.caldi.constants.ANSWERS_NODE
 import com.caldi.constants.EVENTS_NODE
 import com.caldi.constants.EVENT_PROFILE_NODE
 import com.caldi.constants.EVENT_USER_NAME_CHILD
-import com.caldi.constants.PROFILE_PICTURES_CHILD
+import com.caldi.constants.PROFILE_PICTURE_CHILD
 import com.caldi.constants.QUESTIONS_NODE
 import com.caldi.constants.USERS_NODE
 import com.caldi.eventprofile.models.Answer
@@ -20,7 +20,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
-import io.reactivex.functions.Function3
+import io.reactivex.functions.Function4
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import java.io.File
@@ -33,9 +33,11 @@ class EventProfileInteractor {
     private val firebaseAuth = FirebaseAuth.getInstance()
 
     fun fetchEventProfile(eventId: String): Observable<PartialEventProfileViewState> {
-        return Observable.zip(fetchQuestions(eventId), fetchAnswers(eventId), fetchEventUserName(eventId),
-                Function3<List<Question>, List<Answer>, String, EventProfileData> { questionList, answerList, eventUserName ->
-                    EventProfileData(eventUserName, answerList, questionList)
+        return Observable.zip(fetchQuestions(eventId), fetchAnswers(eventId),
+                fetchEventUserName(eventId), fetchEventProfilePictureUrl(eventId),
+                Function4<List<Question>, List<Answer>, String, String, EventProfileData>
+                { questionList, answerList, eventUserName, profilePictureUrl ->
+                    EventProfileData(eventUserName, answerList, questionList, profilePictureUrl)
                 })
                 .flatMap { emitSuccessfulFetchState(it) }
     }
@@ -95,6 +97,25 @@ class EventProfileInteractor {
         return resultSubject
     }
 
+    private fun fetchEventProfilePictureUrl(eventId: String): Observable<String> {
+        val resultSubject = PublishSubject.create<String>()
+        val eventProfilePictureNode = getEventProfilePictureNodeRef(eventId)
+        eventProfilePictureNode.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot?) {
+                if (dataSnapshot?.value != null) {
+                    resultSubject.onNext(dataSnapshot.value as String)
+                } else {
+                    resultSubject.onNext("")
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                resultSubject.onNext("")
+            }
+        })
+        return resultSubject
+    }
+
     fun updateEventProfile(eventId: String, eventProfileData: EventProfileData): Observable<PartialEventProfileViewState> {
         return Observable.zip(updateEventUserName(eventId, eventProfileData.eventUserName), updateAnswers(eventId, eventProfileData.answerList),
                 BiFunction<Boolean, Boolean, Boolean> { successUpdateName, successUpdateAnswers ->
@@ -127,17 +148,26 @@ class EventProfileInteractor {
         return resultSubject
     }
 
-    fun uploadProfilePicture(profilePicture: File): Observable<PartialEventProfileViewState> {
+    fun uploadProfilePicture(eventId: String, profilePicture: File): Observable<PartialEventProfileViewState> {
         val resultSubject = PublishSubject.create<PartialEventProfileViewState>()
         val profilePictureUri = Uri.fromFile(profilePicture)
-        firebaseStorage.reference.child(PROFILE_PICTURES_CHILD).putFile(profilePictureUri)
-                .addOnFailureListener { emitError(resultSubject) }
-                .addOnSuccessListener {
+        firebaseAuth.uid?.let {
+            firebaseStorage.reference.child("$eventId/$it").putFile(profilePictureUri)
+                    .addOnFailureListener { emitError(resultSubject) }
+                    .addOnSuccessListener { updateEventProfilePictureNode(eventId, it.downloadUrl.toString(), resultSubject) }
+        }
+        return resultSubject
+    }
+
+    private fun updateEventProfilePictureNode(eventId: String, profilePictureUrl: String,
+                                              resultSubject: Subject<PartialEventProfileViewState>) {
+        getEventProfilePictureNodeRef(eventId).setValue(profilePictureUrl)
+                .addOnCompleteListener {
                     resultSubject.onNext(
-                            PartialEventProfileViewState.SuccessfulPictureUploadState(it.downloadUrl.toString())
+                            PartialEventProfileViewState.SuccessfulPictureUploadState(profilePictureUrl)
                     )
                 }
-        return resultSubject
+                .addOnFailureListener { emitError(resultSubject) }
     }
 
     private fun getUserAnswersNodeRef(eventId: String): DatabaseReference {
@@ -152,6 +182,11 @@ class EventProfileInteractor {
 
     private fun getEventQuestionsNodeRef(eventId: String): DatabaseReference {
         return firebaseDatabase.getReference("$EVENTS_NODE/$eventId/$QUESTIONS_NODE")
+    }
+
+    private fun getEventProfilePictureNodeRef(eventId: String): DatabaseReference {
+        return firebaseDatabase.getReference(
+                "$USERS_NODE/${firebaseAuth.currentUser?.uid}/$EVENT_PROFILE_NODE/$eventId/$PROFILE_PICTURE_CHILD")
     }
 
     private fun emitSuccessfulFetchState(eventProfileData: EventProfileData): Observable<PartialEventProfileViewState> {

@@ -10,7 +10,7 @@ interface EventProfileView {
 
     fun emitInputData(): Observable<Pair<String, EventProfileData>>
 
-    fun emitProfilePictureFile(): Observable<File>
+    fun emitProfilePictureFile(): Observable<Pair<String, File>>
 
     fun render(eventProfileViewState: EventProfileViewState)
 }

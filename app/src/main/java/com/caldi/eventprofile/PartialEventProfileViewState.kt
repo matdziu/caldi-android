@@ -11,7 +11,7 @@ sealed class PartialEventProfileViewState {
 
     class SuccessfulUpdateState(val dismissToast: Boolean = false) : PartialEventProfileViewState()
 
-    class SuccessfulPictureUploadState(val pictureUrl: String) : PartialEventProfileViewState()
+    class SuccessfulPictureUploadState(val pictureUrl: String = "") : PartialEventProfileViewState()
 
     class ProgressState : PartialEventProfileViewState()
 

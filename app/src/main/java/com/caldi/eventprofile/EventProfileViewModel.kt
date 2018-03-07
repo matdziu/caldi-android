@@ -44,7 +44,10 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
                 }
 
         val profilePictureFileObservable = eventProfileView.emitProfilePictureFile()
-                .flatMap { eventProfileInteractor.uploadProfilePicture(it).startWith(PartialEventProfileViewState.ProgressState()) }
+                .flatMap {
+                    eventProfileInteractor.uploadProfilePicture(it.first, it.second)
+                            .startWith(PartialEventProfileViewState.ProgressState())
+                }
 
         val mergedObservable = Observable.merge(listOf(fetchEventProfileObservable,
                 updateProfileObservable, profilePictureFileObservable)).subscribeWith(stateSubject)
@@ -64,7 +67,8 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
                         eventUserName = partialState.eventProfileData.eventUserName,
                         questionViewStateList = convertToQuestionViewStateList(partialState.eventProfileData.questionList,
                                 partialState.eventProfileData.answerList),
-                        renderEventName = partialState.renderEventName)
+                        renderEventName = partialState.renderEventName,
+                        profilePictureUrl = partialState.eventProfileData.profilePictureUrl)
             is PartialEventProfileViewState.SuccessfulUpdateState ->
                 previousState.copy(
                         progress = false,
