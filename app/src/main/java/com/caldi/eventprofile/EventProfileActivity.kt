@@ -13,7 +13,6 @@ import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
-import com.bumptech.glide.Glide
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
 import com.caldi.constants.EVENT_ID_KEY
@@ -23,8 +22,8 @@ import com.caldi.eventprofile.models.EventProfileData
 import com.caldi.extensions.hideSoftKeyboard
 import com.caldi.factories.EventProfileViewModelFactory
 import com.jakewharton.rxbinding2.view.RxView
+import com.squareup.picasso.Picasso
 import com.theartofdev.edmodo.cropper.CropImage
-import com.theartofdev.edmodo.cropper.CropImageView
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
@@ -83,7 +82,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
 
         uploadPhotoButton.setOnClickListener {
             CropImage.activity()
-                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .setAspectRatio(1, 1)
                     .start(this)
         }
     }
@@ -139,7 +138,8 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
     override fun render(eventProfileViewState: EventProfileViewState) {
         with(eventProfileViewState) {
             if (!profilePictureUrl.isBlank()) {
-                Glide.with(this@EventProfileActivity).load(profilePictureUrl).into(profilePictureImageView)
+                Picasso.get().load(profilePictureUrl).placeholder(R.drawable.profile_picture_shape)
+                        .into(profilePictureImageView)
             }
             showProgressBar(progress)
             showError(error, dismissToast)

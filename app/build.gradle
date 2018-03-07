@@ -49,11 +49,10 @@ dependencies {
     implementation 'com.facebook.android:facebook-android-sdk:4.30.0'
     implementation 'com.google.firebase:firebase-database:11.8.0'
     implementation 'de.hdodenhof:circleimageview:2.2.0'
-    implementation 'com.github.bumptech.glide:glide:4.6.1'
+    implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.google.firebase:firebase-storage:11.8.0'
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.6.0'
 
-    kapt 'com.github.bumptech.glide:compiler:4.6.1'
     kapt 'com.google.dagger:dagger-android-processor:2.14.1'
     kapt "android.arch.lifecycle:compiler:1.1.0"
     kapt 'com.google.dagger:dagger-compiler:2.14.1'
