@@ -58,7 +58,7 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
             : EventProfileViewState {
         return when (partialState) {
             is PartialEventProfileViewState.ProgressState -> EventProfileViewState(progress = true)
-            is PartialEventProfileViewState.ErrorState -> EventProfileViewState(error = true)
+            is PartialEventProfileViewState.ErrorState -> EventProfileViewState(error = true, dismissToast = partialState.dismissToast)
             is PartialEventProfileViewState.SuccessfulFetchState ->
                 EventProfileViewState(
                         eventUserName = partialState.eventProfileData.eventUserName,

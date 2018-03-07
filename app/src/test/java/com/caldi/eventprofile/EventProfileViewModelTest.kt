@@ -12,6 +12,7 @@ import io.reactivex.android.plugins.RxAndroidPlugins
 import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
 import org.junit.Test
+import java.io.File
 import java.util.concurrent.TimeUnit
 
 class EventProfileViewModelTest {
@@ -112,6 +113,42 @@ class EventProfileViewModelTest {
                 EventProfileViewState(progress = true),
                 EventProfileViewState(successUpload = true, dismissToast = false),
                 EventProfileViewState(successUpload = true, dismissToast = true)
+        )
+    }
+
+    @Test
+    fun testProfilePictureUploadSuccess() {
+        whenever(eventProfileInteractor.uploadProfilePicture(any())).thenReturn(Observable.just(
+                PartialEventProfileViewState.SuccessfulPictureUploadState("this/is/pic/url")
+        ))
+
+        val eventProfileViewRobot = EventProfileViewRobot(eventProfileViewModel)
+
+        eventProfileViewRobot.sendProfilePictureFile(File("this/is/pic/filepath"))
+        eventProfileViewRobot.assertViewStates(
+                EventProfileViewState(),
+                EventProfileViewState(progress = true),
+                EventProfileViewState(profilePictureUrl = "this/is/pic/url")
+        )
+    }
+
+    @Test
+    fun testProfilePictureUploadError() {
+        whenever(eventProfileInteractor.uploadProfilePicture(any())).thenReturn(
+                Observable.timer(100, TimeUnit.MILLISECONDS)
+                        .map { PartialEventProfileViewState.ErrorState(true) }
+                        .startWith(PartialEventProfileViewState.ErrorState())
+                        as Observable<PartialEventProfileViewState>
+        )
+
+        val eventProfileViewRobot = EventProfileViewRobot(eventProfileViewModel)
+
+        eventProfileViewRobot.sendProfilePictureFile(File("this/is/pic/filepath"))
+        eventProfileViewRobot.assertViewStates(
+                EventProfileViewState(),
+                EventProfileViewState(progress = true),
+                EventProfileViewState(error = true),
+                EventProfileViewState(error = true, dismissToast = true)
         )
     }
 }
