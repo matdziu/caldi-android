@@ -36,12 +36,27 @@
                     android:text="@string/create_profile_prompt"
                     android:textSize="16dp" />
 
-                <ImageView
-                    android:id="@+id/profilePictureImageView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:src="@drawable/profile_picture_shape" />
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/profilePictureImageView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:src="@drawable/profile_picture_shape" />
+
+                    <TextView
+                        android:id="@+id/loadingPhotoTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="@string/loading_photo"
+                        android:textSize="16dp"
+                        android:visibility="gone" />
+
+                </RelativeLayout>
 
                 <com.caldi.customviews.CaldiButton
                     android:id="@+id/uploadPhotoButton"

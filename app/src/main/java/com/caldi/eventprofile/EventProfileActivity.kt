@@ -31,6 +31,7 @@ import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_event_profile.contentViewGroup
 import kotlinx.android.synthetic.main.activity_event_profile.createProfilePromptTextView
 import kotlinx.android.synthetic.main.activity_event_profile.eventUserNameEditText
+import kotlinx.android.synthetic.main.activity_event_profile.loadingPhotoTextView
 import kotlinx.android.synthetic.main.activity_event_profile.profilePictureImageView
 import kotlinx.android.synthetic.main.activity_event_profile.progressBar
 import kotlinx.android.synthetic.main.activity_event_profile.questionsRecyclerView
@@ -141,15 +142,18 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
     override fun render(eventProfileViewState: EventProfileViewState) {
         with(eventProfileViewState) {
             if (!profilePictureUrl.isBlank()) {
+                loadingPhotoTextView.visibility = View.VISIBLE
                 Picasso.get().load(profilePictureUrl).placeholder(R.drawable.profile_picture_shape)
                         .into(profilePictureImageView, object : Callback {
                             override fun onSuccess() {
                                 profilePictureImageView.adjustViewBounds = true
+                                loadingPhotoTextView.visibility = View.GONE
                             }
 
                             override fun onError(e: Exception?) {
                                 profilePictureImageView.adjustViewBounds = false
                                 profilePictureImageView.setImageResource(R.drawable.profile_picture_shape)
+                                loadingPhotoTextView.visibility = View.GONE
                             }
                         })
             }
