@@ -43,8 +43,6 @@ import javax.inject.Inject
 
 class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
 
-    private var eventId = ""
-
     private lateinit var eventProfileViewModel: EventProfileViewModel
     private lateinit var questionsViewModel: QuestionsViewModel
 

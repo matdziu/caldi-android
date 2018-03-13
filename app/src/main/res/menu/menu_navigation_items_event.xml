@@ -2,16 +2,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/events_item"
+        android:id="@+id/meet_people_item"
         android:checkable="true"
-        android:icon="@drawable/ic_event_white_18dp"
-        android:title="@string/events_item_text" />
+        android:icon="@drawable/ic_tag_faces_white_18dp"
+        android:title="@string/meet_people_text" />
 
     <item
         android:id="@+id/event_profile_item"
         android:checkable="true"
         android:icon="@drawable/ic_account_circle_white_18dp"
         android:title="@string/your_event_profile_text" />
+
+    <item
+        android:id="@+id/events_item"
+        android:checkable="true"
+        android:icon="@drawable/ic_event_white_18dp"
+        android:title="@string/events_item_text" />
 
     <item
         android:id="@+id/sign_out_item"

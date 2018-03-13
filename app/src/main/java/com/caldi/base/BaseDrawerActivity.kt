@@ -10,8 +10,10 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import com.caldi.R
+import com.caldi.eventprofile.EventProfileActivity
 import com.caldi.home.HomeActivity
 import com.caldi.login.LoginActivity
+import com.caldi.meetpeople.MeetPeopleActivity
 import com.google.firebase.auth.FirebaseAuth
 
 open class BaseDrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -25,6 +27,8 @@ open class BaseDrawerActivity : AppCompatActivity(), NavigationView.OnNavigation
     private val toolbar: Toolbar by lazy {
         findViewById<Toolbar>(R.id.toolbar)
     }
+
+    protected var eventId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,9 +54,10 @@ open class BaseDrawerActivity : AppCompatActivity(), NavigationView.OnNavigation
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     startActivity(intent)
                 }
+                R.id.event_profile_item -> EventProfileActivity.start(this, eventId)
+                R.id.meet_people_item -> MeetPeopleActivity.start(this, eventId)
             }
             drawerLayout.closeDrawers()
-            finish()
             true
         } else {
             false
