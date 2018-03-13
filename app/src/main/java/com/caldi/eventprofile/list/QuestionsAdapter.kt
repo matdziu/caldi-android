@@ -11,7 +11,7 @@ class QuestionsAdapter(private val questionsViewModel: QuestionsViewModel)
     override fun getItemCount(): Int = questionsViewModel.getItemCount()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuestionViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_question,
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_event_question,
                 parent, false)
         return QuestionViewHolder(itemView)
     }
