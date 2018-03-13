@@ -49,11 +49,7 @@ open class BaseDrawerActivity : AppCompatActivity(), NavigationView.OnNavigation
         return if (!item.isChecked) {
             when (item.itemId) {
                 R.id.sign_out_item -> signOut()
-                R.id.events_item -> {
-                    val intent = Intent(this, HomeActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    startActivity(intent)
-                }
+                R.id.events_item -> startActivity(Intent(this, HomeActivity::class.java))
                 R.id.event_profile_item -> EventProfileActivity.start(this, eventId)
                 R.id.meet_people_item -> MeetPeopleActivity.start(this, eventId)
             }
