@@ -38,7 +38,6 @@ class HomeActivity : BaseDrawerActivity(), HomeView {
         AndroidInjection.inject(this)
         setContentView(R.layout.activity_home)
         super.onCreate(savedInstanceState)
-        setNavigationSelection(R.id.events_item)
 
         homeViewModel = ViewModelProviders.of(this, homeViewModelFactory)[HomeViewModel::class.java]
 
@@ -52,6 +51,7 @@ class HomeActivity : BaseDrawerActivity(), HomeView {
 
     override fun onStart() {
         super.onStart()
+        setNavigationSelection(R.id.events_item)
         homeViewModel.bind(this)
         eventsFetchTriggerObservable.onNext(forceEventsFetching)
     }

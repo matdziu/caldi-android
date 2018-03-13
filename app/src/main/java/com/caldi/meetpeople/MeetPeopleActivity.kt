@@ -22,9 +22,13 @@ class MeetPeopleActivity : BaseDrawerActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setContentView(R.layout.activity_meet_people)
         super.onCreate(savedInstanceState)
-        setNavigationSelection(R.id.meet_people_item)
 
         eventId = intent.getStringExtra(EVENT_ID_KEY)
         Toast.makeText(this, eventId, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        setNavigationSelection(R.id.meet_people_item)
     }
 }

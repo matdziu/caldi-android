@@ -34,7 +34,6 @@ class AddEventActivity : BaseDrawerActivity(), AddEventView {
         AndroidInjection.inject(this)
         setContentView(R.layout.activity_add_event)
         super.onCreate(savedInstanceState)
-        setNavigationSelection(R.id.events_item)
         setPromptText()
 
         addEventViewModel = ViewModelProviders.of(this, addEventViewModelFactory)[AddEventViewModel::class.java]
@@ -42,6 +41,7 @@ class AddEventActivity : BaseDrawerActivity(), AddEventView {
 
     override fun onStart() {
         super.onStart()
+        setNavigationSelection(R.id.events_item)
         addEventViewModel.bind(this)
     }
 

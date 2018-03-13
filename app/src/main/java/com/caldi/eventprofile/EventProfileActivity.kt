@@ -68,7 +68,6 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
         AndroidInjection.inject(this)
         setContentView(R.layout.activity_event_profile)
         super.onCreate(savedInstanceState)
-        setNavigationSelection(R.id.event_profile_item)
         setPromptText()
 
         eventId = intent.getStringExtra(EVENT_ID_KEY)
@@ -91,6 +90,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
 
     override fun onStart() {
         super.onStart()
+        setNavigationSelection(R.id.event_profile_item)
         eventProfileViewModel.bind(this)
         if (fetchEventProfile) triggerEventProfileFetchSubject.onNext(eventId)
     }
