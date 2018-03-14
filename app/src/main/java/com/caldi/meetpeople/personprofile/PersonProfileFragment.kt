@@ -1,4 +1,4 @@
-package com.caldi.meetpeople
+package com.caldi.meetpeople.personprofile
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.caldi.R
+import com.caldi.constants.PERSON_PROFILE_VIEW_STATE_KEY
+import com.caldi.meetpeople.MeetPeopleActivity
 import kotlinx.android.synthetic.main.fragment_person_profile.acceptProfileButton
 import kotlinx.android.synthetic.main.fragment_person_profile.dismissProfileButton
 
@@ -15,7 +17,13 @@ class PersonProfileFragment : Fragment() {
 
     companion object {
 
-        fun newInstance(): PersonProfileFragment = PersonProfileFragment()
+        fun newInstance(personProfileViewState: PersonProfileViewState): PersonProfileFragment {
+            val personProfileFragment = PersonProfileFragment()
+            val bundle = Bundle()
+            bundle.putParcelable(PERSON_PROFILE_VIEW_STATE_KEY, personProfileViewState)
+            personProfileFragment.arguments = bundle
+            return personProfileFragment
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -30,6 +38,8 @@ class PersonProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         dismissProfileButton.setOnClickListener { emitTagForDismiss(tag) }
         acceptProfileButton.setOnClickListener { emitTagForAccept(tag) }
+        // this is save thanks to newInstance method
+        render(arguments!!.getParcelable(PERSON_PROFILE_VIEW_STATE_KEY))
     }
 
     private fun emitTagForDismiss(tag: String?) {
@@ -38,5 +48,9 @@ class PersonProfileFragment : Fragment() {
 
     private fun emitTagForAccept(tag: String?) {
         tag?.let { hostingActivity.acceptProfileSubject.onNext(it) }
+    }
+
+    private fun render(personProfileViewState: PersonProfileViewState) {
+
     }
 }

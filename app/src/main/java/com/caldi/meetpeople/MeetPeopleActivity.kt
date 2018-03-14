@@ -1,20 +1,31 @@
 package com.caldi.meetpeople
 
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
 import com.caldi.constants.EVENT_ID_KEY
+import com.caldi.factories.MeetPeopleViewModelFactory
+import com.caldi.meetpeople.personprofile.PersonProfileFragment
+import com.caldi.meetpeople.personprofile.PersonProfileViewState
+import dagger.android.AndroidInjection
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
+import javax.inject.Inject
 
-class MeetPeopleActivity : BaseDrawerActivity() {
+class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
 
     enum class ExitAnimDirection { LEFT, RIGHT }
 
     val dismissProfileSubject: Subject<String> = PublishSubject.create()
     val acceptProfileSubject: Subject<String> = PublishSubject.create()
+
+    @Inject
+    lateinit var meetPeopleViewModelFactory: MeetPeopleViewModelFactory
+
+    private lateinit var meetPeopleViewModel: MeetPeopleViewModel
 
     companion object {
 
@@ -26,10 +37,13 @@ class MeetPeopleActivity : BaseDrawerActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         setContentView(R.layout.activity_meet_people)
         super.onCreate(savedInstanceState)
 
         eventId = intent.getStringExtra(EVENT_ID_KEY)
+
+        meetPeopleViewModel = ViewModelProviders.of(this, meetPeopleViewModelFactory)[MeetPeopleViewModel::class.java]
 
         dismissProfileSubject.subscribe { removePersonProfileFragment(it, ExitAnimDirection.LEFT) }
         acceptProfileSubject.subscribe { removePersonProfileFragment(it, ExitAnimDirection.RIGHT) }
@@ -45,7 +59,7 @@ class MeetPeopleActivity : BaseDrawerActivity() {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction
                 .setCustomAnimations(R.anim.up_enter, 0)
-                .add(R.id.fragmentsContainer, PersonProfileFragment.newInstance(), tag)
+                .add(R.id.fragmentsContainer, PersonProfileFragment.newInstance(PersonProfileViewState()), tag)
         fragmentTransaction.commit()
     }
 
@@ -64,5 +78,9 @@ class MeetPeopleActivity : BaseDrawerActivity() {
     override fun onStart() {
         super.onStart()
         setNavigationSelection(R.id.meet_people_item)
+    }
+
+    override fun render(meetPeopleViewState: MeetPeopleViewState) {
+
     }
 }

@@ -5,6 +5,7 @@ import com.caldi.eventprofile.EventProfileActivity
 import com.caldi.home.HomeActivity
 import com.caldi.injection.ActivityScope
 import com.caldi.login.LoginActivity
+import com.caldi.meetpeople.MeetPeopleActivity
 import com.caldi.signup.SignUpActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
@@ -33,4 +34,8 @@ abstract class ActivityBuilder {
     @ActivityScope
     @ContributesAndroidInjector(modules = [EventProfileActivityModule::class])
     abstract fun bindEventProfileActivity(): EventProfileActivity
+
+    @ActivityScope
+    @ContributesAndroidInjector(modules = [MeetPeopleActivityModule::class])
+    abstract fun bindMeetPeopleActivityModule(): MeetPeopleActivity
 }
