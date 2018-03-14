@@ -11,6 +11,8 @@ import io.reactivex.subjects.Subject
 
 class MeetPeopleActivity : BaseDrawerActivity() {
 
+    enum class ExitAnimDirection { LEFT, RIGHT }
+
     val dismissProfileSubject: Subject<String> = PublishSubject.create()
     val acceptProfileSubject: Subject<String> = PublishSubject.create()
 
@@ -29,8 +31,8 @@ class MeetPeopleActivity : BaseDrawerActivity() {
 
         eventId = intent.getStringExtra(EVENT_ID_KEY)
 
-        dismissProfileSubject.subscribe { removePersonProfileFragment(it) }
-        acceptProfileSubject.subscribe { removePersonProfileFragment(it) }
+        dismissProfileSubject.subscribe { removePersonProfileFragment(it, ExitAnimDirection.LEFT) }
+        acceptProfileSubject.subscribe { removePersonProfileFragment(it, ExitAnimDirection.RIGHT) }
 
         addPersonProfileFragment("1")
         addPersonProfileFragment("2")
@@ -45,8 +47,14 @@ class MeetPeopleActivity : BaseDrawerActivity() {
         fragmentTransaction.commit()
     }
 
-    private fun removePersonProfileFragment(tag: String) {
+    private fun removePersonProfileFragment(tag: String, exitAnimDirection: ExitAnimDirection) {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
+
+        when (exitAnimDirection) {
+            ExitAnimDirection.LEFT -> fragmentTransaction.setCustomAnimations(0, R.anim.left_exit)
+            ExitAnimDirection.RIGHT -> fragmentTransaction.setCustomAnimations(0, R.anim.right_exit)
+        }
+
         fragmentTransaction.remove(supportFragmentManager.findFragmentByTag(tag))
         fragmentTransaction.commit()
     }
