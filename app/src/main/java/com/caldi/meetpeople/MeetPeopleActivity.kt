@@ -6,8 +6,13 @@ import android.os.Bundle
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
 import com.caldi.constants.EVENT_ID_KEY
+import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.Subject
 
 class MeetPeopleActivity : BaseDrawerActivity() {
+
+    val dismissProfileSubject: Subject<String> = PublishSubject.create()
+    val acceptProfileSubject: Subject<String> = PublishSubject.create()
 
     companion object {
 
@@ -24,12 +29,25 @@ class MeetPeopleActivity : BaseDrawerActivity() {
 
         eventId = intent.getStringExtra(EVENT_ID_KEY)
 
-        addPersonProfileFragment()
+        dismissProfileSubject.subscribe { removePersonProfileFragment(it) }
+        acceptProfileSubject.subscribe { removePersonProfileFragment(it) }
+
+        addPersonProfileFragment("1")
+        addPersonProfileFragment("2")
+        addPersonProfileFragment("3")
+        addPersonProfileFragment("4")
+        addPersonProfileFragment("5")
     }
 
-    private fun addPersonProfileFragment() {
+    private fun addPersonProfileFragment(tag: String) {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.add(R.id.fragmentsContainer, PersonProfileFragment.newInstance())
+        fragmentTransaction.add(R.id.fragmentsContainer, PersonProfileFragment.newInstance(), tag)
+        fragmentTransaction.commit()
+    }
+
+    private fun removePersonProfileFragment(tag: String) {
+        val fragmentTransaction = supportFragmentManager.beginTransaction()
+        fragmentTransaction.remove(supportFragmentManager.findFragmentByTag(tag))
         fragmentTransaction.commit()
     }
 
