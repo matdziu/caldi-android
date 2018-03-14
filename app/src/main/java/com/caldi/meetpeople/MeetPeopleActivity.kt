@@ -3,7 +3,6 @@ package com.caldi.meetpeople
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
 import com.caldi.constants.EVENT_ID_KEY
@@ -24,7 +23,14 @@ class MeetPeopleActivity : BaseDrawerActivity() {
         super.onCreate(savedInstanceState)
 
         eventId = intent.getStringExtra(EVENT_ID_KEY)
-        Toast.makeText(this, eventId, Toast.LENGTH_SHORT).show()
+
+        addPersonProfileFragment()
+    }
+
+    private fun addPersonProfileFragment() {
+        val fragmentTransaction = supportFragmentManager.beginTransaction()
+        fragmentTransaction.add(R.id.fragmentsContainer, PersonProfileFragment.newInstance())
+        fragmentTransaction.commit()
     }
 
     override fun onStart() {
