@@ -43,7 +43,9 @@ class MeetPeopleActivity : BaseDrawerActivity() {
 
     private fun addPersonProfileFragment(tag: String) {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.add(R.id.fragmentsContainer, PersonProfileFragment.newInstance(), tag)
+        fragmentTransaction
+                .setCustomAnimations(R.anim.up_enter, 0)
+                .add(R.id.fragmentsContainer, PersonProfileFragment.newInstance(), tag)
         fragmentTransaction.commit()
     }
 
