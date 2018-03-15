@@ -78,6 +78,7 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
     override fun onStart() {
         super.onStart()
         setNavigationSelection(R.id.meet_people_item)
+        meetPeopleViewModel.bind(this)
     }
 
     override fun render(meetPeopleViewState: MeetPeopleViewState) {

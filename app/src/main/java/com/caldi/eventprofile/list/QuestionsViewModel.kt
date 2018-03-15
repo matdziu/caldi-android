@@ -1,8 +1,8 @@
 package com.caldi.eventprofile.list
 
 import android.arch.lifecycle.ViewModel
-import com.caldi.eventprofile.models.Answer
-import com.caldi.eventprofile.models.Question
+import com.caldi.base.models.Answer
+import com.caldi.base.models.Question
 import io.reactivex.disposables.Disposable
 
 class QuestionsViewModel : ViewModel() {
