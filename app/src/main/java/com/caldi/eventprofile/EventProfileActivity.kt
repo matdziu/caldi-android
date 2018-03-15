@@ -83,7 +83,6 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
         uploadPhotoButton.setOnClickListener {
             CropImage.activity()
                     .setAspectRatio(1, 1)
-                    .setMaxCropResultSize(1000, 1000)
                     .start(this)
         }
     }
@@ -140,6 +139,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
     override fun render(eventProfileViewState: EventProfileViewState) {
         with(eventProfileViewState) {
             if (!profilePictureUrl.isBlank()) {
+                profilePictureImageView.adjustViewBounds = false
                 loadingPhotoTextView.visibility = View.VISIBLE
                 Picasso.get().load(profilePictureUrl).placeholder(R.drawable.profile_picture_shape)
                         .into(profilePictureImageView, object : Callback {
