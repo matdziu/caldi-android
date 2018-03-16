@@ -28,6 +28,8 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
     val acceptProfileSubject: Subject<String> = PublishSubject.create()
 
     private val triggerProfilesFetchingSubject: Subject<String> = PublishSubject.create()
+    private val positiveMetSubject: Subject<String> = PublishSubject.create()
+    private val negativeMeetSubject: Subject<String> = PublishSubject.create()
 
     private var fetchProfiles = true
     private var addProfileFragments = true
@@ -68,19 +70,23 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
 
     override fun onStop() {
         fetchProfiles = false
-        addProfileFragments = false
         meetPeopleViewModel.unbind()
         super.onStop()
     }
 
     override fun emitProfilesFetchingTrigger(): Observable<String> = triggerProfilesFetchingSubject
 
+    override fun emitPositiveMeet(): Observable<String> = positiveMetSubject
+
+    override fun emitNegativeMeet(): Observable<String> = negativeMeetSubject
+
     override fun render(meetPeopleViewState: MeetPeopleViewState) {
         with(meetPeopleViewState) {
             showProgressBar(progress)
             showError(error, dismissToast)
 
-            if (addProfileFragments) {
+            if (addProfileFragments && personProfileViewStateList.isNotEmpty()) {
+                addProfileFragments = false
                 for (personProfileViewState in personProfileViewStateList) {
                     addPersonProfileFragment(personProfileViewState)
                 }
@@ -112,15 +118,21 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
         fragmentTransaction.commit()
     }
 
-    private fun removePersonProfileFragment(tag: String, exitAnimDirection: ExitAnimDirection) {
+    private fun removePersonProfileFragment(userId: String, exitAnimDirection: ExitAnimDirection) {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
 
         when (exitAnimDirection) {
-            ExitAnimDirection.LEFT -> fragmentTransaction.setCustomAnimations(0, R.anim.left_exit)
-            ExitAnimDirection.RIGHT -> fragmentTransaction.setCustomAnimations(0, R.anim.right_exit)
+            ExitAnimDirection.LEFT -> {
+                fragmentTransaction.setCustomAnimations(0, R.anim.left_exit)
+                negativeMeetSubject.onNext(userId)
+            }
+            ExitAnimDirection.RIGHT -> {
+                fragmentTransaction.setCustomAnimations(0, R.anim.right_exit)
+                positiveMetSubject.onNext(userId)
+            }
         }
 
-        fragmentTransaction.remove(supportFragmentManager.findFragmentByTag(tag))
+        fragmentTransaction.remove(supportFragmentManager.findFragmentByTag(userId))
         fragmentTransaction.commit()
     }
 }

@@ -25,7 +25,14 @@ class MeetPeopleViewModel(private val meetPeopleInteractor: MeetPeopleInteractor
                             .startWith(PartialMeetPeopleViewState.ProgressState())
                 }
 
-        val mergedObservable = Observable.merge(listOf(fetchProfilesObservable))
+        val positiveMeetObservable = meetPeopleView.emitPositiveMeet()
+                .flatMap { meetPeopleInteractor.saveMetAttendee(it, eventId, MeetPeopleInteractor.MeetType.POSITIVE) }
+
+        val negativeMeetObservable = meetPeopleView.emitNegativeMeet()
+                .flatMap { meetPeopleInteractor.saveMetAttendee(it, eventId, MeetPeopleInteractor.MeetType.NEGATIVE) }
+
+        val mergedObservable = Observable.merge(listOf(fetchProfilesObservable,
+                positiveMeetObservable, negativeMeetObservable))
                 .subscribeWith(stateSubject)
 
         compositeDisposable.add(mergedObservable.scan(MeetPeopleViewState(), this::reduce)
@@ -43,6 +50,7 @@ class MeetPeopleViewModel(private val meetPeopleInteractor: MeetPeopleInteractor
                     dismissToast = partialState.dismissToast)
             is PartialMeetPeopleViewState.SuccessfulProfileFetchState -> MeetPeopleViewState(
                     personProfileViewStateList = convertToPersonProfileViewStateList(partialState.attendeesProfilesList))
+            is PartialMeetPeopleViewState.SuccessfulMetAttendeeSave -> previousState
         }
     }
 

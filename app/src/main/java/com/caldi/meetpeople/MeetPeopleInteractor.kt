@@ -5,6 +5,10 @@ import com.caldi.base.models.Answer
 import com.caldi.base.models.Question
 import com.caldi.constants.ATTENDEES_WITH_PROFILE_NODE
 import com.caldi.constants.EVENTS_NODE
+import com.caldi.constants.MEET_NODE
+import com.caldi.constants.NEGATIVE_MEET_NODE
+import com.caldi.constants.POSITIVE_MEET_NODE
+import com.caldi.constants.USERS_NODE
 import com.caldi.meetpeople.models.AttendeeProfile
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -19,7 +23,24 @@ import java.util.concurrent.TimeUnit
 
 class MeetPeopleInteractor : BaseProfileInteractor() {
 
+    enum class MeetType { POSITIVE, NEGATIVE }
+
     private val currentUserId: String? = FirebaseAuth.getInstance().currentUser?.uid
+
+    fun saveMetAttendee(metAttendeeId: String, eventId: String, meetType: MeetType)
+            : Observable<PartialMeetPeopleViewState> {
+        val stateSubject = PublishSubject.create<PartialMeetPeopleViewState>()
+        var meetNodeRef = getMeetNodeRef(eventId)
+        meetNodeRef = when (meetType) {
+            MeetType.POSITIVE -> meetNodeRef.child(POSITIVE_MEET_NODE)
+            MeetType.NEGATIVE -> meetNodeRef.child(NEGATIVE_MEET_NODE)
+        }
+        meetNodeRef
+                .push()
+                .setValue(metAttendeeId)
+                .addOnCompleteListener { stateSubject.onNext(PartialMeetPeopleViewState.SuccessfulMetAttendeeSave()) }
+        return stateSubject
+    }
 
     fun fetchAttendeesProfiles(eventId: String): Observable<PartialMeetPeopleViewState> {
         val stateSubject = PublishSubject.create<PartialMeetPeopleViewState>()
@@ -68,6 +89,10 @@ class MeetPeopleInteractor : BaseProfileInteractor() {
 
     private fun getAttendeesWithProfileNodeRef(eventId: String): DatabaseReference {
         return firebaseDatabase.getReference("$EVENTS_NODE/$eventId/$ATTENDEES_WITH_PROFILE_NODE")
+    }
+
+    private fun getMeetNodeRef(eventId: String): DatabaseReference {
+        return firebaseDatabase.getReference("$USERS_NODE/$currentUserId/$MEET_NODE/$eventId")
     }
 
     private fun emitError(stateSubject: Subject<PartialMeetPeopleViewState>) {
