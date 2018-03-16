@@ -138,7 +138,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
 
     override fun render(eventProfileViewState: EventProfileViewState) {
         with(eventProfileViewState) {
-            if (!profilePictureUrl.isBlank()) {
+            if (profilePictureUrl.isNotBlank()) {
                 profilePictureImageView.adjustViewBounds = false
                 loadingPhotoTextView.visibility = View.VISIBLE
                 Picasso.get().load(profilePictureUrl).placeholder(R.drawable.profile_picture_shape)

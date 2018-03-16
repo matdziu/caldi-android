@@ -4,7 +4,8 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.view.View
+import android.widget.Toast
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
 import com.caldi.constants.EVENT_ID_KEY
@@ -15,6 +16,8 @@ import dagger.android.AndroidInjection
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
+import kotlinx.android.synthetic.main.activity_meet_people.fragmentsContainer
+import kotlinx.android.synthetic.main.activity_meet_people.progressBar
 import javax.inject.Inject
 
 class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
@@ -71,14 +74,37 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
     override fun emitProfilesFetchingTrigger(): Observable<String> = triggerProfilesFetchingSubject
 
     override fun render(meetPeopleViewState: MeetPeopleViewState) {
-        Log.d("mateusz", meetPeopleViewState.toString())
+        with(meetPeopleViewState) {
+            showProgressBar(progress)
+            showError(error, dismissToast)
+
+            for (personProfileViewState in personProfileViewStateList) {
+                addPersonProfileFragment(personProfileViewState)
+            }
+        }
     }
 
-    private fun addPersonProfileFragment(tag: String) {
+    private fun showProgressBar(show: Boolean) {
+        if (show) {
+            fragmentsContainer.visibility = View.GONE
+            progressBar.visibility = View.VISIBLE
+        } else {
+            fragmentsContainer.visibility = View.VISIBLE
+            progressBar.visibility = View.GONE
+        }
+    }
+
+    private fun showError(show: Boolean, dismissToast: Boolean = false) {
+        if (show && !dismissToast) {
+            Toast.makeText(this, getString(R.string.error_event_profile_text), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun addPersonProfileFragment(personProfileViewState: PersonProfileViewState) {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction
                 .setCustomAnimations(R.anim.up_enter, 0)
-                .add(R.id.fragmentsContainer, PersonProfileFragment.newInstance(PersonProfileViewState()), tag)
+                .add(R.id.fragmentsContainer, PersonProfileFragment.newInstance(personProfileViewState), personProfileViewState.userId)
         fragmentTransaction.commit()
     }
 
