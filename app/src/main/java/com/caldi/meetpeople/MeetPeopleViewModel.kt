@@ -1,14 +1,68 @@
 package com.caldi.meetpeople
 
 import android.arch.lifecycle.ViewModel
-import android.util.Log
+import com.caldi.base.models.Answer
+import com.caldi.base.models.Question
+import com.caldi.meetpeople.list.AnswerViewState
+import com.caldi.meetpeople.models.AttendeeProfile
+import com.caldi.meetpeople.personprofile.PersonProfileViewState
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.subjects.BehaviorSubject
 
 class MeetPeopleViewModel(private val meetPeopleInteractor: MeetPeopleInteractor) : ViewModel() {
 
+    private val compositeDisposable = CompositeDisposable()
+    private val stateSubject = BehaviorSubject.create<PartialMeetPeopleViewState>()
+    private var eventId: String = ""
+
     fun bind(meetPeopleView: MeetPeopleView) {
-        meetPeopleInteractor.fetchAttendeesProfiles("8c86f3a8-8a29-4d3d-901d-8769738dc428")
-                .subscribe {
-                    Log.d("mateusz", "as")
+        val fetchProfilesObservable = meetPeopleView.emitProfilesFetchingTrigger()
+                .flatMap {
+                    eventId = it
+                    meetPeopleInteractor.fetchAttendeesProfiles(it)
+                            .startWith(PartialMeetPeopleViewState.ProgressState())
                 }
+
+        val mergedObservable = Observable.merge(listOf(fetchProfilesObservable))
+                .subscribeWith(stateSubject)
+
+        compositeDisposable.add(mergedObservable.scan(MeetPeopleViewState(), this::reduce)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { meetPeopleView.render(it) })
+    }
+
+    private fun reduce(previousState: MeetPeopleViewState, partialState: PartialMeetPeopleViewState):
+            MeetPeopleViewState {
+        return when (partialState) {
+            is PartialMeetPeopleViewState.ProgressState -> MeetPeopleViewState(
+                    progress = true)
+            is PartialMeetPeopleViewState.ErrorState -> MeetPeopleViewState(
+                    error = true,
+                    dismissToast = partialState.dismissToast)
+            is PartialMeetPeopleViewState.SuccessfulProfileFetchState -> MeetPeopleViewState(
+                    personProfileViewStateList = convertToPersonProfileViewStateList(partialState.attendeesProfilesList))
+        }
+    }
+
+    private fun convertToPersonProfileViewStateList(attendeesProfilesList: List<AttendeeProfile>)
+            : List<PersonProfileViewState> {
+        return attendeesProfilesList.map {
+            PersonProfileViewState(
+                    it.eventUserName,
+                    it.profilePictureUrl,
+                    convertToAnswerViewStateList(it.questionList, it.answerList))
+        }
+    }
+
+    private fun convertToAnswerViewStateList(questionList: List<Question>, answerList: List<Answer>)
+            : List<AnswerViewState> {
+        val answersMap = answerList.map { it.questionId to it.answer }.toMap()
+        return questionList.map { AnswerViewState(it.question, answersMap.getOrDefault(it.id, "")) }
+    }
+
+    fun unbind() {
+        compositeDisposable.clear()
     }
 }

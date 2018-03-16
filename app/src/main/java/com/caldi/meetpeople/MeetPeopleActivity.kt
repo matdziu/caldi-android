@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
 import com.caldi.constants.EVENT_ID_KEY
@@ -11,6 +12,7 @@ import com.caldi.factories.MeetPeopleViewModelFactory
 import com.caldi.meetpeople.personprofile.PersonProfileFragment
 import com.caldi.meetpeople.personprofile.PersonProfileViewState
 import dagger.android.AndroidInjection
+import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import javax.inject.Inject
@@ -21,6 +23,10 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
 
     val dismissProfileSubject: Subject<String> = PublishSubject.create()
     val acceptProfileSubject: Subject<String> = PublishSubject.create()
+
+    private val triggerProfilesFetchingSubject: Subject<String> = PublishSubject.create()
+
+    private var fetchProfiles = true
 
     @Inject
     lateinit var meetPeopleViewModelFactory: MeetPeopleViewModelFactory
@@ -47,12 +53,25 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
 
         dismissProfileSubject.subscribe { removePersonProfileFragment(it, ExitAnimDirection.LEFT) }
         acceptProfileSubject.subscribe { removePersonProfileFragment(it, ExitAnimDirection.RIGHT) }
+    }
 
-        addPersonProfileFragment("1")
-        addPersonProfileFragment("2")
-        addPersonProfileFragment("3")
-        addPersonProfileFragment("4")
-        addPersonProfileFragment("5")
+    override fun onStart() {
+        super.onStart()
+        setNavigationSelection(R.id.meet_people_item)
+        meetPeopleViewModel.bind(this)
+        if (fetchProfiles) triggerProfilesFetchingSubject.onNext(eventId)
+    }
+
+    override fun onStop() {
+        fetchProfiles = false
+        meetPeopleViewModel.unbind()
+        super.onStop()
+    }
+
+    override fun emitProfilesFetchingTrigger(): Observable<String> = triggerProfilesFetchingSubject
+
+    override fun render(meetPeopleViewState: MeetPeopleViewState) {
+        Log.d("mateusz", meetPeopleViewState.toString())
     }
 
     private fun addPersonProfileFragment(tag: String) {
@@ -73,15 +92,5 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
 
         fragmentTransaction.remove(supportFragmentManager.findFragmentByTag(tag))
         fragmentTransaction.commit()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        setNavigationSelection(R.id.meet_people_item)
-        meetPeopleViewModel.bind(this)
-    }
-
-    override fun render(meetPeopleViewState: MeetPeopleViewState) {
-
     }
 }

@@ -40,7 +40,7 @@ class MeetPeopleInteractor : BaseProfileInteractor() {
                             for ((index, attendeeId) in attendeesIdsList.withIndex()) {
                                 fetchAttendeeProfile(eventId, attendeeId).subscribe {
                                     attendeesProfilesList.add(it)
-                                    if (index == attendeesProfilesList.size - 1) {
+                                    if (index == attendeesIdsList.size - 1) {
                                         stateSubject.onNext(PartialMeetPeopleViewState.SuccessfulProfileFetchState(attendeesProfilesList))
                                     }
                                 }
