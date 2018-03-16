@@ -74,14 +74,14 @@ class PersonProfileFragment : Fragment() {
                 Picasso.get().load(profilePictureUrl).placeholder(R.drawable.profile_picture_shape)
                         .into(profilePictureImageView, object : Callback {
                             override fun onSuccess() {
-                                profilePictureImageView.adjustViewBounds = true
-                                loadingPhotoTextView.visibility = View.GONE
+                                profilePictureImageView?.adjustViewBounds = true
+                                loadingPhotoTextView?.visibility = View.GONE
                             }
 
                             override fun onError(e: Exception?) {
-                                profilePictureImageView.adjustViewBounds = false
-                                profilePictureImageView.setImageResource(R.drawable.profile_picture_shape)
-                                loadingPhotoTextView.visibility = View.GONE
+                                profilePictureImageView?.adjustViewBounds = false
+                                profilePictureImageView?.setImageResource(R.drawable.profile_picture_shape)
+                                loadingPhotoTextView?.visibility = View.GONE
                             }
                         })
             }
