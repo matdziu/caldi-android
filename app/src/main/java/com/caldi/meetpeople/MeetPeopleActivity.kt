@@ -30,6 +30,7 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
     private val triggerProfilesFetchingSubject: Subject<String> = PublishSubject.create()
 
     private var fetchProfiles = true
+    private var addProfileFragments = true
 
     @Inject
     lateinit var meetPeopleViewModelFactory: MeetPeopleViewModelFactory
@@ -67,6 +68,7 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
 
     override fun onStop() {
         fetchProfiles = false
+        addProfileFragments = false
         meetPeopleViewModel.unbind()
         super.onStop()
     }
@@ -78,8 +80,10 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
             showProgressBar(progress)
             showError(error, dismissToast)
 
-            for (personProfileViewState in personProfileViewStateList) {
-                addPersonProfileFragment(personProfileViewState)
+            if (addProfileFragments) {
+                for (personProfileViewState in personProfileViewStateList) {
+                    addPersonProfileFragment(personProfileViewState)
+                }
             }
         }
     }
