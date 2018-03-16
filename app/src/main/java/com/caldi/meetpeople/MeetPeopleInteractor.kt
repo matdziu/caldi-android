@@ -62,7 +62,7 @@ class MeetPeopleInteractor : BaseProfileInteractor() {
                 fetchEventProfilePictureUrl(eventId, userId),
                 Function4<List<Question>, List<Answer>, String, String, AttendeeProfile>
                 { questionList, answerList, eventUserName, profilePictureUrl ->
-                    AttendeeProfile(eventUserName, profilePictureUrl, answerList, questionList)
+                    AttendeeProfile(userId, eventUserName, profilePictureUrl, answerList, questionList)
                 })
     }
 

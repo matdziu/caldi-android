@@ -7,6 +7,7 @@ import kotlinx.android.parcel.Parcelize
 
 @SuppressLint("ParcelCreator")
 @Parcelize
-data class PersonProfileViewState(val eventUserName: String = "",
+data class PersonProfileViewState(val userId: String = "",
+                                  val eventUserName: String = "",
                                   val profilePictureUrl: String = "",
                                   val answerViewStateList: List<AnswerViewState> = listOf()) : Parcelable

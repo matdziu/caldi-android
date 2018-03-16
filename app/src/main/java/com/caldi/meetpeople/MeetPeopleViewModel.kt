@@ -50,6 +50,7 @@ class MeetPeopleViewModel(private val meetPeopleInteractor: MeetPeopleInteractor
             : List<PersonProfileViewState> {
         return attendeesProfilesList.map {
             PersonProfileViewState(
+                    it.userId,
                     it.eventUserName,
                     it.profilePictureUrl,
                     convertToAnswerViewStateList(it.questionList, it.answerList))
