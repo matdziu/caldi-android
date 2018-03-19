@@ -16,6 +16,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import io.reactivex.Observable
+import io.reactivex.functions.BiFunction
 import io.reactivex.functions.Function4
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
@@ -30,12 +31,10 @@ class MeetPeopleInteractor : BaseProfileInteractor() {
     fun saveMetAttendee(metAttendeeId: String, eventId: String, meetType: MeetType)
             : Observable<PartialMeetPeopleViewState> {
         val stateSubject = PublishSubject.create<PartialMeetPeopleViewState>()
-        var meetNodeRef = getMeetNodeRef(eventId)
-        meetNodeRef = when (meetType) {
-            MeetType.POSITIVE -> meetNodeRef.child(POSITIVE_MEET_NODE)
-            MeetType.NEGATIVE -> meetNodeRef.child(NEGATIVE_MEET_NODE)
+        when (meetType) {
+            MeetType.POSITIVE -> getMeetNodeRef(eventId).child(POSITIVE_MEET_NODE)
+            MeetType.NEGATIVE -> getMeetNodeRef(eventId).child(NEGATIVE_MEET_NODE)
         }
-        meetNodeRef
                 .push()
                 .setValue(metAttendeeId)
                 .addOnCompleteListener { stateSubject.onNext(PartialMeetPeopleViewState.SuccessfulMetAttendeeSave()) }
@@ -57,15 +56,27 @@ class MeetPeopleInteractor : BaseProfileInteractor() {
                                     .map { it.value as String }
                                     .filter { it != currentUserId }
 
-                            val attendeesProfilesList = arrayListOf<AttendeeProfile>()
-                            for ((index, attendeeId) in attendeesIdsList.withIndex()) {
-                                fetchAttendeeProfile(eventId, attendeeId).subscribe {
-                                    attendeesProfilesList.add(it)
-                                    if (index == attendeesIdsList.size - 1) {
-                                        stateSubject.onNext(PartialMeetPeopleViewState.SuccessfulProfileFetchState(attendeesProfilesList))
+                            Observable.zip(
+                                    fetchMetAttendeesIdsList(eventId, MeetType.POSITIVE),
+                                    fetchMetAttendeesIdsList(eventId, MeetType.NEGATIVE),
+                                    BiFunction<List<String>, List<String>, List<String>>
+                                    { positiveAttendeesList, negativeAttendeesList ->
+                                        positiveAttendeesList + negativeAttendeesList
+                                    })
+                                    .subscribe {
+                                        val notMetAttendeesIdsList = attendeesIdsList - it
+                                        val attendeesProfilesList = arrayListOf<AttendeeProfile>()
+                                        for ((index, attendeeId) in notMetAttendeesIdsList.withIndex()) {
+                                            fetchAttendeeProfile(eventId, attendeeId).subscribe {
+                                                attendeesProfilesList.add(it)
+                                                if (index == notMetAttendeesIdsList.size - 1) {
+                                                    stateSubject.onNext(
+                                                            PartialMeetPeopleViewState.
+                                                                    SuccessfulAttendeesFetchState(attendeesProfilesList))
+                                                }
+                                            }
+                                        }
                                     }
-                                }
-                            }
                         }
                     }
 
@@ -85,6 +96,29 @@ class MeetPeopleInteractor : BaseProfileInteractor() {
                 { questionList, answerList, eventUserName, profilePictureUrl ->
                     AttendeeProfile(userId, eventUserName, profilePictureUrl, answerList, questionList)
                 })
+    }
+
+    private fun fetchMetAttendeesIdsList(eventId: String, meetType: MeetType): Observable<List<String>> {
+        val resultSubject = PublishSubject.create<List<String>>()
+
+        when (meetType) {
+            MeetType.POSITIVE -> getMeetNodeRef(eventId).child(POSITIVE_MEET_NODE)
+            MeetType.NEGATIVE -> getMeetNodeRef(eventId).child(NEGATIVE_MEET_NODE)
+        }
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot?) {
+                        if (dataSnapshot != null) {
+                            val metAttendeesIdsList = dataSnapshot.children.map { it.value as String }
+                            resultSubject.onNext(metAttendeesIdsList)
+                        }
+                    }
+
+                    override fun onCancelled(databaseError: DatabaseError?) {
+                        resultSubject.onNext(listOf())
+                    }
+                })
+
+        return resultSubject
     }
 
     private fun getAttendeesWithProfileNodeRef(eventId: String): DatabaseReference {

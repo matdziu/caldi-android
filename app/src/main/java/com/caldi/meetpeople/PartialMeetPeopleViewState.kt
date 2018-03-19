@@ -4,7 +4,7 @@ import com.caldi.meetpeople.models.AttendeeProfile
 
 sealed class PartialMeetPeopleViewState {
 
-    class SuccessfulProfileFetchState(val attendeesProfilesList: List<AttendeeProfile> = listOf()) : PartialMeetPeopleViewState()
+    class SuccessfulAttendeesFetchState(val attendeesProfilesList: List<AttendeeProfile> = listOf()) : PartialMeetPeopleViewState()
 
     class SuccessfulMetAttendeeSave : PartialMeetPeopleViewState()
 

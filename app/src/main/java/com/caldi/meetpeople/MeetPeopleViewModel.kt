@@ -48,7 +48,7 @@ class MeetPeopleViewModel(private val meetPeopleInteractor: MeetPeopleInteractor
             is PartialMeetPeopleViewState.ErrorState -> MeetPeopleViewState(
                     error = true,
                     dismissToast = partialState.dismissToast)
-            is PartialMeetPeopleViewState.SuccessfulProfileFetchState -> MeetPeopleViewState(
+            is PartialMeetPeopleViewState.SuccessfulAttendeesFetchState -> MeetPeopleViewState(
                     personProfileViewStateList = convertToPersonProfileViewStateList(partialState.attendeesProfilesList))
             is PartialMeetPeopleViewState.SuccessfulMetAttendeeSave -> previousState
         }
