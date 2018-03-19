@@ -13,6 +13,19 @@
 
         <include layout="@layout/toolbar" />
 
+        <TextView
+            android:id="@+id/noPeopleToMeetTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/toolbar"
+            android:layout_centerHorizontal="true"
+            android:padding="8dp"
+            android:text="@string/no_people_to_meet_text"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimaryText"
+            android:textSize="16dp"
+            android:visibility="gone" />
+
         <FrameLayout
             android:id="@+id/fragmentsContainer"
             android:layout_width="match_parent"

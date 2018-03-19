@@ -67,7 +67,14 @@ class MeetPeopleInteractor : BaseProfileInteractor() {
                                         positiveAttendeesList + negativeAttendeesList
                                     })
                                     .map { metAttendeesIdsList -> attendeesIdsList - metAttendeesIdsList }
-                                    .doOnNext { notMetAttendeesNumber = it.size }
+                                    .doOnNext {
+                                        notMetAttendeesNumber = it.size
+                                        if (notMetAttendeesNumber == 0) {
+                                            stateSubject.onNext(
+                                                    PartialMeetPeopleViewState.SuccessfulAttendeesFetchState()
+                                            )
+                                        }
+                                    }
                                     .flatMapIterable { it }
                                     .flatMap { fetchAttendeeProfile(eventId, it) }
                                     .subscribe {
