@@ -56,6 +56,9 @@ class MeetPeopleInteractor : BaseProfileInteractor() {
                                     .map { it.value as String }
                                     .filter { it != currentUserId }
 
+                            val notMetAttendeesList = arrayListOf<AttendeeProfile>()
+                            var notMetAttendeesNumber = 0
+
                             Observable.zip(
                                     fetchMetAttendeesIdsList(eventId, MeetType.POSITIVE),
                                     fetchMetAttendeesIdsList(eventId, MeetType.NEGATIVE),
@@ -63,18 +66,16 @@ class MeetPeopleInteractor : BaseProfileInteractor() {
                                     { positiveAttendeesList, negativeAttendeesList ->
                                         positiveAttendeesList + negativeAttendeesList
                                     })
+                                    .map { metAttendeesIdsList -> attendeesIdsList - metAttendeesIdsList }
+                                    .doOnNext { notMetAttendeesNumber = it.size }
+                                    .flatMapIterable { it }
+                                    .flatMap { fetchAttendeeProfile(eventId, it) }
                                     .subscribe {
-                                        val notMetAttendeesIdsList = attendeesIdsList - it
-                                        val attendeesProfilesList = arrayListOf<AttendeeProfile>()
-                                        for ((index, attendeeId) in notMetAttendeesIdsList.withIndex()) {
-                                            fetchAttendeeProfile(eventId, attendeeId).subscribe {
-                                                attendeesProfilesList.add(it)
-                                                if (index == notMetAttendeesIdsList.size - 1) {
-                                                    stateSubject.onNext(
-                                                            PartialMeetPeopleViewState.
-                                                                    SuccessfulAttendeesFetchState(attendeesProfilesList))
-                                                }
-                                            }
+                                        notMetAttendeesList.add(it)
+                                        if (notMetAttendeesList.size == notMetAttendeesNumber) {
+                                            stateSubject.onNext(
+                                                    PartialMeetPeopleViewState.SuccessfulAttendeesFetchState(notMetAttendeesList)
+                                            )
                                         }
                                     }
                         }
