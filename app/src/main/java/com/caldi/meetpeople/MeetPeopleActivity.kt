@@ -83,6 +83,7 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
 
     override fun render(meetPeopleViewState: MeetPeopleViewState) {
         with(meetPeopleViewState) {
+            promptToFillEventProfile(eventProfileBlank, dismissToast)
             showProgressBar(progress)
             showError(error, dismissToast)
 
@@ -92,6 +93,13 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
                     addPersonProfileFragment(personProfileViewState)
                 }
             }
+        }
+    }
+
+    private fun promptToFillEventProfile(eventProfileBlank: Boolean, dismissToast: Boolean) {
+        if (eventProfileBlank && !dismissToast) {
+            Toast.makeText(this, getString(R.string.fill_event_profile_first_prompt), Toast.LENGTH_SHORT).show()
+            finish()
         }
     }
 

@@ -5,6 +5,7 @@ import com.caldi.base.models.Answer
 import com.caldi.base.models.Question
 import com.caldi.constants.ATTENDEES_WITH_PROFILE_NODE
 import com.caldi.constants.EVENTS_NODE
+import com.caldi.constants.EVENT_PROFILE_NODE
 import com.caldi.constants.MEET_NODE
 import com.caldi.constants.NEGATIVE_MEET_NODE
 import com.caldi.constants.POSITIVE_MEET_NODE
@@ -27,6 +28,26 @@ class MeetPeopleInteractor : BaseProfileInteractor() {
     enum class MeetType { POSITIVE, NEGATIVE }
 
     private val currentUserId: String? = FirebaseAuth.getInstance().currentUser?.uid
+
+    fun checkIfEventProfileIsFilled(eventId: String): Observable<PartialMeetPeopleViewState> {
+        val stateSubject = PublishSubject.create<PartialMeetPeopleViewState>()
+        firebaseDatabase.getReference("$USERS_NODE/$currentUserId/$EVENT_PROFILE_NODE")
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot?) {
+                        if (dataSnapshot == null || !dataSnapshot.hasChild(eventId)) {
+                            Observable.timer(100, TimeUnit.MILLISECONDS)
+                                    .map { PartialMeetPeopleViewState.BlankEventProfileState(true) }
+                                    .startWith(PartialMeetPeopleViewState.BlankEventProfileState())
+                                    .subscribe(stateSubject)
+                        }
+                    }
+
+                    override fun onCancelled(databaseError: DatabaseError?) {
+                        emitError(stateSubject)
+                    }
+                })
+        return stateSubject
+    }
 
     fun saveMetAttendee(metAttendeeId: String, eventId: String, meetType: MeetType)
             : Observable<PartialMeetPeopleViewState> {

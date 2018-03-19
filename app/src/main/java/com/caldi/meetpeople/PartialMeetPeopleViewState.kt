@@ -11,4 +11,6 @@ sealed class PartialMeetPeopleViewState {
     class ErrorState(val dismissToast: Boolean = false) : PartialMeetPeopleViewState()
 
     class ProgressState : PartialMeetPeopleViewState()
+
+    class BlankEventProfileState(val dismissToast: Boolean = false) : PartialMeetPeopleViewState()
 }
