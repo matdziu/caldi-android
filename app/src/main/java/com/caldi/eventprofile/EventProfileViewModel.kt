@@ -1,9 +1,9 @@
 package com.caldi.eventprofile
 
 import android.arch.lifecycle.ViewModel
-import com.caldi.eventprofile.list.QuestionViewState
 import com.caldi.base.models.Answer
 import com.caldi.base.models.Question
+import com.caldi.eventprofile.list.QuestionViewState
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -92,7 +92,7 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
             : List<QuestionViewState> {
         val answersMap = answerList.map { it.questionId to it }.toMap()
         return questionList.map {
-            val currentAnswer = answersMap.getOrDefault(it.id, Answer())
+            val currentAnswer = answersMap[it.id] ?: Answer()
             QuestionViewState(it.question, currentAnswer.answer, it.id, currentAnswer.valid)
         }
     }

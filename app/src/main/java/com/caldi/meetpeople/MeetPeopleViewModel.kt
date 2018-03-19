@@ -68,7 +68,10 @@ class MeetPeopleViewModel(private val meetPeopleInteractor: MeetPeopleInteractor
     private fun convertToAnswerViewStateList(questionList: List<Question>, answerList: List<Answer>)
             : List<AnswerViewState> {
         val answersMap = answerList.map { it.questionId to it.answer }.toMap()
-        return questionList.map { AnswerViewState(it.question, answersMap.getOrDefault(it.id, "")) }
+        return questionList.map {
+            val currentAnswer = answersMap[it.id] ?: ""
+            AnswerViewState(it.question, currentAnswer)
+        }
     }
 
     fun unbind() {
