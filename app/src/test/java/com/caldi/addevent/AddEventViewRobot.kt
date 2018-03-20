@@ -1,13 +1,11 @@
 package com.caldi.addevent
 
+import com.caldi.base.BaseViewRobot
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
-import junit.framework.Assert
 
-class AddEventViewRobot(addEventViewModel: AddEventViewModel) {
-
-    private val renderedStates = arrayListOf<AddEventViewState>()
+class AddEventViewRobot(addEventViewModel: AddEventViewModel) : BaseViewRobot<AddEventViewState>() {
 
     private val newEventCodeObservable: Subject<String> = PublishSubject.create()
 
@@ -26,9 +24,5 @@ class AddEventViewRobot(addEventViewModel: AddEventViewModel) {
 
     fun emitAddNewEventButtonClick(eventCode: String) {
         newEventCodeObservable.onNext(eventCode)
-    }
-
-    fun assertViewStates(vararg expectedStates: AddEventViewState) {
-        Assert.assertEquals(expectedStates.toCollection(arrayListOf()), renderedStates)
     }
 }

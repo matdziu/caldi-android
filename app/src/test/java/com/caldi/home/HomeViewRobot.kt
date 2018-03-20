@@ -1,13 +1,11 @@
 package com.caldi.home
 
+import com.caldi.base.BaseViewRobot
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
-import junit.framework.Assert
 
-class HomeViewRobot(homeViewModel: HomeViewModel) {
-
-    private val renderedStates = arrayListOf<HomeViewState>()
+class HomeViewRobot(homeViewModel: HomeViewModel) : BaseViewRobot<HomeViewState>() {
 
     private val eventsFetchTriggerObservable: Subject<Boolean> = PublishSubject.create()
 
@@ -26,9 +24,5 @@ class HomeViewRobot(homeViewModel: HomeViewModel) {
 
     fun emitEventsFetchTrigger() {
         eventsFetchTriggerObservable.onNext(true)
-    }
-
-    fun assertViewStates(vararg expectedStates: HomeViewState) {
-        Assert.assertEquals(expectedStates.toCollection(arrayListOf()), renderedStates)
     }
 }

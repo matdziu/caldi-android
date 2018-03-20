@@ -1,15 +1,13 @@
 package com.caldi.eventprofile
 
+import com.caldi.base.BaseViewRobot
 import com.caldi.eventprofile.list.QuestionItemView
 import com.caldi.eventprofile.list.QuestionViewState
 import com.caldi.eventprofile.list.QuestionsViewModel
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
-import junit.framework.Assert
 
-class QuestionItemViewRobot(private val questionsViewModel: QuestionsViewModel) {
-
-    private val renderedStates = arrayListOf<QuestionViewState>()
+class QuestionItemViewRobot(private val questionsViewModel: QuestionsViewModel) : BaseViewRobot<QuestionViewState>() {
 
     private val userInputObservable = PublishSubject.create<String>()
 
@@ -29,9 +27,5 @@ class QuestionItemViewRobot(private val questionsViewModel: QuestionsViewModel) 
 
     fun emitUserInput(input: String) {
         userInputObservable.onNext(input)
-    }
-
-    fun assertViewStates(vararg expectedStates: QuestionViewState) {
-        Assert.assertEquals(expectedStates.toCollection(arrayListOf()), renderedStates)
     }
 }

@@ -1,14 +1,12 @@
 package com.caldi.eventprofile
 
+import com.caldi.base.BaseViewRobot
 import com.caldi.eventprofile.models.EventProfileData
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
-import junit.framework.Assert
 import java.io.File
 
-class EventProfileViewRobot(eventProfileViewModel: EventProfileViewModel) {
-
-    private val renderedStates = arrayListOf<EventProfileViewState>()
+class EventProfileViewRobot(eventProfileViewModel: EventProfileViewModel) : BaseViewRobot<EventProfileViewState>() {
 
     private val profileFetchingTriggerObservable = PublishSubject.create<String>()
 
@@ -43,9 +41,5 @@ class EventProfileViewRobot(eventProfileViewModel: EventProfileViewModel) {
 
     fun emitInputData(eventProfileData: EventProfileData) {
         inputDataObservable.onNext(eventProfileData)
-    }
-
-    fun assertViewStates(vararg expectedStates: EventProfileViewState) {
-        Assert.assertEquals(expectedStates.toCollection(arrayListOf()), renderedStates)
     }
 }

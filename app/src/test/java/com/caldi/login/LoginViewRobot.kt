@@ -1,16 +1,14 @@
 package com.caldi.login
 
+import com.caldi.base.BaseViewRobot
 import com.facebook.AccessToken
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
-import junit.framework.Assert
 
-class LoginViewRobot(loginViewModel: LoginViewModel) {
-
-    private val renderedStates = arrayListOf<LoginViewState>()
+class LoginViewRobot(loginViewModel: LoginViewModel) : BaseViewRobot<LoginViewState>() {
 
     private val inputObservable: Subject<InputData> = PublishSubject.create()
 
@@ -33,9 +31,5 @@ class LoginViewRobot(loginViewModel: LoginViewModel) {
 
     fun clickLoginButton(email: String, password: String) {
         inputObservable.onNext(InputData(email, password))
-    }
-
-    fun assertViewStates(vararg expectedStates: LoginViewState) {
-        Assert.assertEquals(expectedStates.toCollection(arrayListOf()), renderedStates)
     }
 }
