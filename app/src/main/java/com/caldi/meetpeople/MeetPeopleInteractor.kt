@@ -27,7 +27,7 @@ class MeetPeopleInteractor : BaseProfileInteractor() {
 
     enum class MeetType { POSITIVE, NEGATIVE }
 
-    private val profilesBatchSize = 2
+    private val profilesBatchSize = 5
 
     private val currentUserId: String? = FirebaseAuth.getInstance().currentUser?.uid
 
