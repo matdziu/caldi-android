@@ -8,4 +8,6 @@
     <color name="facebookBlueDark">#32408f</color>
     <color name="colorAccentDark">#ea1c0d</color>
     <color name="colorLightGreen">#1CD51F</color>
+    <color name="colorGray">#C9C9C9</color>
+    <color name="colorDimGreen">#B2D4B2</color>
 </resources>

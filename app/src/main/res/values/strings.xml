@@ -37,4 +37,5 @@
     <string name="no_people_to_meet_text">Currently there is nobody here ;(</string>
     <string name="fill_event_profile_first_prompt">First fill in your event profile</string>
     <string name="chat_menu_text">Chat</string>
+    <string name="chat_message_hint">Aa</string>
 </resources>
