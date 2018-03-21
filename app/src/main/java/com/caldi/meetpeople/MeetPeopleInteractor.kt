@@ -29,6 +29,8 @@ class MeetPeopleInteractor : BaseProfileInteractor() {
 
     private val profilesBatchSize = 5
 
+    private var cachedAttendeesIdsList = listOf<String>()
+
     private val currentUserId: String? = FirebaseAuth.getInstance().currentUser?.uid
 
     fun checkIfEventProfileIsFilled(eventId: String): Observable<PartialMeetPeopleViewState> {
@@ -71,51 +73,59 @@ class MeetPeopleInteractor : BaseProfileInteractor() {
     }
 
     private fun fetchAttendeesIdsList(eventId: String, stateSubject: Subject<PartialMeetPeopleViewState>) {
-        getAttendeesWithProfileNodeRef(eventId)
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot?) {
-                        if (dataSnapshot != null) {
-                            val attendeesIdsList = dataSnapshot.children
-                                    .map { it.value as String }
-                                    .filter { it != currentUserId }
+        if (cachedAttendeesIdsList.isEmpty()) {
+            getAttendeesWithProfileNodeRef(eventId)
+                    .addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onDataChange(dataSnapshot: DataSnapshot?) {
+                            if (dataSnapshot != null) {
+                                cachedAttendeesIdsList = dataSnapshot.children
+                                        .map { it.value as String }
+                                        .filter { it != currentUserId }
 
-                            val notMetAttendeesList = arrayListOf<AttendeeProfile>()
-                            var notMetAttendeesNumber = 0
-
-                            Observable.zip(
-                                    fetchMetAttendeesIdsList(eventId, MeetType.POSITIVE),
-                                    fetchMetAttendeesIdsList(eventId, MeetType.NEGATIVE),
-                                    BiFunction<List<String>, List<String>, List<String>>
-                                    { positiveAttendeesList, negativeAttendeesList ->
-                                        positiveAttendeesList + negativeAttendeesList
-                                    })
-                                    .map { metAttendeesIdsList -> attendeesIdsList - metAttendeesIdsList }
-                                    .map { it.takeLast(profilesBatchSize) }
-                                    .doOnNext {
-                                        notMetAttendeesNumber = it.size
-                                        if (notMetAttendeesNumber == 0) {
-                                            stateSubject.onNext(
-                                                    PartialMeetPeopleViewState.SuccessfulAttendeesFetchState()
-                                            )
-                                        }
-                                    }
-                                    .flatMapIterable { it }
-                                    .flatMap { fetchAttendeeProfile(eventId, it) }
-                                    .subscribe {
-                                        notMetAttendeesList.add(it)
-                                        if (notMetAttendeesList.size == notMetAttendeesNumber) {
-                                            stateSubject.onNext(
-                                                    PartialMeetPeopleViewState.SuccessfulAttendeesFetchState(notMetAttendeesList)
-                                            )
-                                        }
-                                    }
+                                fetchUnmetAttendeesProfiles(eventId, stateSubject)
+                            }
                         }
-                    }
 
-                    override fun onCancelled(databaseError: DatabaseError) {
-                        emitError(stateSubject)
-                    }
+                        override fun onCancelled(databaseError: DatabaseError) {
+                            emitError(stateSubject)
+                        }
+                    })
+        } else {
+            fetchUnmetAttendeesProfiles(eventId, stateSubject)
+        }
+    }
+
+    private fun fetchUnmetAttendeesProfiles(eventId: String, stateSubject: Subject<PartialMeetPeopleViewState>) {
+        val notMetAttendeesList = arrayListOf<AttendeeProfile>()
+        var notMetAttendeesNumber = 0
+
+        Observable.zip(
+                fetchMetAttendeesIdsList(eventId, MeetType.POSITIVE),
+                fetchMetAttendeesIdsList(eventId, MeetType.NEGATIVE),
+                BiFunction<List<String>, List<String>, List<String>>
+                { positiveAttendeesList, negativeAttendeesList ->
+                    positiveAttendeesList + negativeAttendeesList
                 })
+                .map { metAttendeesIdsList -> cachedAttendeesIdsList - metAttendeesIdsList }
+                .map { it.takeLast(profilesBatchSize) }
+                .doOnNext {
+                    notMetAttendeesNumber = it.size
+                    if (notMetAttendeesNumber == 0) {
+                        stateSubject.onNext(
+                                PartialMeetPeopleViewState.SuccessfulAttendeesFetchState()
+                        )
+                    }
+                }
+                .flatMapIterable { it }
+                .flatMap { fetchAttendeeProfile(eventId, it) }
+                .subscribe {
+                    notMetAttendeesList.add(it)
+                    if (notMetAttendeesList.size == notMetAttendeesNumber) {
+                        stateSubject.onNext(
+                                PartialMeetPeopleViewState.SuccessfulAttendeesFetchState(notMetAttendeesList)
+                        )
+                    }
+                }
     }
 
     private fun fetchAttendeeProfile(eventId: String, userId: String): Observable<AttendeeProfile> {
