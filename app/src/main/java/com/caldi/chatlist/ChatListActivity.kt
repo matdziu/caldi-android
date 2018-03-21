@@ -1,14 +1,11 @@
 package com.caldi.chatlist
 
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Intent
 import android.os.Bundle
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
-import com.caldi.chat.ChatActivity
 import com.caldi.factories.ChatListViewModelFactory
 import dagger.android.AndroidInjection
-import kotlinx.android.synthetic.main.activity_chat_list.button
 import javax.inject.Inject
 
 class ChatListActivity : BaseDrawerActivity(), ChatListView {
@@ -24,8 +21,6 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
         super.onCreate(savedInstanceState)
 
         chatListViewModel = ViewModelProviders.of(this, chatListViewModelFactory)[ChatListViewModel::class.java]
-
-        button.setOnClickListener { startActivity(Intent(this, ChatActivity::class.java)) }
     }
 
     override fun onStart() {

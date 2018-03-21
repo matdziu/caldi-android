@@ -29,7 +29,9 @@ open class BaseDrawerActivity : AppCompatActivity(), NavigationView.OnNavigation
         findViewById<Toolbar>(R.id.toolbar)
     }
 
-    protected var eventId = ""
+    companion object {
+        var eventId = ""
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +54,7 @@ open class BaseDrawerActivity : AppCompatActivity(), NavigationView.OnNavigation
                 R.id.sign_out_item -> signOut()
                 R.id.events_item -> startActivity(Intent(this, HomeActivity::class.java))
                 R.id.event_profile_item -> EventProfileActivity.start(this, eventId)
-                R.id.meet_people_item -> MeetPeopleActivity.start(this, eventId)
+                R.id.meet_people_item -> startActivity(Intent(this, MeetPeopleActivity::class.java))
                 R.id.chat_item -> startActivity(Intent(this, ChatListActivity::class.java))
             }
             drawerLayout.closeDrawers()

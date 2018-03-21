@@ -1,14 +1,11 @@
 package com.caldi.meetpeople
 
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
-import com.caldi.constants.EVENT_ID_KEY
 import com.caldi.factories.MeetPeopleViewModelFactory
 import com.caldi.meetpeople.personprofile.PersonProfileFragment
 import com.caldi.meetpeople.personprofile.PersonProfileViewState
@@ -41,21 +38,10 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
 
     private lateinit var meetPeopleViewModel: MeetPeopleViewModel
 
-    companion object {
-
-        fun start(context: Context, eventId: String) {
-            val intent = Intent(context, MeetPeopleActivity::class.java)
-            intent.putExtra(EVENT_ID_KEY, eventId)
-            context.startActivity(intent)
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         setContentView(R.layout.activity_meet_people)
         super.onCreate(savedInstanceState)
-
-        eventId = intent.getStringExtra(EVENT_ID_KEY)
 
         meetPeopleViewModel = ViewModelProviders.of(this, meetPeopleViewModelFactory)[MeetPeopleViewModel::class.java]
 
