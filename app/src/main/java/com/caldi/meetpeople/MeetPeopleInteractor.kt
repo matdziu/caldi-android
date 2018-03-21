@@ -27,6 +27,8 @@ class MeetPeopleInteractor : BaseProfileInteractor() {
 
     enum class MeetType { POSITIVE, NEGATIVE }
 
+    private val profilesBatchSize = 2
+
     private val currentUserId: String? = FirebaseAuth.getInstance().currentUser?.uid
 
     fun checkIfEventProfileIsFilled(eventId: String): Observable<PartialMeetPeopleViewState> {
@@ -88,6 +90,7 @@ class MeetPeopleInteractor : BaseProfileInteractor() {
                                         positiveAttendeesList + negativeAttendeesList
                                     })
                                     .map { metAttendeesIdsList -> attendeesIdsList - metAttendeesIdsList }
+                                    .map { it.takeLast(profilesBatchSize) }
                                     .doOnNext {
                                         notMetAttendeesNumber = it.size
                                         if (notMetAttendeesNumber == 0) {

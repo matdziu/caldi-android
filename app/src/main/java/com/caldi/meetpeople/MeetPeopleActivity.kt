@@ -32,8 +32,10 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
     private val positiveMetSubject: Subject<String> = PublishSubject.create()
     private val negativeMeetSubject: Subject<String> = PublishSubject.create()
 
-    private var fetchProfiles = true
-    private var addProfileFragments = true
+    private var fetchProfilesOnStart = true
+
+    private var currentProfilesViewStates = listOf<PersonProfileViewState>()
+    private var currentProfilesBatchSize = 0
 
     @Inject
     lateinit var meetPeopleViewModelFactory: MeetPeopleViewModelFactory
@@ -66,11 +68,11 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
         super.onStart()
         setNavigationSelection(R.id.meet_people_item)
         meetPeopleViewModel.bind(this)
-        if (fetchProfiles) triggerProfilesFetchingSubject.onNext(eventId)
+        if (fetchProfilesOnStart) triggerProfilesFetchingSubject.onNext(eventId)
     }
 
     override fun onStop() {
-        fetchProfiles = false
+        fetchProfilesOnStart = false
         meetPeopleViewModel.unbind()
         super.onStop()
     }
@@ -87,9 +89,10 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
             showProgressBar(progress)
             showError(error, dismissToast)
 
-            if (addProfileFragments && personProfileViewStateList.isNotEmpty()) {
-                addProfileFragments = false
-                for (personProfileViewState in personProfileViewStateList) {
+            if (personProfileViewStateList.isNotEmpty() && currentProfilesViewStates != personProfileViewStateList) {
+                currentProfilesViewStates = personProfileViewStateList
+                currentProfilesBatchSize = personProfileViewStateList.size
+                for (personProfileViewState in currentProfilesViewStates) {
                     addPersonProfileFragment(personProfileViewState)
                 }
             }
@@ -131,6 +134,10 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
 
     private fun removePersonProfileFragment(userId: String, exitAnimDirection: ExitAnimDirection) {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
+        currentProfilesBatchSize -= 1
+        if (currentProfilesBatchSize == 0) {
+            triggerProfilesFetchingSubject.onNext(eventId)
+        }
 
         when (exitAnimDirection) {
             ExitAnimDirection.LEFT -> {
