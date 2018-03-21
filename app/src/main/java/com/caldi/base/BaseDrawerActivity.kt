@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import com.caldi.R
+import com.caldi.chatlist.ChatListActivity
 import com.caldi.eventprofile.EventProfileActivity
 import com.caldi.home.HomeActivity
 import com.caldi.login.LoginActivity
@@ -52,6 +53,7 @@ open class BaseDrawerActivity : AppCompatActivity(), NavigationView.OnNavigation
                 R.id.events_item -> startActivity(Intent(this, HomeActivity::class.java))
                 R.id.event_profile_item -> EventProfileActivity.start(this, eventId)
                 R.id.meet_people_item -> MeetPeopleActivity.start(this, eventId)
+                R.id.chat_item -> startActivity(Intent(this, ChatListActivity::class.java))
             }
             drawerLayout.closeDrawers()
             true

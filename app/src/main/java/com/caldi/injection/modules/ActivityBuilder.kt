@@ -1,6 +1,8 @@
 package com.caldi.injection.modules
 
 import com.caldi.addevent.AddEventActivity
+import com.caldi.chat.ChatActivity
+import com.caldi.chatlist.ChatListActivity
 import com.caldi.eventprofile.EventProfileActivity
 import com.caldi.home.HomeActivity
 import com.caldi.injection.ActivityScope
@@ -38,4 +40,12 @@ abstract class ActivityBuilder {
     @ActivityScope
     @ContributesAndroidInjector(modules = [MeetPeopleActivityModule::class])
     abstract fun bindMeetPeopleActivityModule(): MeetPeopleActivity
+
+    @ActivityScope
+    @ContributesAndroidInjector(modules = [ChatListActivityModule::class])
+    abstract fun bindChatListActivityModule(): ChatListActivity
+
+    @ActivityScope
+    @ContributesAndroidInjector(modules = [ChatActivityModule::class])
+    abstract fun bindChatActivityModule(): ChatActivity
 }

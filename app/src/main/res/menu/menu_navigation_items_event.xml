@@ -8,6 +8,12 @@
         android:title="@string/meet_people_text" />
 
     <item
+        android:id="@+id/chat_item"
+        android:checkable="true"
+        android:icon="@drawable/ic_chat_white_18dp"
+        android:title="@string/chat_menu_text" />
+
+    <item
         android:id="@+id/event_profile_item"
         android:checkable="true"
         android:icon="@drawable/ic_account_circle_white_18dp"
