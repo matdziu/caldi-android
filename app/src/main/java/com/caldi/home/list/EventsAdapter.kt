@@ -8,7 +8,7 @@ import com.caldi.home.models.Event
 
 class EventsAdapter : RecyclerView.Adapter<EventViewHolder>() {
 
-    private var eventList = arrayListOf<Event>()
+    private val eventList = arrayListOf<Event>()
 
     override fun getItemCount(): Int = eventList.size
 
