@@ -16,7 +16,6 @@ import dagger.android.AndroidInjection
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
-import kotlinx.android.synthetic.main.activity_meet_people.fragmentsContainer
 import kotlinx.android.synthetic.main.activity_meet_people.noPeopleToMeetTextView
 import kotlinx.android.synthetic.main.activity_meet_people.progressBar
 import javax.inject.Inject
@@ -108,11 +107,9 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
 
     private fun showProgressBar(show: Boolean) {
         if (show) {
-            fragmentsContainer.visibility = View.GONE
             progressBar.visibility = View.VISIBLE
             noPeopleToMeetTextView.visibility = View.GONE
         } else {
-            fragmentsContainer.visibility = View.VISIBLE
             progressBar.visibility = View.GONE
             noPeopleToMeetTextView.visibility = View.VISIBLE
         }
