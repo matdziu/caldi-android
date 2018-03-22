@@ -20,17 +20,15 @@ class ChatListInteractor {
 
     fun fetchUserChatList(eventId: String): Observable<PartialChatListViewState> {
         val stateSubject = PublishSubject.create<PartialChatListViewState>()
-        firebaseDatabase.getReference("$USERS_NODE/$currentUserId/$USER_CHATS_NODE")
+        firebaseDatabase.getReference("$USERS_NODE/$currentUserId/$USER_CHATS_NODE/$eventId")
                 .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot?) {
-                        if (dataSnapshot != null) {
-                            stateSubject.onNext(PartialChatListViewState.SuccessfulChatListFetch(
-                                    dataSnapshot.children.map {
-                                        val chatItem = it.value as ChatItem
-                                        chatItem.id = it.key
-                                        chatItem
-                                    }))
-                        }
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        stateSubject.onNext(PartialChatListViewState.SuccessfulChatListFetch(
+                                dataSnapshot.children.map {
+                                    val chatItem = it.getValue(ChatItem::class.java) as ChatItem
+                                    chatItem.id = it.key
+                                    chatItem
+                                }))
                     }
 
                     override fun onCancelled(databaseError: DatabaseError) {

@@ -1,3 +1,7 @@
 package com.caldi.chatlist
 
-data class ChatListViewState(val progress: Boolean = false)
+import com.caldi.chatlist.models.ChatItem
+
+data class ChatListViewState(val progress: Boolean = false,
+                             val error: Boolean = false,
+                             val chatItemList: List<ChatItem> = listOf())
