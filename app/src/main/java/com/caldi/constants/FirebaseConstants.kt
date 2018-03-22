@@ -11,6 +11,7 @@ const val ATTENDEES_WITH_PROFILE_NODE = "attendeesWithProfile"
 const val MEET_NODE = "meet"
 const val POSITIVE_MEET_NODE = "positive"
 const val NEGATIVE_MEET_NODE = "negative"
+const val USER_CHATS_NODE = "userChats"
 
 const val EVENT_CODE_CHILD = "code"
 const val EVENT_USER_NAME_CHILD = "eventUserName"
