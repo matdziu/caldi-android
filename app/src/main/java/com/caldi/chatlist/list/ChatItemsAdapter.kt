@@ -20,4 +20,12 @@ class ChatItemsAdapter : RecyclerView.Adapter<ChatItemViewHolder>() {
     }
 
     override fun getItemCount(): Int = chatItemList.size
+
+    fun setChatItemList(chatItemList: List<ChatItem>) {
+        if (chatItemList.isNotEmpty() && this.chatItemList != chatItemList) {
+            this.chatItemList.clear()
+            this.chatItemList.addAll(chatItemList)
+            notifyDataSetChanged()
+        }
+    }
 }

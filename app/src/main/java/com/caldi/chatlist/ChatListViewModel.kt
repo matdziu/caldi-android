@@ -31,7 +31,7 @@ class ChatListViewModel(private val chatListInteractor: ChatListInteractor) : Vi
             : ChatListViewState {
         return when (partialState) {
             is PartialChatListViewState.ProgressState -> ChatListViewState(progress = true)
-            is PartialChatListViewState.ErrorState -> ChatListViewState(error = true)
+            is PartialChatListViewState.ErrorState -> ChatListViewState(error = true, dismissToast = partialState.dimissToast)
             is PartialChatListViewState.SuccessfulChatListFetch -> ChatListViewState(chatItemList = partialState.chatList)
         }
     }
