@@ -1,6 +1,7 @@
 package com.caldi.chat
 
 import com.caldi.chat.models.Message
+import com.caldi.chat.utils.NewMessageAddedListener
 import com.caldi.constants.CHATS_NODE
 import com.caldi.constants.MESSAGE_CHILD
 import com.caldi.constants.SENDER_ID_CHILD
@@ -21,6 +22,8 @@ class ChatInteractor {
 
     private val firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
     private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+
+    private var newMessageAddedListener: NewMessageAddedListener? = null
 
     fun sendMessage(message: String, chatId: String): Observable<PartialChatViewState> {
         val stateSubject = PublishSubject.create<PartialChatViewState>()
@@ -58,6 +61,24 @@ class ChatInteractor {
                     }
                 })
         return stateSubject
+    }
+
+    fun listenForNewMessages(chatId: String): Observable<PartialChatViewState> {
+        val stateSubject = PublishSubject.create<PartialChatViewState>()
+
+        newMessageAddedListener = object : NewMessageAddedListener() {
+            override fun onNewMessageAdded(newMessage: Message) {
+                stateSubject.onNext(PartialChatViewState.NewMessageAdded(newMessage))
+            }
+        }
+
+        getChatNodeReference(chatId).addChildEventListener(newMessageAddedListener)
+
+        return stateSubject
+    }
+
+    fun stopListeningForNewMessages(chatId: String) {
+        newMessageAddedListener?.let { getChatNodeReference(chatId).removeEventListener(it) }
     }
 
     private fun getChatNodeReference(chatId: String): DatabaseReference {
