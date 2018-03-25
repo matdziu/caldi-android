@@ -3,19 +3,17 @@ package com.caldi.chat
 import com.caldi.chat.models.Message
 import com.caldi.chat.utils.NewMessageAddedListener
 import com.caldi.constants.CHATS_NODE
-import com.caldi.constants.MESSAGE_CHILD
-import com.caldi.constants.SENDER_ID_CHILD
 import com.caldi.constants.TIMESTAMP_CHILD
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ServerValue
 import com.google.firebase.database.ValueEventListener
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 class ChatInteractor {
@@ -25,35 +23,36 @@ class ChatInteractor {
 
     private var newMessageAddedListener: NewMessageAddedListener? = null
 
+    private var batchSize = 10
+
     fun sendMessage(message: String, chatId: String): Observable<PartialChatViewState> {
         val stateSubject = PublishSubject.create<PartialChatViewState>()
         val messageNodeRef = getChatNodeReference(chatId).push()
 
-        val updates = mapOf(
-                MESSAGE_CHILD to message,
-                SENDER_ID_CHILD to currentUserId
-        )
+        val messageId = UUID.randomUUID().toString()
 
-        messageNodeRef.child(TIMESTAMP_CHILD)
-                .setValue(ServerValue.TIMESTAMP)
-                .continueWith { messageNodeRef.updateChildren(updates) }
-                .addOnSuccessListener { stateSubject.onNext(PartialChatViewState.MessageSendingSuccess()) }
+        messageNodeRef.setValue(Message(
+                message = message,
+                senderId = currentUserId,
+                messageId = messageId))
+                .addOnSuccessListener { stateSubject.onNext(PartialChatViewState.MessageSendingSuccess(messageId)) }
 
         return stateSubject
     }
 
-    fun fetchChatMessagesBatch(chatId: String, fetchRange: Int): Observable<PartialChatViewState> {
+    fun fetchChatMessagesBatch(chatId: String, fromTimestamp: String): Observable<PartialChatViewState> {
         val stateSubject = PublishSubject.create<PartialChatViewState>()
         getChatNodeReference(chatId)
                 .orderByChild(TIMESTAMP_CHILD)
-                .limitToLast(fetchRange)
+                .endAt(fromTimestamp)
+                .limitToLast(batchSize)
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        val fetchedMessagesList = arrayListOf<Message>()
+                        val messagesBatchList = arrayListOf<Message>()
                         for (messageSnapshot in dataSnapshot.children.toList()) {
-                            messageSnapshot.getValue(Message::class.java)?.let { fetchedMessagesList.add(it) }
+                            messageSnapshot.getValue(Message::class.java)?.let { messagesBatchList.add(it) }
                         }
-                        stateSubject.onNext(PartialChatViewState.MessagesBatchFetchSuccess(fetchedMessagesList))
+                        stateSubject.onNext(PartialChatViewState.MessagesBatchFetchSuccess(messagesBatchList))
                     }
 
                     override fun onCancelled(databaseError: DatabaseError) {

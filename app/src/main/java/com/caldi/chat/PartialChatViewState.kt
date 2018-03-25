@@ -4,7 +4,7 @@ import com.caldi.chat.models.Message
 
 sealed class PartialChatViewState {
 
-    class MessageSendingSuccess : PartialChatViewState()
+    class MessageSendingSuccess(val messageId: String) : PartialChatViewState()
 
     class NewMessageAdded(val newMessage: Message) : PartialChatViewState()
 

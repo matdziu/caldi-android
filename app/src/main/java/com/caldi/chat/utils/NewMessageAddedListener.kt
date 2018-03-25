@@ -10,7 +10,7 @@ abstract class NewMessageAddedListener : ChildEventListener {
     abstract fun onNewMessageAdded(newMessage: Message)
 
     override fun onChildChanged(dataSnapshot: DataSnapshot, prevChildKey: String?) {
-        dataSnapshot.getValue(Message::class.java)?.let { if (it.isNotEmpty()) onNewMessageAdded(it) }
+        dataSnapshot.getValue(Message::class.java)?.let { onNewMessageAdded(it) }
     }
 
     override fun onCancelled(p0: DatabaseError?) {
