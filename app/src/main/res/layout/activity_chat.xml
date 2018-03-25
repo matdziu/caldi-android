@@ -65,9 +65,11 @@
             <com.caldi.customviews.CaldiEditText
                 android:id="@+id/messageInputEditText"
                 android:layout_width="match_parent"
-                android:layout_height="38dp"
+                android:layout_height="wrap_content"
                 android:layout_toStartOf="@id/sendMessageButton"
                 android:hint="@string/chat_message_hint"
+                android:maxHeight="100dp"
+                android:minHeight="38dp"
                 android:textSize="16dp" />
 
             <ImageButton

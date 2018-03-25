@@ -29,13 +29,11 @@ class ChatInteractor {
         val stateSubject = PublishSubject.create<PartialChatViewState>()
         val messageNodeRef = getChatNodeReference(chatId).push()
 
-        val messageId = UUID.randomUUID().toString()
-
         messageNodeRef.setValue(Message(
                 message = message,
                 senderId = currentUserId,
-                messageId = messageId))
-                .addOnSuccessListener { stateSubject.onNext(PartialChatViewState.MessageSendingSuccess(messageId)) }
+                messageId = UUID.randomUUID().toString()))
+                .addOnSuccessListener { stateSubject.onNext(PartialChatViewState.MessageSendingSuccess()) }
 
         return stateSubject
     }
@@ -76,8 +74,9 @@ class ChatInteractor {
         return stateSubject
     }
 
-    fun stopListeningForNewMessages(chatId: String) {
+    fun stopListeningForNewMessages(chatId: String): Observable<PartialChatViewState> {
         newMessageAddedListener?.let { getChatNodeReference(chatId).removeEventListener(it) }
+        return Observable.just(PartialChatViewState.NewMessagesListenerRemoved())
     }
 
     private fun getChatNodeReference(chatId: String): DatabaseReference {
