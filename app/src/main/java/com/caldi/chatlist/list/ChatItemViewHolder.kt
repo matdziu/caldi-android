@@ -18,7 +18,7 @@ class ChatItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                     .load(chatItem.imageUrl)
                     .placeholder(R.drawable.profile_picture_shape)
                     .into(chatItemImageView)
-            setOnClickListener { ChatActivity.start(context, chatItem.id) }
+            setOnClickListener { ChatActivity.start(context, chatItem.chatId) }
         }
     }
 }

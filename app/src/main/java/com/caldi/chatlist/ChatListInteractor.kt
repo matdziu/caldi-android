@@ -24,11 +24,7 @@ class ChatListInteractor {
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         stateSubject.onNext(PartialChatListViewState.SuccessfulChatListFetch(
-                                dataSnapshot.children.map {
-                                    val chatItem = it.getValue(ChatItem::class.java) as ChatItem
-                                    chatItem.id = it.key
-                                    chatItem
-                                }))
+                                dataSnapshot.children.map { it.getValue(ChatItem::class.java) as ChatItem }))
                     }
 
                     override fun onCancelled(databaseError: DatabaseError) {
