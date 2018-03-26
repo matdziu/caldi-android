@@ -13,7 +13,6 @@ import com.google.firebase.database.ValueEventListener
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 class ChatInteractor {
@@ -32,7 +31,7 @@ class ChatInteractor {
         messageNodeRef.setValue(Message(
                 message = message,
                 senderId = currentUserId,
-                messageId = UUID.randomUUID().toString()))
+                messageId = messageNodeRef.key))
                 .addOnSuccessListener { stateSubject.onNext(PartialChatViewState.MessageSendingSuccess()) }
 
         return stateSubject
