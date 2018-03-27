@@ -7,11 +7,16 @@ import android.os.Bundle
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
 import com.caldi.constants.CHAT_ID_KEY
+import com.caldi.constants.CHAT_IMAGE_URL_KEY
+import com.caldi.constants.CHAT_NAME_KEY
 import com.caldi.factories.ChatViewModelFactory
 import com.jakewharton.rxbinding2.view.RxView
+import com.squareup.picasso.Picasso
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
+import kotlinx.android.synthetic.main.activity_chat.chatInfoImageView
+import kotlinx.android.synthetic.main.activity_chat.chatInfoTextView
 import kotlinx.android.synthetic.main.activity_chat.messageInputEditText
 import kotlinx.android.synthetic.main.activity_chat.sendMessageButton
 import javax.inject.Inject
@@ -32,9 +37,14 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
 
     companion object {
 
-        fun start(context: Context, chatId: String) {
+        fun start(context: Context,
+                  chatId: String,
+                  name: String,
+                  imageUrl: String) {
             val intent = Intent(context, ChatActivity::class.java)
             intent.putExtra(CHAT_ID_KEY, chatId)
+            intent.putExtra(CHAT_NAME_KEY, name)
+            intent.putExtra(CHAT_IMAGE_URL_KEY, imageUrl)
             context.startActivity(intent)
         }
     }
@@ -45,6 +55,15 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
         super.onCreate(savedInstanceState)
 
         chatId = intent.getStringExtra(CHAT_ID_KEY)
+
+        val chatName = intent.getStringExtra(CHAT_NAME_KEY)
+        val imageUrl = intent.getStringExtra(CHAT_IMAGE_URL_KEY)
+
+        chatInfoTextView.text = chatName
+        Picasso.get()
+                .load(imageUrl)
+                .placeholder(R.drawable.profile_picture_shape)
+                .into(chatInfoImageView)
 
         chatViewModel = ViewModelProviders.of(this, chatViewModelFactory)[ChatViewModel::class.java]
     }
