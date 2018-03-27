@@ -1,5 +1,6 @@
 package com.caldi.chat
 
+import com.caldi.chat.list.MessageViewState
 import com.caldi.chat.models.Message
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
@@ -22,8 +23,7 @@ class ChatViewModelTest {
 
     @Test
     fun testSuccessfulMessageSending() {
-        whenever(chatInteractor.sendMessage(any(), any())).
-                thenReturn(Observable.just(PartialChatViewState.MessageSendingSuccess()))
+        whenever(chatInteractor.sendMessage(any(), any())).thenReturn(Observable.just(PartialChatViewState.MessageSendingSuccess()))
 
         val chatViewRobot = ChatViewRobot(chatViewModel)
 
@@ -37,8 +37,9 @@ class ChatViewModelTest {
     @Test
     fun testNewMessageAdditionListening() {
         whenever(chatInteractor.listenForNewMessages(any())).thenReturn(
-                Observable.just(PartialChatViewState.NewMessageAdded(Message(messageId = "testABC")))
+                Observable.just(PartialChatViewState.NewMessageAdded(Message(messageId = "testABC", senderId = "testCurrentUserId")))
         )
+        whenever(chatInteractor.currentUserId).thenReturn("testCurrentUserId")
 
         val chatViewRobot = ChatViewRobot(chatViewModel)
 
@@ -46,7 +47,7 @@ class ChatViewModelTest {
 
         chatViewRobot.assertViewStates(
                 ChatViewState(),
-                ChatViewState(newMessage = Message(messageId = "testABC"))
+                ChatViewState(newMessage = MessageViewState(messageId = "testABC"))
         )
     }
 
@@ -55,6 +56,7 @@ class ChatViewModelTest {
         whenever(chatInteractor.stopListeningForNewMessages(any())).thenReturn(
                 Observable.just(PartialChatViewState.NewMessagesListenerRemoved())
         )
+        whenever(chatInteractor.currentUserId).thenReturn("testCurrentUserId")
 
         val chatViewRobot = ChatViewRobot(chatViewModel)
 
@@ -68,7 +70,7 @@ class ChatViewModelTest {
 
     @Test
     fun testSuccessfulBatchFetch() {
-        val messagesBatchList = listOf(Message(messageId = "firstMessageABC"), Message(messageId = "secondMessageABC"))
+        val messagesBatchList = listOf(Message(message = "firstMessageABC"), Message(message = "secondMessageABC"))
         whenever(chatInteractor.fetchChatMessagesBatch(any(), any())).thenReturn(
                 Observable.just(PartialChatViewState.MessagesBatchFetchSuccess(messagesBatchList))
         )
@@ -80,7 +82,10 @@ class ChatViewModelTest {
         chatViewRobot.assertViewStates(
                 ChatViewState(),
                 ChatViewState(itemProgress = true),
-                ChatViewState(itemProgress = false, messagesBatchList = messagesBatchList)
+                ChatViewState(itemProgress = false, messagesBatchList = listOf(
+                        MessageViewState("firstMessageABC", isOwn = false),
+                        MessageViewState("secondMessageABC", isOwn = false)
+                ))
         )
     }
 }

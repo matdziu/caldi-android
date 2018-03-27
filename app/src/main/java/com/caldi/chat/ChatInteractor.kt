@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit
 class ChatInteractor {
 
     private val firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
-    private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+    val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
     private var newMessageAddedListener: NewMessageAddedListener? = null
 
