@@ -107,6 +107,8 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
     }
 
     override fun render(chatViewState: ChatViewState) {
-
+        with(chatViewState) {
+            messagesAdapter.submitList(messagesList)
+        }
     }
 }

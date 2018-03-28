@@ -23,7 +23,7 @@ class ChatViewModelTest {
 
     @Test
     fun testSuccessfulMessageSending() {
-        whenever(chatInteractor.sendMessage(any(), any())).thenReturn(Observable.just(PartialChatViewState.MessageSendingSuccess()))
+        whenever(chatInteractor.sendMessage(any(), any())).thenReturn(Observable.just(PartialChatViewState.MessageSendingStarted()))
 
         val chatViewRobot = ChatViewRobot(chatViewModel)
 

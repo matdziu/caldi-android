@@ -40,13 +40,17 @@ class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
     private fun reduce(previousState: ChatViewState, partialState: PartialChatViewState)
             : ChatViewState {
         return when (partialState) {
-            is PartialChatViewState.MessageSendingSuccess -> previousState
+            is PartialChatViewState.MessageSendingStarted -> previousState.copy(
+                    messagesList = previousState.messagesList + convertToMessageViewState(partialState.message, false)
+            )
             is PartialChatViewState.NewMessageAdded -> previousState.copy(
-                    newMessage = convertToMessageViewState(partialState.newMessage))
+                    messagesList = concatMessagesList(previousState.messagesList,
+                            listOf(convertToMessageViewState(partialState.newMessage))))
             is PartialChatViewState.NewMessagesListenerRemoved -> previousState
             is PartialChatViewState.MessagesBatchFetchSuccess -> previousState.copy(
                     itemProgress = false,
-                    messagesBatchList = partialState.messagesBatchList.map { convertToMessageViewState(it) }
+                    messagesList = concatMessagesList(previousState.messagesList,
+                            partialState.messagesBatchList.map { convertToMessageViewState(it) })
             )
             is PartialChatViewState.ItemProgressState -> previousState.copy(
                     itemProgress = true
@@ -58,10 +62,16 @@ class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
         }
     }
 
-    private fun convertToMessageViewState(messageToConvert: Message): MessageViewState {
+    private fun concatMessagesList(oldMessages: List<MessageViewState>, newMessages: List<MessageViewState>)
+            : List<MessageViewState> {
+        val newMessagesIds = newMessages.map { it.messageId }
+        return oldMessages.filter { !newMessagesIds.contains(it.messageId) } + newMessages
+    }
+
+    private fun convertToMessageViewState(messageToConvert: Message, isSent: Boolean = true): MessageViewState {
         return with(messageToConvert) {
             MessageViewState(message, messageId, timestamp,
-                    senderId == chatInteractor.currentUserId, true)
+                    senderId == chatInteractor.currentUserId, isSent)
         }
     }
 

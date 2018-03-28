@@ -25,16 +25,15 @@ class ChatInteractor {
     private var batchSize = 10
 
     fun sendMessage(message: String, chatId: String): Observable<PartialChatViewState> {
-        val stateSubject = PublishSubject.create<PartialChatViewState>()
         val messageNodeRef = getChatNodeReference(chatId).push()
-
-        messageNodeRef.setValue(Message(
+        val messageObject = Message(
                 message = message,
                 senderId = currentUserId,
-                messageId = messageNodeRef.key))
-                .addOnSuccessListener { stateSubject.onNext(PartialChatViewState.MessageSendingSuccess()) }
+                messageId = messageNodeRef.key)
 
-        return stateSubject
+        messageNodeRef.setValue(messageObject)
+
+        return Observable.just(PartialChatViewState.MessageSendingStarted(messageObject))
     }
 
     fun fetchChatMessagesBatch(chatId: String, fromTimestamp: String): Observable<PartialChatViewState> {

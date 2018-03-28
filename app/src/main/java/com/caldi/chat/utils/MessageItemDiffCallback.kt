@@ -1,6 +1,7 @@
-package com.caldi.chat.list
+package com.caldi.chat.utils
 
 import android.support.v7.util.DiffUtil
+import com.caldi.chat.list.MessageViewState
 
 class MessageItemDiffCallback : DiffUtil.ItemCallback<MessageViewState>() {
 
