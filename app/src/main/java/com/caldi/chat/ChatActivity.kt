@@ -4,8 +4,10 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
+import com.caldi.chat.list.MessagesAdapter
 import com.caldi.constants.CHAT_ID_KEY
 import com.caldi.constants.CHAT_IMAGE_URL_KEY
 import com.caldi.constants.CHAT_NAME_KEY
@@ -18,6 +20,7 @@ import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_chat.chatInfoImageView
 import kotlinx.android.synthetic.main.activity_chat.chatInfoTextView
 import kotlinx.android.synthetic.main.activity_chat.messageInputEditText
+import kotlinx.android.synthetic.main.activity_chat.messagesRecyclerView
 import kotlinx.android.synthetic.main.activity_chat.sendMessageButton
 import javax.inject.Inject
 
@@ -34,6 +37,8 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
     private var chatId = ""
 
     private var isNewMessagesListenerSet = false
+
+    private val messagesAdapter = MessagesAdapter()
 
     companion object {
 
@@ -66,6 +71,9 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
                 .into(chatInfoImageView)
 
         chatViewModel = ViewModelProviders.of(this, chatViewModelFactory)[ChatViewModel::class.java]
+
+        messagesRecyclerView.layoutManager = LinearLayoutManager(this)
+        messagesRecyclerView.adapter = messagesAdapter
     }
 
     override fun onStart() {

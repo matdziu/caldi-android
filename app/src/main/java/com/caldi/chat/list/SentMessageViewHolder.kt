@@ -12,7 +12,7 @@ class SentMessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) 
     fun bind(messageViewState: MessageViewState) {
         with(messageViewState) {
             itemView.sentMessageTextView.text = message
-            if (isSent) setMessageBackground(R.drawable.round_empty_green_background)
+            if (isSent) setMessageBackground(R.drawable.round_full_green_background)
             else setMessageBackground(R.drawable.round_full_dim_green_background)
         }
     }

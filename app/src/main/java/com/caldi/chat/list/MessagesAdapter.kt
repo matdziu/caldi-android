@@ -1,20 +1,19 @@
 package com.caldi.chat.list
 
 import android.support.annotation.LayoutRes
+import android.support.v7.recyclerview.extensions.ListAdapter
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.caldi.R
 
-class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class MessagesAdapter : ListAdapter<MessageViewState, RecyclerView.ViewHolder>(MessageItemDiffCallback()) {
 
     enum class MessageType { SENT, RECEIVED }
 
-    private val messagesViewStateList = arrayListOf<MessageViewState>()
-
     override fun getItemViewType(position: Int): Int {
-        return when (messagesViewStateList[position].isOwn) {
+        return when (getItem(position).isOwn) {
             true -> MessageType.SENT.ordinal
             else -> MessageType.RECEIVED.ordinal
         }
@@ -32,12 +31,10 @@ class MessagesAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val currentMessageViewState = messagesViewStateList[position]
+        val currentMessageViewState = getItem(position)
         when (holder) {
             is SentMessageViewHolder -> holder.bind(currentMessageViewState)
             is ReceivedMessageViewHolder -> holder.bind(currentMessageViewState)
         }
     }
-
-    override fun getItemCount(): Int = messagesViewStateList.size
 }
