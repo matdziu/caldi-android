@@ -26,7 +26,8 @@ class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
                 }
 
         val sentMessageObservable = chatView.emitSentMessage()
-                .flatMap { chatInteractor.sendMessage(it, chatId) }
+                .filter { it.isNotBlank() }
+                .flatMap { chatInteractor.sendMessage(it.trim(), chatId) }
 
         val mergedObservable = Observable.merge(arrayListOf(
                 newMessagesListeningToggleObservable,
