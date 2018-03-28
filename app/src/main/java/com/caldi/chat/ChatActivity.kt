@@ -72,7 +72,10 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
 
         chatViewModel = ViewModelProviders.of(this, chatViewModelFactory)[ChatViewModel::class.java]
 
-        messagesRecyclerView.layoutManager = LinearLayoutManager(this)
+        val layoutManager = LinearLayoutManager(this)
+        layoutManager.stackFromEnd = true
+
+        messagesRecyclerView.layoutManager = layoutManager
         messagesRecyclerView.adapter = messagesAdapter
     }
 
