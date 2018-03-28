@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
 import com.caldi.chat.list.MessagesAdapter
+import com.caldi.chat.utils.MessagesAdapterObserver
 import com.caldi.constants.CHAT_ID_KEY
 import com.caldi.constants.CHAT_IMAGE_URL_KEY
 import com.caldi.constants.CHAT_NAME_KEY
@@ -39,6 +40,12 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
     private var isNewMessagesListenerSet = false
 
     private val messagesAdapter = MessagesAdapter()
+
+    private val messagesAdapterObserver: MessagesAdapterObserver by lazy {
+        MessagesAdapterObserver { lastItemPosition ->
+            messagesRecyclerView.scrollToPosition(lastItemPosition)
+        }
+    }
 
     companion object {
 
@@ -87,10 +94,12 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
             newMessagesListeningToggleSubject.onNext(true)
             isNewMessagesListenerSet = true
         }
+        messagesAdapter.registerAdapterDataObserver(messagesAdapterObserver)
     }
 
     override fun onStop() {
         chatViewModel.unbind()
+        messagesAdapter.unregisterAdapterDataObserver(messagesAdapterObserver)
         super.onStop()
     }
 
