@@ -47,7 +47,7 @@ class ChatViewModelTest {
 
         chatViewRobot.assertViewStates(
                 ChatViewState(),
-                ChatViewState(newMessage = MessageViewState(messageId = "testABC"))
+                ChatViewState(newMessage = MessageViewState(messageId = "testABC", isSent = true))
         )
     }
 
@@ -83,8 +83,8 @@ class ChatViewModelTest {
                 ChatViewState(),
                 ChatViewState(itemProgress = true),
                 ChatViewState(itemProgress = false, messagesBatchList = listOf(
-                        MessageViewState("firstMessageABC", isOwn = false),
-                        MessageViewState("secondMessageABC", isOwn = false)
+                        MessageViewState("firstMessageABC", isOwn = false, isSent = true),
+                        MessageViewState("secondMessageABC", isOwn = false, isSent = true)
                 ))
         )
     }

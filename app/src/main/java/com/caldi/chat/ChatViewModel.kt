@@ -59,7 +59,10 @@ class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
     }
 
     private fun convertToMessageViewState(messageToConvert: Message): MessageViewState {
-        return with(messageToConvert) { MessageViewState(message, messageId, senderId == chatInteractor.currentUserId) }
+        return with(messageToConvert) {
+            MessageViewState(message, messageId, timestamp,
+                    senderId == chatInteractor.currentUserId, true)
+        }
     }
 
     fun unbind() {
