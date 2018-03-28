@@ -10,7 +10,7 @@ import io.reactivex.subjects.BehaviorSubject
 class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
-    private val stateSubject = BehaviorSubject.create<PartialChatViewState>()
+    private val stateSubject = BehaviorSubject.createDefault(ChatViewState())
 
     fun bind(chatView: ChatView, chatId: String) {
         val newMessagesListeningToggleObservable = chatView.emitNewMessagesListeningToggle()
@@ -32,9 +32,10 @@ class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
                 newMessagesListeningToggleObservable,
                 batchFetchTriggerObservable,
                 sentMessageObservable))
+                .scan(stateSubject.value, this::reduce)
                 .subscribeWith(stateSubject)
 
-        compositeDisposable.add(mergedObservable.scan(ChatViewState(), this::reduce).subscribe { chatView.render(it) })
+        compositeDisposable.add(mergedObservable.subscribe { chatView.render(it) })
     }
 
     private fun reduce(previousState: ChatViewState, partialState: PartialChatViewState)
