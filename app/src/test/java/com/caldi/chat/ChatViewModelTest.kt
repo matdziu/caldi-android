@@ -34,7 +34,6 @@ class ChatViewModelTest {
         chatViewRobot.toggleNewMessagesListening(true)
 
         chatViewRobot.assertViewStates(
-                ChatViewState(),
                 ChatViewState(progress = true),
                 ChatViewState()
         )
@@ -54,7 +53,7 @@ class ChatViewModelTest {
         chatViewRobot.fetchMessagesBatch("2018-03-29")
 
         chatViewRobot.assertViewStates(
-                ChatViewState(),
+                ChatViewState(progress = true),
                 ChatViewState(messagesList = listOf(MessageViewState("Test message",
                         "testMessageId", "2018-03-29", true, true)))
         )
@@ -68,7 +67,7 @@ class ChatViewModelTest {
         chatViewRobot.sendMessage("\n")
 
         chatViewRobot.assertViewStates(
-                ChatViewState()
+                ChatViewState(progress = true)
         )
     }
 
@@ -86,7 +85,7 @@ class ChatViewModelTest {
         chatViewRobot.sendMessage("this is test message")
 
         chatViewRobot.assertViewStates(
-                ChatViewState(),
+                ChatViewState(progress = true),
                 ChatViewState(messagesList = listOf(MessageViewState(
                         "this is test message", "testMessageId",
                         "2018-03-29", true, true))))
@@ -103,8 +102,8 @@ class ChatViewModelTest {
         chatViewRobot.toggleNewMessagesListening(false)
 
         chatViewRobot.assertViewStates(
-                ChatViewState(),
-                ChatViewState()
+                ChatViewState(progress = true),
+                ChatViewState(progress = true)
         )
     }
 }

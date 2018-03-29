@@ -154,13 +154,13 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
     }
 
     private fun showProgressBar(show: Boolean) {
+        progressBar.visibility = View.GONE
         if (show) {
             progressBar.visibility = View.VISIBLE
             sendPanelView.visibility = View.GONE
             messagesRecyclerView.visibility = View.GONE
             chatInfoView.visibility = View.GONE
         } else {
-            progressBar.visibility = View.GONE
             sendPanelView.visibility = View.VISIBLE
             messagesRecyclerView.visibility = View.VISIBLE
             chatInfoView.visibility = View.VISIBLE

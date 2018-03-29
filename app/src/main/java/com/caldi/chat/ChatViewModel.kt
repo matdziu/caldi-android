@@ -11,12 +11,11 @@ class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
     private val stateSubject = BehaviorSubject.create<PartialChatViewState>()
-    private var currentViewState = ChatViewState()
 
     fun bind(chatView: ChatView, chatId: String) {
         val newMessagesListeningToggleObservable = chatView.emitNewMessagesListeningToggle()
                 .flatMap {
-                    if (it) chatInteractor.listenForNewMessages(chatId).startWith(PartialChatViewState.ProgressState())
+                    if (it) chatInteractor.listenForNewMessages(chatId)
                     else chatInteractor.stopListeningForNewMessages(chatId)
                 }
 
@@ -33,8 +32,7 @@ class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
                 sentMessageObservable))
                 .subscribeWith(stateSubject)
 
-        compositeDisposable.add(mergedObservable.scan(currentViewState, this::reduce)
-                .doOnNext { currentViewState = it }
+        compositeDisposable.add(mergedObservable.scan(ChatViewState(progress = true), this::reduce)
                 .subscribe { chatView.render(it) })
     }
 
@@ -49,9 +47,6 @@ class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
                     progress = false,
                     error = true,
                     dismissToast = partialState.dismissToast
-            )
-            is PartialChatViewState.ProgressState -> previousState.copy(
-                    progress = true
             )
         }
     }
