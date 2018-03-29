@@ -2,11 +2,15 @@ package com.caldi.organizer
 
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.View
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
+import com.caldi.common.utils.MessagesAdapterObserver
 import com.caldi.extensions.getCurrentISODate
 import com.caldi.factories.OrganizerViewModelFactory
+import com.caldi.organizer.list.MessagesAdapter
 import com.squareup.picasso.Picasso
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
@@ -27,8 +31,21 @@ class OrganizerActivity : BaseDrawerActivity(), OrganizerView {
     private val newMessagesListeningToggleSubject = PublishSubject.create<Boolean>()
 
     private var init = true
+    private var isBatchLoading = false
 
     private lateinit var organizerViewModel: OrganizerViewModel
+
+    private val messagesAdapter = MessagesAdapter()
+
+    private val messagesAdapterObserver: MessagesAdapterObserver by lazy {
+        MessagesAdapterObserver { lastItemPosition ->
+            if (lastItemPosition == 0) {
+                isBatchLoading = false
+            } else {
+                messagesRecyclerView.scrollToPosition(lastItemPosition)
+            }
+        }
+    }
 
     @Inject
     lateinit var organizerViewModelFactory: OrganizerViewModelFactory
@@ -39,6 +56,21 @@ class OrganizerActivity : BaseDrawerActivity(), OrganizerView {
         super.onCreate(savedInstanceState)
 
         organizerViewModel = ViewModelProviders.of(this, organizerViewModelFactory)[OrganizerViewModel::class.java]
+
+        val layoutManager = LinearLayoutManager(this)
+        layoutManager.stackFromEnd = true
+
+        messagesRecyclerView.layoutManager = layoutManager
+        messagesRecyclerView.adapter = messagesAdapter
+
+        messagesRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (!recyclerView.canScrollVertically(-1) && !isBatchLoading) {
+                    isBatchLoading = true
+                    batchFetchTriggerSubject.onNext(messagesAdapter.getLastTimestamp())
+                }
+            }
+        })
     }
 
     override fun onStart() {
@@ -51,10 +83,13 @@ class OrganizerActivity : BaseDrawerActivity(), OrganizerView {
             newMessagesListeningToggleSubject.onNext(true)
             init = false
         }
+
+        messagesAdapter.registerAdapterDataObserver(messagesAdapterObserver)
     }
 
     override fun onStop() {
         organizerViewModel.unbind()
+        messagesAdapter.unregisterAdapterDataObserver(messagesAdapterObserver)
         super.onStop()
     }
 
@@ -74,6 +109,7 @@ class OrganizerActivity : BaseDrawerActivity(), OrganizerView {
             showProgressBar(progress)
             organizerInfoTextView.text = eventName
             loadEventImage(eventImageUrl)
+            messagesAdapter.submitList(messagesList)
         }
     }
 

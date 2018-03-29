@@ -10,7 +10,7 @@ import android.view.View
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
 import com.caldi.chat.list.MessagesAdapter
-import com.caldi.chat.utils.MessagesAdapterObserver
+import com.caldi.common.utils.MessagesAdapterObserver
 import com.caldi.constants.CHAT_ID_KEY
 import com.caldi.constants.CHAT_IMAGE_URL_KEY
 import com.caldi.constants.CHAT_NAME_KEY

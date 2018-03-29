@@ -1,4 +1,4 @@
-package com.caldi.chat.utils
+package com.caldi.common.utils
 
 import android.support.v7.widget.RecyclerView
 

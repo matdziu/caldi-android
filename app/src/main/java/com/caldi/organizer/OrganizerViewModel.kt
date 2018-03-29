@@ -36,7 +36,7 @@ class OrganizerViewModel(private val organizerInteractor: OrganizerInteractor) :
     private fun reduce(previousState: OrganizerViewState, partialState: PartialOrganizerViewState)
             : OrganizerViewState {
         return when (partialState) {
-            is PartialOrganizerViewState.EventInfoFetched -> OrganizerViewState(
+            is PartialOrganizerViewState.EventInfoFetched -> previousState.copy(
                     eventName = partialState.eventInfo.name,
                     eventImageUrl = partialState.eventInfo.imageUrl)
             is PartialOrganizerViewState.NewMessagesListenerRemoved -> previousState
