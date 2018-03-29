@@ -14,6 +14,12 @@
         android:title="@string/chat_menu_text" />
 
     <item
+        android:id="@+id/organizer_item"
+        android:checkable="true"
+        android:icon="@drawable/ic_rss_feed_white_18dp"
+        android:title="@string/organizer_messages_text" />
+
+    <item
         android:id="@+id/event_profile_item"
         android:checkable="true"
         android:icon="@drawable/ic_account_circle_white_18dp"

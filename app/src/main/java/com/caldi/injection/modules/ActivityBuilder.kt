@@ -8,6 +8,7 @@ import com.caldi.home.HomeActivity
 import com.caldi.injection.ActivityScope
 import com.caldi.login.LoginActivity
 import com.caldi.meetpeople.MeetPeopleActivity
+import com.caldi.organizer.OrganizerActivity
 import com.caldi.signup.SignUpActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
@@ -48,4 +49,8 @@ abstract class ActivityBuilder {
     @ActivityScope
     @ContributesAndroidInjector(modules = [ChatActivityModule::class])
     abstract fun bindChatActivityModule(): ChatActivity
+
+    @ActivityScope
+    @ContributesAndroidInjector(modules = [OrganizerActivityModule::class])
+    abstract fun bindOrganizerActivityModule(): OrganizerActivity
 }
