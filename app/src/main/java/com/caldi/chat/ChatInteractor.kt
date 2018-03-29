@@ -52,7 +52,7 @@ class ChatInteractor {
                         for (messageSnapshot in dataSnapshot.children.toList()) {
                             messageSnapshot.getValue(Message::class.java)?.let { messagesBatchList.add(it) }
                         }
-                        messagesBatchList.addAll(currentMessagesList)
+                        currentMessagesList = (messagesBatchList + currentMessagesList).distinct()
                         stateSubject.onNext(PartialChatViewState.MessagesListChanged(currentMessagesList))
                     }
 

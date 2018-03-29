@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
 import com.caldi.chat.list.MessagesAdapter
@@ -12,6 +13,7 @@ import com.caldi.chat.utils.MessagesAdapterObserver
 import com.caldi.constants.CHAT_ID_KEY
 import com.caldi.constants.CHAT_IMAGE_URL_KEY
 import com.caldi.constants.CHAT_NAME_KEY
+import com.caldi.extensions.getCurrentISODate
 import com.caldi.factories.ChatViewModelFactory
 import com.jakewharton.rxbinding2.view.RxView
 import com.squareup.picasso.Picasso
@@ -38,12 +40,18 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
     private var chatId = ""
 
     private var isNewMessagesListenerSet = false
+    private var fetchInitialBatch = true
+    private var isBatchLoading = false
 
     private val messagesAdapter = MessagesAdapter()
 
     private val messagesAdapterObserver: MessagesAdapterObserver by lazy {
         MessagesAdapterObserver { lastItemPosition ->
-            messagesRecyclerView.scrollToPosition(lastItemPosition)
+            if (lastItemPosition == 0) {
+                isBatchLoading = false
+            } else {
+                messagesRecyclerView.scrollToPosition(lastItemPosition)
+            }
         }
     }
 
@@ -84,16 +92,32 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
 
         messagesRecyclerView.layoutManager = layoutManager
         messagesRecyclerView.adapter = messagesAdapter
+
+        messagesRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (!recyclerView.canScrollVertically(-1) && !isBatchLoading) {
+                    isBatchLoading = true
+                    batchFetchTriggerSubject.onNext(messagesAdapter.getLastTimestamp())
+                }
+            }
+        })
     }
 
     override fun onStart() {
         super.onStart()
         setNavigationSelection(R.id.chat_item)
         chatViewModel.bind(this, chatId)
+
         if (!isNewMessagesListenerSet) {
             newMessagesListeningToggleSubject.onNext(true)
             isNewMessagesListenerSet = true
         }
+
+        if (fetchInitialBatch) {
+            batchFetchTriggerSubject.onNext(getCurrentISODate())
+            fetchInitialBatch = false
+        }
+
         messagesAdapter.registerAdapterDataObserver(messagesAdapterObserver)
     }
 

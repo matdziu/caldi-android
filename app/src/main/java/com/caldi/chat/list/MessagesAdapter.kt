@@ -38,4 +38,6 @@ class MessagesAdapter : ListAdapter<MessageViewState, RecyclerView.ViewHolder>(M
             is ReceivedMessageViewHolder -> holder.bind(currentMessageViewState)
         }
     }
+
+    fun getLastTimestamp(): String = getItem(0).timestamp
 }
