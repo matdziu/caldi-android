@@ -3,6 +3,7 @@ package com.caldi.chat
 import com.caldi.chat.list.MessageViewState
 import com.caldi.chat.models.Message
 import com.nhaarman.mockito_kotlin.any
+import com.nhaarman.mockito_kotlin.eq
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Observable
@@ -22,33 +23,55 @@ class ChatViewModelTest {
     }
 
     @Test
-    fun testSuccessfulMessageSending() {
-        whenever(chatInteractor.sendMessage(any(), any())).thenReturn(Observable.just(PartialChatViewState.MessageSendingStarted()))
+    fun testSuccessfulMessagesBatchFetching() {
+        val updatedMessageList = listOf(Message("2018-03-29", "Test message",
+                "testSenderId", "testMessageId", true))
+        whenever(chatInteractor.fetchChatMessagesBatch(any(), any())).thenReturn(
+                Observable.just(PartialChatViewState.MessagesListChanged(updatedMessageList))
+        )
+        whenever(chatInteractor.currentUserId).thenReturn("testSenderId")
 
         val chatViewRobot = ChatViewRobot(chatViewModel)
 
-        chatViewRobot.sendMessage("This is test message")
+        chatViewRobot.fetchMessagesBatch("2018-03-29")
 
         chatViewRobot.assertViewStates(
                 ChatViewState(),
-                ChatViewState())
+                ChatViewState(messagesList = listOf(MessageViewState("Test message",
+                        "testMessageId", "2018-03-29", true, true)))
+        )
     }
 
     @Test
-    fun testNewMessageAdditionListening() {
-        whenever(chatInteractor.listenForNewMessages(any())).thenReturn(
-                Observable.just(PartialChatViewState.NewMessageAdded(Message(messageId = "testABC", senderId = "testCurrentUserId")))
+    fun testEmptyMessageSending() {
+        val chatViewRobot = ChatViewRobot(chatViewModel)
+
+        chatViewRobot.sendMessage("")
+        chatViewRobot.sendMessage("\n")
+
+        chatViewRobot.assertViewStates(
+                ChatViewState()
         )
-        whenever(chatInteractor.currentUserId).thenReturn("testCurrentUserId")
+    }
+
+    @Test
+    fun testNotEmptyMessageSending() {
+        val updatedMessageList = listOf(Message("2018-03-29", "this is test message",
+                "testSenderId", "testMessageId", true))
+        whenever(chatInteractor.sendMessage(eq("this is test message"), any())).thenReturn(
+                Observable.just(PartialChatViewState.MessagesListChanged(updatedMessageList))
+        )
+        whenever(chatInteractor.currentUserId).thenReturn("testSenderId")
 
         val chatViewRobot = ChatViewRobot(chatViewModel)
 
-        chatViewRobot.toggleNewMessagesListening(true)
+        chatViewRobot.sendMessage("this is test message")
 
         chatViewRobot.assertViewStates(
                 ChatViewState(),
-                ChatViewState(newMessage = MessageViewState(messageId = "testABC", isSent = true))
-        )
+                ChatViewState(messagesList = listOf(MessageViewState(
+                        "this is test message", "testMessageId",
+                        "2018-03-29", true, true))))
     }
 
     @Test
@@ -56,7 +79,6 @@ class ChatViewModelTest {
         whenever(chatInteractor.stopListeningForNewMessages(any())).thenReturn(
                 Observable.just(PartialChatViewState.NewMessagesListenerRemoved())
         )
-        whenever(chatInteractor.currentUserId).thenReturn("testCurrentUserId")
 
         val chatViewRobot = ChatViewRobot(chatViewModel)
 
@@ -65,27 +87,6 @@ class ChatViewModelTest {
         chatViewRobot.assertViewStates(
                 ChatViewState(),
                 ChatViewState()
-        )
-    }
-
-    @Test
-    fun testSuccessfulBatchFetch() {
-        val messagesBatchList = listOf(Message(message = "firstMessageABC"), Message(message = "secondMessageABC"))
-        whenever(chatInteractor.fetchChatMessagesBatch(any(), any())).thenReturn(
-                Observable.just(PartialChatViewState.MessagesListChanged(messagesBatchList))
-        )
-
-        val chatViewRobot = ChatViewRobot(chatViewModel)
-
-        chatViewRobot.fetchMessagesBatch("2018-03-25:23:01:11")
-
-        chatViewRobot.assertViewStates(
-                ChatViewState(),
-                ChatViewState(itemProgress = true),
-                ChatViewState(itemProgress = false, messagesBatchList = listOf(
-                        MessageViewState("firstMessageABC", isOwn = false, isSent = true),
-                        MessageViewState("secondMessageABC", isOwn = false, isSent = true)
-                ))
         )
     }
 }

@@ -42,6 +42,7 @@ class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
             : ChatViewState {
         return when (partialState) {
             is PartialChatViewState.MessagesListChanged -> previousState.copy(
+                    error = false,
                     messagesList = partialState.updatedMessagesList.map { convertToMessageViewState(it) }
             )
             is PartialChatViewState.NewMessagesListenerRemoved -> previousState
