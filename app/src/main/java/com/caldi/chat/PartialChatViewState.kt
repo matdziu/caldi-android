@@ -4,15 +4,9 @@ import com.caldi.chat.models.Message
 
 sealed class PartialChatViewState {
 
-    class MessageSendingStarted(val message: Message) : PartialChatViewState()
-
-    class NewMessageAdded(val newMessage: Message) : PartialChatViewState()
-
-    class NewMessagesListenerRemoved : PartialChatViewState()
-
-    class MessagesBatchFetchSuccess(val messagesBatchList: List<Message>) : PartialChatViewState()
-
-    class ItemProgressState : PartialChatViewState()
+    class MessagesListChanged(val updatedMessagesList: List<Message>) : PartialChatViewState()
 
     class ErrorState(val dismissToast: Boolean = false) : PartialChatViewState()
+
+    class NewMessagesListenerRemoved : PartialChatViewState()
 }

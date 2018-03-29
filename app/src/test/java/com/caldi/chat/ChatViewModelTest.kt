@@ -72,7 +72,7 @@ class ChatViewModelTest {
     fun testSuccessfulBatchFetch() {
         val messagesBatchList = listOf(Message(message = "firstMessageABC"), Message(message = "secondMessageABC"))
         whenever(chatInteractor.fetchChatMessagesBatch(any(), any())).thenReturn(
-                Observable.just(PartialChatViewState.MessagesBatchFetchSuccess(messagesBatchList))
+                Observable.just(PartialChatViewState.MessagesListChanged(messagesBatchList))
         )
 
         val chatViewRobot = ChatViewRobot(chatViewModel)

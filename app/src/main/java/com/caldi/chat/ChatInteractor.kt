@@ -24,6 +24,8 @@ class ChatInteractor {
 
     private var batchSize = 10
 
+    private var currentMessagesList = listOf<Message>()
+
     fun sendMessage(message: String, chatId: String): Observable<PartialChatViewState> {
         val messageNodeRef = getChatNodeReference(chatId).push()
         val messageObject = Message(
@@ -33,7 +35,9 @@ class ChatInteractor {
 
         messageNodeRef.setValue(messageObject)
 
-        return Observable.just(PartialChatViewState.MessageSendingStarted(messageObject))
+        messageObject.isSent = false
+        currentMessagesList += messageObject
+        return Observable.just(PartialChatViewState.MessagesListChanged(currentMessagesList))
     }
 
     fun fetchChatMessagesBatch(chatId: String, fromTimestamp: String): Observable<PartialChatViewState> {
@@ -48,7 +52,8 @@ class ChatInteractor {
                         for (messageSnapshot in dataSnapshot.children.toList()) {
                             messageSnapshot.getValue(Message::class.java)?.let { messagesBatchList.add(it) }
                         }
-                        stateSubject.onNext(PartialChatViewState.MessagesBatchFetchSuccess(messagesBatchList))
+                        messagesBatchList.addAll(currentMessagesList)
+                        stateSubject.onNext(PartialChatViewState.MessagesListChanged(currentMessagesList))
                     }
 
                     override fun onCancelled(databaseError: DatabaseError) {
@@ -63,7 +68,8 @@ class ChatInteractor {
 
         newMessageAddedListener = object : NewMessageAddedListener() {
             override fun onNewMessageAdded(newMessage: Message) {
-                stateSubject.onNext(PartialChatViewState.NewMessageAdded(newMessage))
+                currentMessagesList = currentMessagesList.filter { it.messageId != newMessage.messageId } + newMessage
+                stateSubject.onNext(PartialChatViewState.MessagesListChanged(currentMessagesList))
             }
         }
 

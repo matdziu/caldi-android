@@ -10,7 +10,8 @@ import io.reactivex.subjects.BehaviorSubject
 class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
-    private val stateSubject = BehaviorSubject.createDefault(ChatViewState())
+    private val stateSubject = BehaviorSubject.create<PartialChatViewState>()
+    private var currentViewState = ChatViewState()
 
     fun bind(chatView: ChatView, chatId: String) {
         val newMessagesListeningToggleObservable = chatView.emitNewMessagesListeningToggle()
@@ -20,10 +21,7 @@ class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
                 }
 
         val batchFetchTriggerObservable = chatView.emitBachFetchTrigger()
-                .flatMap {
-                    chatInteractor.fetchChatMessagesBatch(chatId, it)
-                            .startWith(PartialChatViewState.ItemProgressState())
-                }
+                .flatMap { chatInteractor.fetchChatMessagesBatch(chatId, it) }
 
         val sentMessageObservable = chatView.emitSentMessage()
                 .filter { it.isNotBlank() }
@@ -33,30 +31,20 @@ class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
                 newMessagesListeningToggleObservable,
                 batchFetchTriggerObservable,
                 sentMessageObservable))
-                .scan(stateSubject.value, this::reduce)
                 .subscribeWith(stateSubject)
 
-        compositeDisposable.add(mergedObservable.subscribe { chatView.render(it) })
+        compositeDisposable.add(mergedObservable.scan(currentViewState, this::reduce)
+                .doOnNext { currentViewState = it }
+                .subscribe { chatView.render(it) })
     }
 
     private fun reduce(previousState: ChatViewState, partialState: PartialChatViewState)
             : ChatViewState {
         return when (partialState) {
-            is PartialChatViewState.MessageSendingStarted -> previousState.copy(
-                    messagesList = previousState.messagesList + convertToMessageViewState(partialState.message, false)
+            is PartialChatViewState.MessagesListChanged -> previousState.copy(
+                    messagesList = partialState.updatedMessagesList.map { convertToMessageViewState(it) }
             )
-            is PartialChatViewState.NewMessageAdded -> previousState.copy(
-                    messagesList = concatMessagesList(previousState.messagesList,
-                            listOf(convertToMessageViewState(partialState.newMessage))))
             is PartialChatViewState.NewMessagesListenerRemoved -> previousState
-            is PartialChatViewState.MessagesBatchFetchSuccess -> previousState.copy(
-                    itemProgress = false,
-                    messagesList = concatMessagesList(previousState.messagesList,
-                            partialState.messagesBatchList.map { convertToMessageViewState(it) })
-            )
-            is PartialChatViewState.ItemProgressState -> previousState.copy(
-                    itemProgress = true
-            )
             is PartialChatViewState.ErrorState -> previousState.copy(
                     error = true,
                     dismissToast = partialState.dismissToast
@@ -64,13 +52,7 @@ class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
         }
     }
 
-    private fun concatMessagesList(oldMessages: List<MessageViewState>, newMessages: List<MessageViewState>)
-            : List<MessageViewState> {
-        val newMessagesIds = newMessages.map { it.messageId }
-        return oldMessages.filter { !newMessagesIds.contains(it.messageId) } + newMessages
-    }
-
-    private fun convertToMessageViewState(messageToConvert: Message, isSent: Boolean = true): MessageViewState {
+    private fun convertToMessageViewState(messageToConvert: Message): MessageViewState {
         return with(messageToConvert) {
             MessageViewState(message, messageId, timestamp,
                     senderId == chatInteractor.currentUserId, isSent)
