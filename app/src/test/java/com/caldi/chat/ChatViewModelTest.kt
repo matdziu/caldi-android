@@ -23,6 +23,24 @@ class ChatViewModelTest {
     }
 
     @Test
+    fun testNewMessagesListenerSetting() {
+        val updatedMessageList = listOf<Message>()
+        whenever(chatInteractor.listenForNewMessages(any())).thenReturn(
+                Observable.just(PartialChatViewState.MessagesListChanged(updatedMessageList))
+        )
+
+        val chatViewRobot = ChatViewRobot(chatViewModel)
+
+        chatViewRobot.toggleNewMessagesListening(true)
+
+        chatViewRobot.assertViewStates(
+                ChatViewState(),
+                ChatViewState(progress = true),
+                ChatViewState()
+        )
+    }
+
+    @Test
     fun testSuccessfulMessagesBatchFetching() {
         val updatedMessageList = listOf(Message("2018-03-29", "Test message",
                 "testSenderId", "testMessageId", true))

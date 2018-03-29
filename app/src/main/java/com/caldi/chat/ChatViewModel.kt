@@ -16,7 +16,7 @@ class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
     fun bind(chatView: ChatView, chatId: String) {
         val newMessagesListeningToggleObservable = chatView.emitNewMessagesListeningToggle()
                 .flatMap {
-                    if (it) chatInteractor.listenForNewMessages(chatId)
+                    if (it) chatInteractor.listenForNewMessages(chatId).startWith(PartialChatViewState.ProgressState())
                     else chatInteractor.stopListeningForNewMessages(chatId)
                 }
 
@@ -41,14 +41,17 @@ class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
     private fun reduce(previousState: ChatViewState, partialState: PartialChatViewState)
             : ChatViewState {
         return when (partialState) {
-            is PartialChatViewState.MessagesListChanged -> previousState.copy(
-                    error = false,
+            is PartialChatViewState.MessagesListChanged -> ChatViewState(
                     messagesList = partialState.updatedMessagesList.map { convertToMessageViewState(it) }
             )
             is PartialChatViewState.NewMessagesListenerRemoved -> previousState
             is PartialChatViewState.ErrorState -> previousState.copy(
+                    progress = false,
                     error = true,
                     dismissToast = partialState.dismissToast
+            )
+            is PartialChatViewState.ProgressState -> previousState.copy(
+                    progress = true
             )
         }
     }

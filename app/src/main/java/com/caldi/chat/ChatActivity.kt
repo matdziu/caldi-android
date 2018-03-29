@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.View
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
 import com.caldi.chat.list.MessagesAdapter
@@ -22,9 +23,12 @@ import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_chat.chatInfoImageView
 import kotlinx.android.synthetic.main.activity_chat.chatInfoTextView
+import kotlinx.android.synthetic.main.activity_chat.chatInfoView
 import kotlinx.android.synthetic.main.activity_chat.messageInputEditText
 import kotlinx.android.synthetic.main.activity_chat.messagesRecyclerView
+import kotlinx.android.synthetic.main.activity_chat.progressBar
 import kotlinx.android.synthetic.main.activity_chat.sendMessageButton
+import kotlinx.android.synthetic.main.activity_chat.sendPanelView
 import javax.inject.Inject
 
 class ChatActivity : BaseDrawerActivity(), ChatView {
@@ -144,7 +148,22 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
 
     override fun render(chatViewState: ChatViewState) {
         with(chatViewState) {
+            showProgressBar(progress)
             messagesAdapter.submitList(messagesList)
+        }
+    }
+
+    private fun showProgressBar(show: Boolean) {
+        if (show) {
+            progressBar.visibility = View.VISIBLE
+            sendPanelView.visibility = View.GONE
+            messagesRecyclerView.visibility = View.GONE
+            chatInfoView.visibility = View.GONE
+        } else {
+            progressBar.visibility = View.GONE
+            sendPanelView.visibility = View.VISIBLE
+            messagesRecyclerView.visibility = View.VISIBLE
+            chatInfoView.visibility = View.VISIBLE
         }
     }
 }
