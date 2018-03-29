@@ -43,8 +43,7 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
 
     private var chatId = ""
 
-    private var isNewMessagesListenerSet = false
-    private var fetchInitialBatch = true
+    private var init = true
     private var isBatchLoading = false
 
     private val messagesAdapter = MessagesAdapter()
@@ -111,15 +110,10 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
         super.onStart()
         setNavigationSelection(R.id.chat_item)
         chatViewModel.bind(this, chatId)
-
-        if (!isNewMessagesListenerSet) {
+        if (init) {
             newMessagesListeningToggleSubject.onNext(true)
-            isNewMessagesListenerSet = true
-        }
-
-        if (fetchInitialBatch) {
             batchFetchTriggerSubject.onNext(getCurrentISODate())
-            fetchInitialBatch = false
+            init = false
         }
 
         messagesAdapter.registerAdapterDataObserver(messagesAdapterObserver)

@@ -1,16 +1,54 @@
 package com.caldi.organizer
 
 import android.arch.lifecycle.ViewModel
+import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
 
 class OrganizerViewModel(private val organizerInteractor: OrganizerInteractor) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
-    private val stateSubject = BehaviorSubject.create<OrganizerViewState>()
+    private val stateSubject = BehaviorSubject.create<PartialOrganizerViewState>()
 
-    fun bind(organizerView: OrganizerView) {
+    fun bind(organizerView: OrganizerView, eventId: String) {
+        val newMessagesListeningToggleObservable = organizerView.emitNewMessagesListeningToggle()
+                .flatMap {
+                    if (it) organizerInteractor.listenForNewMessages(eventId)
+                    else organizerInteractor.stopListeningForNewMessages(eventId)
+                }
 
+        val eventInfoFetchTriggerObservable = organizerView.emitEventInfoFetchTrigger()
+                .flatMap { organizerInteractor.fetchEventInfo(eventId) }
+
+        val batchFetchTriggerObservable = organizerView.emitBatchFetchTrigger()
+                .flatMap { organizerInteractor.fetchMessagesBatch(eventId, it) }
+
+        val mergedObservable = Observable.merge(
+                newMessagesListeningToggleObservable,
+                eventInfoFetchTriggerObservable,
+                batchFetchTriggerObservable)
+                .subscribeWith(stateSubject)
+
+        compositeDisposable.add(mergedObservable.scan(OrganizerViewState(progress = true), this::reduce)
+                .subscribe { organizerView.render(it) })
+    }
+
+    private fun reduce(previousState: OrganizerViewState, partialState: PartialOrganizerViewState)
+            : OrganizerViewState {
+        return when (partialState) {
+            is PartialOrganizerViewState.EventInfoFetched -> OrganizerViewState(
+                    eventName = partialState.eventInfo.name,
+                    eventImageUrl = partialState.eventInfo.imageUrl)
+            is PartialOrganizerViewState.NewMessagesListenerRemoved -> previousState
+            is PartialOrganizerViewState.ErrorState -> previousState.copy(
+                    error = true,
+                    dismissToast = partialState.dismissToast)
+            is PartialOrganizerViewState.MessagesListChanged -> previousState.copy(
+                    progress = false,
+                    error = false,
+                    messagesList = partialState.updatedMessagesList
+            )
+        }
     }
 
     fun unbind() {

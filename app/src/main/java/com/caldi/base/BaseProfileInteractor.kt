@@ -1,7 +1,7 @@
 package com.caldi.base
 
-import com.caldi.base.models.Answer
-import com.caldi.base.models.Question
+import com.caldi.common.models.Answer
+import com.caldi.common.models.Question
 import com.caldi.constants.ANSWERS_NODE
 import com.caldi.constants.EVENTS_NODE
 import com.caldi.constants.EVENT_PROFILE_NODE

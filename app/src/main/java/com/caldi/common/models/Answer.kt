@@ -1,3 +1,3 @@
-package com.caldi.base.models
+package com.caldi.common.models
 
 data class Answer(val questionId: String = "", val answer: String = "", var valid: Boolean = true)

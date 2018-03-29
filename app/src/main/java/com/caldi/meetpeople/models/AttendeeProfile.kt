@@ -1,7 +1,7 @@
 package com.caldi.meetpeople.models
 
-import com.caldi.base.models.Answer
-import com.caldi.base.models.Question
+import com.caldi.common.models.Answer
+import com.caldi.common.models.Question
 
 data class AttendeeProfile(val userId: String = "",
                            val eventUserName: String = "",

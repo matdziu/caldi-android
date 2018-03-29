@@ -1,7 +1,7 @@
 package com.caldi.chat
 
 import com.caldi.chat.models.Message
-import com.caldi.chat.utils.NewMessageAddedListener
+import com.caldi.common.utils.NewMessageAddedListener
 import com.caldi.constants.CHATS_NODE
 import com.caldi.constants.TIMESTAMP_CHILD
 import com.google.firebase.auth.FirebaseAuth
@@ -20,7 +20,7 @@ class ChatInteractor {
     private val firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
     val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
-    private var newMessageAddedListener: NewMessageAddedListener? = null
+    private var newMessageAddedListener: NewMessageAddedListener<Message>? = null
 
     private var batchSize = 10
 
@@ -66,7 +66,7 @@ class ChatInteractor {
     fun listenForNewMessages(chatId: String): Observable<PartialChatViewState> {
         val stateSubject = PublishSubject.create<PartialChatViewState>()
 
-        newMessageAddedListener = object : NewMessageAddedListener() {
+        newMessageAddedListener = object : NewMessageAddedListener<Message>(Message::class.java) {
             override fun onNewMessageAdded(newMessage: Message) {
                 currentMessagesList = currentMessagesList.filter { it.messageId != newMessage.messageId } + newMessage
                 stateSubject.onNext(PartialChatViewState.MessagesListChanged(currentMessagesList))

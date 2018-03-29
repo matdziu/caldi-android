@@ -1,8 +1,8 @@
 package com.caldi.eventprofile
 
 import android.arch.lifecycle.ViewModel
-import com.caldi.base.models.Answer
-import com.caldi.base.models.Question
+import com.caldi.common.models.Answer
+import com.caldi.common.models.Question
 import com.caldi.eventprofile.list.QuestionViewState
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers

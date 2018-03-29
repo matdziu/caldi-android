@@ -1,8 +1,8 @@
 package com.caldi.meetpeople
 
 import com.caldi.base.BaseProfileInteractor
-import com.caldi.base.models.Answer
-import com.caldi.base.models.Question
+import com.caldi.common.models.Answer
+import com.caldi.common.models.Question
 import com.caldi.constants.ATTENDEES_WITH_PROFILE_NODE
 import com.caldi.constants.EVENTS_NODE
 import com.caldi.constants.EVENT_PROFILE_NODE

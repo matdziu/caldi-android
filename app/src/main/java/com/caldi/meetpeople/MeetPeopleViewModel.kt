@@ -1,8 +1,8 @@
 package com.caldi.meetpeople
 
 import android.arch.lifecycle.ViewModel
-import com.caldi.base.models.Answer
-import com.caldi.base.models.Question
+import com.caldi.common.models.Answer
+import com.caldi.common.models.Question
 import com.caldi.meetpeople.list.AnswerViewState
 import com.caldi.meetpeople.models.AttendeeProfile
 import com.caldi.meetpeople.personprofile.PersonProfileViewState

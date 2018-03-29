@@ -1,16 +1,15 @@
-package com.caldi.chat.utils
+package com.caldi.common.utils
 
-import com.caldi.chat.models.Message
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 
-abstract class NewMessageAddedListener : ChildEventListener {
+abstract class NewMessageAddedListener<in T>(private val clazz: Class<T>) : ChildEventListener {
 
-    abstract fun onNewMessageAdded(newMessage: Message)
+    abstract fun onNewMessageAdded(newMessage: T)
 
     override fun onChildChanged(dataSnapshot: DataSnapshot, prevChildKey: String?) {
-        dataSnapshot.getValue(Message::class.java)?.let { onNewMessageAdded(it) }
+        dataSnapshot.getValue(clazz)?.let { onNewMessageAdded(it) }
     }
 
     override fun onCancelled(p0: DatabaseError?) {

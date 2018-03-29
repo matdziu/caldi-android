@@ -2,8 +2,8 @@ package com.caldi.eventprofile
 
 import com.caldi.eventprofile.list.QuestionViewState
 import com.caldi.eventprofile.list.QuestionsViewModel
-import com.caldi.base.models.Answer
-import com.caldi.base.models.Question
+import com.caldi.common.models.Answer
+import com.caldi.common.models.Question
 import junit.framework.Assert.assertEquals
 import org.junit.Test
 

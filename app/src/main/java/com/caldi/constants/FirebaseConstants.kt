@@ -13,6 +13,7 @@ const val POSITIVE_MEET_NODE = "positive"
 const val NEGATIVE_MEET_NODE = "negative"
 const val USER_CHATS_NODE = "userChats"
 const val CHATS_NODE = "chats"
+const val ORGANIZER_MESSAGES_NODE = "messages"
 
 const val EVENT_CODE_CHILD = "code"
 const val EVENT_USER_NAME_CHILD = "eventUserName"
