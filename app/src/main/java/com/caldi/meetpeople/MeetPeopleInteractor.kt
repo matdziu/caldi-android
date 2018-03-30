@@ -5,7 +5,6 @@ import com.caldi.common.models.Answer
 import com.caldi.common.models.Question
 import com.caldi.constants.ATTENDEES_WITH_PROFILE_NODE
 import com.caldi.constants.EVENTS_NODE
-import com.caldi.constants.EVENT_PROFILE_NODE
 import com.caldi.constants.MEET_NODE
 import com.caldi.constants.NEGATIVE_MEET_NODE
 import com.caldi.constants.POSITIVE_MEET_NODE
@@ -34,12 +33,14 @@ class MeetPeopleInteractor : BaseProfileInteractor() {
 
     fun checkIfEventProfileIsFilled(eventId: String): Observable<PartialMeetPeopleViewState> {
         val stateSubject = PublishSubject.create<PartialMeetPeopleViewState>()
-        firebaseDatabase.getReference("$USERS_NODE/$currentUserId/$EVENT_PROFILE_NODE")
+        getAttendeesWithProfileNodeRef(eventId)
+                .orderByValue()
+                .equalTo(currentUserId)
                 .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot?) {
-                        if (dataSnapshot == null || !dataSnapshot.hasChild(eventId)) {
-                            PartialMeetPeopleViewState.BlankEventProfileState()
-                            PartialMeetPeopleViewState.BlankEventProfileState(true)
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        if (!dataSnapshot.hasChildren()) {
+                            stateSubject.onNext(PartialMeetPeopleViewState.BlankEventProfileState())
+                            stateSubject.onNext(PartialMeetPeopleViewState.BlankEventProfileState(true))
                         }
                     }
 

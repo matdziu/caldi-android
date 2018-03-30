@@ -10,7 +10,7 @@ class MeetPeopleViewRobot(meetPeopleViewModel: MeetPeopleViewModel) : BaseViewRo
 
     private val negativeMeetObservable = PublishSubject.create<String>()
 
-    private val profilesFetchingTriggerObservable = PublishSubject.create<String>()
+    private val profilesFetchingTriggerObservable = PublishSubject.create<Boolean>()
 
     private val meetPeopleView = object : MeetPeopleView {
 
@@ -18,7 +18,7 @@ class MeetPeopleViewRobot(meetPeopleViewModel: MeetPeopleViewModel) : BaseViewRo
 
         override fun emitNegativeMeet(): Observable<String> = negativeMeetObservable
 
-        override fun emitProfilesFetchingTrigger(): Observable<String> = profilesFetchingTriggerObservable
+        override fun emitProfilesFetchingTrigger(): Observable<Boolean> = profilesFetchingTriggerObservable
 
         override fun render(meetPeopleViewState: MeetPeopleViewState) {
             renderedStates.add(meetPeopleViewState)
@@ -26,11 +26,11 @@ class MeetPeopleViewRobot(meetPeopleViewModel: MeetPeopleViewModel) : BaseViewRo
     }
 
     init {
-        meetPeopleViewModel.bind(meetPeopleView)
+        meetPeopleViewModel.bind(meetPeopleView, "testEventId")
     }
 
-    fun triggerProfilesFetching(eventId: String) {
-        profilesFetchingTriggerObservable.onNext(eventId)
+    fun triggerProfilesFetching() {
+        profilesFetchingTriggerObservable.onNext(true)
     }
 
     fun positiveAttendeeMeet(userId: String) {

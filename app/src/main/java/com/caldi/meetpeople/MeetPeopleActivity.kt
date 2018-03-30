@@ -24,7 +24,7 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
     val dismissProfileSubject: Subject<String> = PublishSubject.create()
     val acceptProfileSubject: Subject<String> = PublishSubject.create()
 
-    private val triggerProfilesFetchingSubject: Subject<String> = PublishSubject.create()
+    private val triggerProfilesFetchingSubject: Subject<Boolean> = PublishSubject.create()
     private val positiveMetSubject: Subject<String> = PublishSubject.create()
     private val negativeMeetSubject: Subject<String> = PublishSubject.create()
 
@@ -52,17 +52,19 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
     override fun onStart() {
         super.onStart()
         setNavigationSelection(R.id.meet_people_item)
-        meetPeopleViewModel.bind(this)
-        if (fetchProfilesOnStart) triggerProfilesFetchingSubject.onNext(eventId)
+        meetPeopleViewModel.bind(this, eventId)
+        if (fetchProfilesOnStart) {
+            triggerProfilesFetchingSubject.onNext(true)
+            fetchProfilesOnStart = false
+        }
     }
 
     override fun onStop() {
-        fetchProfilesOnStart = false
         meetPeopleViewModel.unbind()
         super.onStop()
     }
 
-    override fun emitProfilesFetchingTrigger(): Observable<String> = triggerProfilesFetchingSubject
+    override fun emitProfilesFetchingTrigger(): Observable<Boolean> = triggerProfilesFetchingSubject
 
     override fun emitPositiveMeet(): Observable<String> = positiveMetSubject
 
@@ -119,7 +121,7 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         currentProfilesBatchSize -= 1
         if (currentProfilesBatchSize == 0) {
-            triggerProfilesFetchingSubject.onNext(eventId)
+            triggerProfilesFetchingSubject.onNext(true)
         }
 
         when (exitAnimDirection) {

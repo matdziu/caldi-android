@@ -36,7 +36,7 @@ class MeetPeopleViewModelTest {
         )
         val meetPeopleViewRobot = MeetPeopleViewRobot(meetPeopleViewModel)
 
-        meetPeopleViewRobot.triggerProfilesFetching("testEventId")
+        meetPeopleViewRobot.triggerProfilesFetching()
 
         meetPeopleViewRobot.assertViewStates(
                 MeetPeopleViewState(),

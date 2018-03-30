@@ -15,13 +15,11 @@ class MeetPeopleViewModel(private val meetPeopleInteractor: MeetPeopleInteractor
 
     private val compositeDisposable = CompositeDisposable()
     private val stateSubject = BehaviorSubject.createDefault(MeetPeopleViewState())
-    private var eventId: String = ""
 
-    fun bind(meetPeopleView: MeetPeopleView) {
+    fun bind(meetPeopleView: MeetPeopleView, eventId: String) {
         val fetchProfilesObservable = meetPeopleView.emitProfilesFetchingTrigger()
                 .flatMap {
-                    eventId = it
-                    meetPeopleInteractor.fetchAttendeesProfiles(it)
+                    meetPeopleInteractor.fetchAttendeesProfiles(eventId)
                             .startWith(PartialMeetPeopleViewState.ProgressState())
                 }
 

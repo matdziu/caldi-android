@@ -8,7 +8,7 @@ interface MeetPeopleView {
 
     fun emitNegativeMeet(): Observable<String>
 
-    fun emitProfilesFetchingTrigger(): Observable<String>
+    fun emitProfilesFetchingTrigger(): Observable<Boolean>
 
     fun render(meetPeopleViewState: MeetPeopleViewState)
 }
