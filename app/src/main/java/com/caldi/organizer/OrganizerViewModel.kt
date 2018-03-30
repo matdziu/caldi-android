@@ -23,10 +23,10 @@ class OrganizerViewModel(private val organizerInteractor: OrganizerInteractor) :
         val batchFetchTriggerObservable = organizerView.emitBatchFetchTrigger()
                 .flatMap { organizerInteractor.fetchMessagesBatch(eventId, it) }
 
-        val mergedObservable = Observable.merge(
+        val mergedObservable = Observable.merge(arrayListOf(
                 newMessagesListeningToggleObservable,
                 eventInfoFetchTriggerObservable,
-                batchFetchTriggerObservable)
+                batchFetchTriggerObservable))
                 .subscribeWith(stateSubject)
 
         compositeDisposable.add(mergedObservable.scan(OrganizerViewState(progress = true), this::reduce)
