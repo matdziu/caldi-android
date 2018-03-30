@@ -1,6 +1,7 @@
 package com.caldi.meetpeople
 
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -43,6 +44,11 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
         meetPeopleViewModel = ViewModelProviders.of(this, meetPeopleViewModelFactory)[MeetPeopleViewModel::class.java]
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        fetchProfilesOnStart = true
+    }
+
     override fun onStart() {
         super.onStart()
         setNavigationSelection(R.id.meet_people_item)
@@ -51,11 +57,11 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
         meetPeopleViewModel.bind(this, eventId)
         if (fetchProfilesOnStart) {
             triggerProfilesFetchingSubject.onNext(true)
-            fetchProfilesOnStart = false
         }
     }
 
     override fun onStop() {
+        fetchProfilesOnStart = false
         meetPeopleViewModel.unbind()
         super.onStop()
     }

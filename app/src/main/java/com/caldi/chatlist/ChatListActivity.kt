@@ -1,6 +1,7 @@
 package com.caldi.chatlist
 
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
@@ -39,6 +40,11 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
 
         chatItemsRecyclerView.adapter = chatItemsAdapter
         chatItemsRecyclerView.layoutManager = LinearLayoutManager(this)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        fetchChatListOnStart = true
     }
 
     override fun onStart() {
