@@ -9,7 +9,7 @@ import io.reactivex.subjects.BehaviorSubject
 class ChatListViewModel(private val chatListInteractor: ChatListInteractor) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
-    private val stateSubject = BehaviorSubject.create<PartialChatListViewState>()
+    private val stateSubject = BehaviorSubject.createDefault(ChatListViewState())
 
     fun bind(chatListView: ChatListView) {
         val userChatListFetchObservable = chatListView.emitUserChatListFetchTrigger()
@@ -20,9 +20,10 @@ class ChatListViewModel(private val chatListInteractor: ChatListInteractor) : Vi
                 }
 
         val mergedObservable = Observable.merge(listOf(userChatListFetchObservable))
+                .scan(stateSubject.value, this::reduce)
                 .subscribeWith(stateSubject)
 
-        compositeDisposable.add(mergedObservable.scan(ChatListViewState(), this::reduce)
+        compositeDisposable.add(mergedObservable
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { chatListView.render(it) })
     }

@@ -55,7 +55,6 @@ class MeetPeopleViewModelTest {
         val meetPeopleViewRobot = MeetPeopleViewRobot(meetPeopleViewModel)
 
         meetPeopleViewRobot.assertViewStates(
-                MeetPeopleViewState(),
                 MeetPeopleViewState(eventProfileBlank = true)
         )
     }

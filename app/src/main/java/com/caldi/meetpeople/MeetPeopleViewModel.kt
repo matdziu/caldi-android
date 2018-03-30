@@ -14,7 +14,7 @@ import io.reactivex.subjects.BehaviorSubject
 class MeetPeopleViewModel(private val meetPeopleInteractor: MeetPeopleInteractor) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
-    private val stateSubject = BehaviorSubject.create<PartialMeetPeopleViewState>()
+    private val stateSubject = BehaviorSubject.createDefault(MeetPeopleViewState())
     private var eventId: String = ""
 
     fun bind(meetPeopleView: MeetPeopleView) {
@@ -31,11 +31,15 @@ class MeetPeopleViewModel(private val meetPeopleInteractor: MeetPeopleInteractor
         val negativeMeetObservable = meetPeopleView.emitNegativeMeet()
                 .flatMap { meetPeopleInteractor.saveMetAttendee(it, eventId, MeetPeopleInteractor.MeetType.NEGATIVE) }
 
-        val mergedObservable = Observable.merge(listOf(fetchProfilesObservable,
-                positiveMeetObservable, negativeMeetObservable, meetPeopleInteractor.checkIfEventProfileIsFilled(eventId)))
+        val mergedObservable = Observable.merge(listOf(
+                fetchProfilesObservable,
+                positiveMeetObservable,
+                negativeMeetObservable,
+                meetPeopleInteractor.checkIfEventProfileIsFilled(eventId)))
+                .scan(stateSubject.value, this::reduce)
                 .subscribeWith(stateSubject)
 
-        compositeDisposable.add(mergedObservable.scan(MeetPeopleViewState(), this::reduce)
+        compositeDisposable.add(mergedObservable
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { meetPeopleView.render(it) })
     }

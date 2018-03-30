@@ -12,7 +12,7 @@ import io.reactivex.subjects.BehaviorSubject
 class EventProfileViewModel(private val eventProfileInteractor: EventProfileInteractor) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
-    private val stateSubject = BehaviorSubject.create<PartialEventProfileViewState>()
+    private val stateSubject = BehaviorSubject.createDefault(EventProfileViewState())
     private var eventId: String = ""
 
     fun bind(eventProfileView: EventProfileView) {
@@ -48,10 +48,14 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
                             .startWith(PartialEventProfileViewState.ProgressState())
                 }
 
-        val mergedObservable = Observable.merge(listOf(fetchEventProfileObservable,
-                updateProfileObservable, profilePictureFileObservable)).subscribeWith(stateSubject)
+        val mergedObservable = Observable.merge(listOf(
+                fetchEventProfileObservable,
+                updateProfileObservable,
+                profilePictureFileObservable))
+                .scan(stateSubject.value, this::reduce)
+                .subscribeWith(stateSubject)
 
-        compositeDisposable.add(mergedObservable.scan(EventProfileViewState(), this::reduce)
+        compositeDisposable.add(mergedObservable
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ eventProfileView.render(it) }))
     }

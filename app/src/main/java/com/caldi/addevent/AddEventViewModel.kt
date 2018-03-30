@@ -3,12 +3,11 @@ package com.caldi.addevent
 import android.arch.lifecycle.ViewModel
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.BehaviorSubject
-import io.reactivex.subjects.Subject
 
 class AddEventViewModel(private val addEventInteractor: AddEventInteractor) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
-    private val stateSubject: Subject<PartialAddEventViewState> = BehaviorSubject.create()
+    private val stateSubject = BehaviorSubject.createDefault(AddEventViewState())
 
     fun bind(addEventView: AddEventView) {
         val newEventCodeObservable = addEventView.emitNewEventCode()
@@ -16,10 +15,10 @@ class AddEventViewModel(private val addEventInteractor: AddEventInteractor) : Vi
                     addEventInteractor.addNewEvent(eventCode.trim())
                             .startWith(PartialAddEventViewState.InProgressState())
                 }
+                .scan(stateSubject.value, this::reduce)
                 .subscribeWith(stateSubject)
 
-        compositeDisposable.add(newEventCodeObservable.scan(AddEventViewState(), this::reduce)
-                .subscribe({ addEventView.render(it) }))
+        compositeDisposable.add(newEventCodeObservable.subscribe({ addEventView.render(it) }))
     }
 
     private fun reduce(previousState: AddEventViewState, partialState: PartialAddEventViewState)

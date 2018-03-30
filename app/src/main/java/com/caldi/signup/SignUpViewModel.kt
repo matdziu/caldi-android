@@ -8,7 +8,7 @@ import io.reactivex.subjects.BehaviorSubject
 class SignUpViewModel(private val signUpInteractor: SignUpInteractor) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
-    private val stateSubject = BehaviorSubject.create<PartialSignUpViewState>()
+    private val stateSubject = BehaviorSubject.createDefault(SignUpViewState())
 
     fun bind(signUpView: SignUpView) {
         val inputDataObservable = signUpView.emitInput()
@@ -30,13 +30,13 @@ class SignUpViewModel(private val signUpInteractor: SignUpInteractor) : ViewMode
                                 .startWith(PartialSignUpViewState.InProgressState())
                     }
                 }
+                .scan(stateSubject.value, this::reduce)
                 .subscribeWith(stateSubject)
 
-        compositeDisposable.add(inputDataObservable.scan(SignUpViewState(), this::reduceState)
-                .subscribe({ signUpView.render(it) }))
+        compositeDisposable.add(inputDataObservable.subscribe({ signUpView.render(it) }))
     }
 
-    private fun reduceState(previousState: SignUpViewState, partialState: PartialSignUpViewState)
+    private fun reduce(previousState: SignUpViewState, partialState: PartialSignUpViewState)
             : SignUpViewState {
         return when (partialState) {
             is PartialSignUpViewState.LocalValidation -> SignUpViewState(emailValid = partialState.emailValid,

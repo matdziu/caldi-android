@@ -8,7 +8,7 @@ import io.reactivex.subjects.BehaviorSubject
 class LoginViewModel(private val loginInteractor: LoginInteractor) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
-    private val stateSubject = BehaviorSubject.create<PartialLoginViewState>()
+    private val stateSubject = BehaviorSubject.createDefault(LoginViewState())
 
     fun bind(loginView: LoginView) {
         val isLoggedInObservable = loginInteractor.isLoggedIn()
@@ -35,15 +35,18 @@ class LoginViewModel(private val loginInteractor: LoginInteractor) : ViewModel()
                     }
                 }
 
-        val mergedObservable = Observable.merge(arrayListOf(inputDataObservable, isLoggedInObservable,
-                googleSignInObservable, facebookSignInObservable))
+        val mergedObservable = Observable.merge(listOf(
+                inputDataObservable,
+                isLoggedInObservable,
+                googleSignInObservable,
+                facebookSignInObservable))
+                .scan(stateSubject.value, this::reduce)
                 .subscribeWith(stateSubject)
 
-        compositeDisposable.add(mergedObservable.scan(LoginViewState(), this::reduceState)
-                .subscribe({ loginView.render(it) }))
+        compositeDisposable.add(mergedObservable.subscribe({ loginView.render(it) }))
     }
 
-    private fun reduceState(previousState: LoginViewState, partialState: PartialLoginViewState)
+    private fun reduce(previousState: LoginViewState, partialState: PartialLoginViewState)
             : LoginViewState {
         return when (partialState) {
             is PartialLoginViewState.LocalValidation -> LoginViewState(emailValid = partialState.emailValid,
