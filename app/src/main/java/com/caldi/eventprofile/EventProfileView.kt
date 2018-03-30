@@ -8,7 +8,7 @@ interface EventProfileView {
 
     fun emitEventProfileFetchingTrigger(): Observable<String>
 
-    fun emitInputData(): Observable<EventProfileData>
+    fun emitEventProfileData(): Observable<EventProfileData>
 
     fun emitProfilePictureFile(): Observable<File>
 

@@ -9,11 +9,9 @@ import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Observable
 import io.reactivex.android.plugins.RxAndroidPlugins
-import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
 import org.junit.Test
 import java.io.File
-import java.util.concurrent.TimeUnit
 
 class EventProfileViewModelTest {
 
@@ -22,7 +20,6 @@ class EventProfileViewModelTest {
 
     init {
         RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
-        RxJavaPlugins.setComputationSchedulerHandler { Schedulers.trampoline() }
     }
 
     @Test
@@ -31,8 +28,7 @@ class EventProfileViewModelTest {
                 listOf(Answer("1", "Looking for party!", true)),
                 listOf(Question("1", "What are you looking for here?")))
         whenever(eventProfileInteractor.fetchEventProfile(any())).thenReturn(
-                Observable.timer(100, TimeUnit.MILLISECONDS)
-                        .map { PartialEventProfileViewState.SuccessfulFetchState(eventProfileData, false) }
+                Observable.just(PartialEventProfileViewState.SuccessfulFetchState(eventProfileData, false))
                         .startWith(PartialEventProfileViewState.SuccessfulFetchState(eventProfileData, true))
                         as Observable<PartialEventProfileViewState>
         )
@@ -60,11 +56,10 @@ class EventProfileViewModelTest {
     @Test
     fun testEventProfileUpdateInvalid() {
         val eventProfileData = EventProfileData("Matt the Android Dev",
-                listOf(Answer("1", "Looking for party!", true)),
+                listOf(Answer("1", "Looking for a party!", true)),
                 listOf(Question("1", "What are you looking for here?")))
         whenever(eventProfileInteractor.fetchEventProfile(any())).thenReturn(
-                Observable.timer(100, TimeUnit.MILLISECONDS)
-                        .map { PartialEventProfileViewState.SuccessfulFetchState(eventProfileData, false) }
+                Observable.just(PartialEventProfileViewState.SuccessfulFetchState(eventProfileData, false))
                         .startWith(PartialEventProfileViewState.SuccessfulFetchState(eventProfileData, true))
                         as Observable<PartialEventProfileViewState>
         )
@@ -79,33 +74,48 @@ class EventProfileViewModelTest {
         val eventProfileViewRobot = EventProfileViewRobot(eventProfileViewModel)
 
         eventProfileViewRobot.fetchEventProfile("droidcon")
+
         eventProfileViewRobot.emitInputData(eventProfileDataEmptyAnswer)
+
         eventProfileViewRobot.emitInputData(eventProfileDataEmptyName)
+
+        val fetchedQuestionViewStateList = listOf(QuestionViewState("What are you looking for here?",
+                "Looking for a party!", "1"))
+        val errorQuestionViewState = listOf(QuestionViewState("What are you looking for here?",
+                " ", "1", answerValid = false))
         eventProfileViewRobot.assertViewStates(
                 EventProfileViewState(),
-                EventProfileViewState(
-                        progress = true),
+                EventProfileViewState(progress = true),
                 EventProfileViewState(
                         eventUserName = "Matt the Android Dev",
+                        eventUserNameValid = true,
                         renderInputs = true,
-                        questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
-                                "Looking for party!", "1"))),
+                        questionViewStateList = fetchedQuestionViewStateList),
                 EventProfileViewState(
                         eventUserName = "Matt the Android Dev",
+                        eventUserNameValid = true,
                         renderInputs = false,
-                        questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
-                                "Looking for party!", "1"))),
+                        questionViewStateList = fetchedQuestionViewStateList),
                 EventProfileViewState(
                         eventUserName = "Matt the Android Dev",
+                        eventUserNameValid = true,
+                        renderInputs = true,
+                        questionViewStateList = errorQuestionViewState),
+                EventProfileViewState(
+                        eventUserName = "Matt the Android Dev",
+                        eventUserNameValid = true,
                         renderInputs = false,
-                        questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
-                                " ", "1", false))),
+                        questionViewStateList = errorQuestionViewState),
                 EventProfileViewState(
                         eventUserName = " ",
-                        renderInputs = false,
                         eventUserNameValid = false,
-                        questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
-                                "Looking for a party!", "1", true)))
+                        renderInputs = true,
+                        questionViewStateList = fetchedQuestionViewStateList),
+                EventProfileViewState(
+                        eventUserName = " ",
+                        eventUserNameValid = false,
+                        renderInputs = false,
+                        questionViewStateList = fetchedQuestionViewStateList)
         )
     }
 
@@ -115,44 +125,55 @@ class EventProfileViewModelTest {
                 listOf(Answer("1", "Looking for party!", true)),
                 listOf(Question("1", "What are you looking for here?")))
         whenever(eventProfileInteractor.updateEventProfile(any(), any())).thenReturn(
-                Observable.timer(100, TimeUnit.MILLISECONDS)
-                        .map { PartialEventProfileViewState.SuccessfulUpdateState(true) }
-                        .startWith(PartialEventProfileViewState.SuccessfulUpdateState()) as Observable<PartialEventProfileViewState>
+                Observable.just(PartialEventProfileViewState.SuccessfulUpdateState(true))
+                        .startWith(PartialEventProfileViewState.SuccessfulUpdateState())
+                        as Observable<PartialEventProfileViewState>
         )
 
         val eventProfileViewRobot = EventProfileViewRobot(eventProfileViewModel)
 
         eventProfileViewRobot.emitInputData(eventProfileData)
 
+        val questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
+                "Looking for party!", "1", true))
         eventProfileViewRobot.assertViewStates(
                 EventProfileViewState(),
                 EventProfileViewState(
                         eventUserName = "Matt the Android Dev",
                         eventUserNameValid = true,
-                        questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
-                                "Looking for party!", "1", true))),
+                        questionViewStateList = questionViewStateList,
+                        renderInputs = true
+                ),
+                EventProfileViewState(
+                        eventUserName = "Matt the Android Dev",
+                        eventUserNameValid = true,
+                        questionViewStateList = questionViewStateList,
+                        renderInputs = false
+                ),
                 EventProfileViewState(
                         progress = true,
                         eventUserName = "Matt the Android Dev",
                         eventUserNameValid = true,
-                        questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
-                                "Looking for party!", "1", true))),
+                        questionViewStateList = questionViewStateList,
+                        renderInputs = false
+                ),
                 EventProfileViewState(
-                        successUpload = true,
-                        dismissToast = false,
+                        updateSuccess = true,
                         progress = false,
                         eventUserName = "Matt the Android Dev",
                         eventUserNameValid = true,
-                        questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
-                                "Looking for party!", "1", true))),
+                        questionViewStateList = questionViewStateList,
+                        renderInputs = false
+                ),
                 EventProfileViewState(
-                        successUpload = true,
+                        updateSuccess = true,
+                        progress = false,
                         dismissToast = true,
-                        progress = false,
                         eventUserName = "Matt the Android Dev",
                         eventUserNameValid = true,
-                        questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
-                                "Looking for party!", "1", true)))
+                        questionViewStateList = questionViewStateList,
+                        renderInputs = false
+                )
         )
     }
 
@@ -175,8 +196,7 @@ class EventProfileViewModelTest {
     @Test
     fun testProfilePictureUploadError() {
         whenever(eventProfileInteractor.uploadProfilePicture(any(), any())).thenReturn(
-                Observable.timer(100, TimeUnit.MILLISECONDS)
-                        .map { PartialEventProfileViewState.ErrorState(true) }
+                Observable.just(PartialEventProfileViewState.ErrorState(true))
                         .startWith(PartialEventProfileViewState.ErrorState())
                         as Observable<PartialEventProfileViewState>
         )

@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModel
 import com.caldi.common.models.Answer
 import com.caldi.common.models.Question
 import com.caldi.eventprofile.list.QuestionViewState
+import com.caldi.eventprofile.models.EventProfileData
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -23,29 +24,24 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
                             .startWith(PartialEventProfileViewState.ProgressState())
                 }
 
-        val updateProfileObservable = eventProfileView.emitInputData()
+        val updateProfileObservable = eventProfileView.emitEventProfileData()
                 .flatMap {
-                    val eventUserNameValid = !it.eventUserName.isBlank()
-                    var eachAnswerValid = true
+                    it.eventUserNameValid = it.eventUserName.isNotBlank()
 
+                    var eachAnswerValid = true
                     for (answer in it.answerList) {
                         answer.valid = answer.answer.isNotBlank()
                         if (!answer.valid) eachAnswerValid = false
                     }
 
-                    if (!eventUserNameValid || !eachAnswerValid) {
-                        Observable.just(PartialEventProfileViewState.LocalValidation(it.eventUserName,
-                                eventUserNameValid, it.answerList, it.questionList, false))
-                                .startWith(PartialEventProfileViewState.LocalValidation(it.eventUserName,
-                                        eventUserNameValid, it.answerList, it.questionList))
+                    if (!it.eventUserNameValid || !eachAnswerValid) {
+                        getLocalValidationStateObservable(it)
                     } else {
-                        eventProfileInteractor.updateEventProfile(eventId, it)
-                                .startWith(listOf(
-                                        PartialEventProfileViewState.LocalValidation(it.eventUserName,
-                                                eventUserNameValid, it.answerList, it.questionList),
-                                        PartialEventProfileViewState.LocalValidation(it.eventUserName,
-                                                eventUserNameValid, it.answerList, it.questionList, false),
-                                        PartialEventProfileViewState.ProgressState()))
+                        Observable.concat(
+                                getLocalValidationStateObservable(it),
+                                eventProfileInteractor.updateEventProfile(eventId, it)
+                                        .startWith(PartialEventProfileViewState.ProgressState())
+                        )
                     }
                 }
 
@@ -67,6 +63,18 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
                 .subscribe({ eventProfileView.render(it) }))
     }
 
+    private fun getLocalValidationStateObservable(eventProfileData: EventProfileData)
+            : Observable<PartialEventProfileViewState.LocalValidation> {
+        val localValidationState = with(eventProfileData) {
+            PartialEventProfileViewState.LocalValidation(eventUserName,
+                    eventUserNameValid,
+                    answerList,
+                    questionList, false)
+        }
+        return Observable.just(localValidationState)
+                .startWith(localValidationState.copy(renderInputs = true))
+    }
+
     private fun reduce(previousState: EventProfileViewState, partialState: PartialEventProfileViewState)
             : EventProfileViewState {
         return when (partialState) {
@@ -83,25 +91,24 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
                         eventUserName = partialState.eventProfileData.eventUserName,
                         questionViewStateList = convertToQuestionViewStateList(partialState.eventProfileData.questionList,
                                 partialState.eventProfileData.answerList),
-                        renderInputs = partialState.renderInputs,
-                        profilePictureUrl = partialState.eventProfileData.profilePictureUrl)
+                        profilePictureUrl = partialState.eventProfileData.profilePictureUrl,
+                        renderInputs = partialState.renderInputs)
             is PartialEventProfileViewState.SuccessfulUpdateState ->
                 previousState.copy(
                         progress = false,
                         error = false,
-                        successUpload = true,
+                        updateSuccess = true,
                         dismissToast = partialState.dismissToast)
             is PartialEventProfileViewState.LocalValidation ->
                 previousState.copy(
-                        renderInputs = partialState.renderInputs,
                         progress = false,
                         eventUserName = partialState.eventUserName,
                         eventUserNameValid = partialState.eventUserNameValid,
                         questionViewStateList = convertToQuestionViewStateList(partialState.questionList,
-                                partialState.answerList))
+                                partialState.answerList),
+                        renderInputs = partialState.renderInputs)
             is PartialEventProfileViewState.SuccessfulPictureUploadState ->
                 previousState.copy(
-                        renderInputs = false,
                         progress = false,
                         profilePictureUrl = partialState.pictureUrl
                 )

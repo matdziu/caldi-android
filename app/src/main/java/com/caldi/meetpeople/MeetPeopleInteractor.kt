@@ -21,7 +21,6 @@ import io.reactivex.functions.BiFunction
 import io.reactivex.functions.Function4
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
-import java.util.concurrent.TimeUnit
 
 class MeetPeopleInteractor : BaseProfileInteractor() {
 
@@ -39,10 +38,8 @@ class MeetPeopleInteractor : BaseProfileInteractor() {
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot?) {
                         if (dataSnapshot == null || !dataSnapshot.hasChild(eventId)) {
-                            Observable.timer(100, TimeUnit.MILLISECONDS)
-                                    .map { PartialMeetPeopleViewState.BlankEventProfileState(true) }
-                                    .startWith(PartialMeetPeopleViewState.BlankEventProfileState())
-                                    .subscribe(stateSubject)
+                            PartialMeetPeopleViewState.BlankEventProfileState()
+                            PartialMeetPeopleViewState.BlankEventProfileState(true)
                         }
                     }
 
@@ -172,9 +169,7 @@ class MeetPeopleInteractor : BaseProfileInteractor() {
     }
 
     private fun emitError(stateSubject: Subject<PartialMeetPeopleViewState>) {
-        Observable.timer(100, TimeUnit.MILLISECONDS)
-                .map { PartialMeetPeopleViewState.ErrorState(true) }
-                .startWith(PartialMeetPeopleViewState.ErrorState())
-                .subscribe(stateSubject)
+        stateSubject.onNext(PartialMeetPeopleViewState.ErrorState())
+        stateSubject.onNext(PartialMeetPeopleViewState.ErrorState(true))
     }
 }

@@ -18,7 +18,6 @@ import io.reactivex.functions.Function4
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import java.io.File
-import java.util.concurrent.TimeUnit
 
 class EventProfileInteractor : BaseProfileInteractor() {
 
@@ -126,30 +125,25 @@ class EventProfileInteractor : BaseProfileInteractor() {
     }
 
     private fun emitSuccessfulFetchState(eventProfileData: EventProfileData): Observable<PartialEventProfileViewState> {
-        return Observable.timer(100, TimeUnit.MILLISECONDS)
-                .map { PartialEventProfileViewState.SuccessfulFetchState(eventProfileData, false) }
+        return Observable.just(PartialEventProfileViewState.SuccessfulFetchState(eventProfileData, false))
                 .startWith(PartialEventProfileViewState.SuccessfulFetchState(eventProfileData, true))
                 as Observable<PartialEventProfileViewState>
     }
 
     private fun emitSuccessfulUpdateState(): Observable<PartialEventProfileViewState> {
-        return Observable.timer(100, TimeUnit.MILLISECONDS)
-                .map { PartialEventProfileViewState.SuccessfulUpdateState(true) }
+        return Observable.just(PartialEventProfileViewState.SuccessfulUpdateState(true))
                 .startWith(PartialEventProfileViewState.SuccessfulUpdateState())
                 as Observable<PartialEventProfileViewState>
     }
 
     private fun emitError(): Observable<PartialEventProfileViewState> {
-        return Observable.timer(100, TimeUnit.MILLISECONDS)
-                .map { PartialEventProfileViewState.ErrorState(true) }
+        return Observable.just(PartialEventProfileViewState.ErrorState(true))
                 .startWith(PartialEventProfileViewState.ErrorState())
                 as Observable<PartialEventProfileViewState>
     }
 
     private fun emitError(resultSubject: Subject<PartialEventProfileViewState>) {
-        Observable.timer(100, TimeUnit.MILLISECONDS)
-                .map { PartialEventProfileViewState.ErrorState(true) }
-                .startWith(PartialEventProfileViewState.ErrorState())
-                .subscribe(resultSubject)
+        resultSubject.onNext(PartialEventProfileViewState.ErrorState())
+        resultSubject.onNext(PartialEventProfileViewState.ErrorState(true))
     }
 }

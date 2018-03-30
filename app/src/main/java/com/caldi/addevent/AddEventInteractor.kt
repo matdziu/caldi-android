@@ -14,7 +14,6 @@ import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
-import java.util.concurrent.TimeUnit
 
 class AddEventInteractor {
 
@@ -93,9 +92,7 @@ class AddEventInteractor {
     }
 
     private fun emitError(stateSubject: Subject<PartialAddEventViewState>) {
-        Observable.timer(100, TimeUnit.MILLISECONDS)
-                .map { PartialAddEventViewState.ErrorState(true) }
-                .startWith(PartialAddEventViewState.ErrorState())
-                .subscribe(stateSubject)
+        stateSubject.onNext(PartialAddEventViewState.ErrorState())
+        stateSubject.onNext(PartialAddEventViewState.ErrorState(true))
     }
 }

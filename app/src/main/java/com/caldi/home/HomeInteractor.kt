@@ -12,7 +12,6 @@ import com.google.firebase.database.ValueEventListener
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
-import java.util.concurrent.TimeUnit
 
 class HomeInteractor {
 
@@ -72,9 +71,7 @@ class HomeInteractor {
     }
 
     private fun emitError(stateSubject: Subject<PartialHomeViewState>) {
-        Observable.timer(100, TimeUnit.MILLISECONDS)
-                .map { PartialHomeViewState.ErrorState(true) }
-                .startWith(PartialHomeViewState.ErrorState())
-                .subscribe(stateSubject)
+        stateSubject.onNext(PartialHomeViewState.ErrorState())
+        stateSubject.onNext(PartialHomeViewState.ErrorState(true))
     }
 }

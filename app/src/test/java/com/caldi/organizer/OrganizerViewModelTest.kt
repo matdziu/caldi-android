@@ -22,7 +22,6 @@ class OrganizerViewModelTest {
 
     init {
         RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
-        RxJavaPlugins.setComputationSchedulerHandler { Schedulers.trampoline() }
 
         whenever(organizerInteractor.fetchEventInfo(any())).thenReturn(
                 Observable.just(PartialOrganizerViewState.EventInfoFetched(EventInfo("testEventName", "url/to/pic")))

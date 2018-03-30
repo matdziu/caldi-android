@@ -11,7 +11,6 @@ import com.google.firebase.database.ValueEventListener
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
-import java.util.concurrent.TimeUnit
 
 class ChatListInteractor {
 
@@ -35,9 +34,7 @@ class ChatListInteractor {
     }
 
     private fun emitError(stateSubject: Subject<PartialChatListViewState>) {
-        Observable.timer(100, TimeUnit.MILLISECONDS)
-                .map { PartialChatListViewState.ErrorState(true) }
-                .startWith(PartialChatListViewState.ErrorState())
-                .subscribe(stateSubject)
+        stateSubject.onNext(PartialChatListViewState.ErrorState())
+        stateSubject.onNext(PartialChatListViewState.ErrorState(true))
     }
 }

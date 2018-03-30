@@ -6,10 +6,8 @@ import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Observable
 import io.reactivex.android.plugins.RxAndroidPlugins
-import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
 import org.junit.Test
-import java.util.concurrent.TimeUnit
 
 class ChatListViewModelTest {
 
@@ -18,7 +16,6 @@ class ChatListViewModelTest {
 
     init {
         RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
-        RxJavaPlugins.setComputationSchedulerHandler { Schedulers.trampoline() }
     }
 
     @Test
@@ -41,8 +38,7 @@ class ChatListViewModelTest {
     @Test
     fun testChatListFetchingError() {
         whenever(chatListInteractor.fetchUserChatList(any())).thenReturn(
-                Observable.timer(100, TimeUnit.MILLISECONDS)
-                        .map { PartialChatListViewState.ErrorState(true) }
+                Observable.just(PartialChatListViewState.ErrorState(true))
                         .startWith(PartialChatListViewState.ErrorState())
                         as Observable<PartialChatListViewState>
         )

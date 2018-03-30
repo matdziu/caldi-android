@@ -11,7 +11,6 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
-import java.util.concurrent.TimeUnit
 
 
 class LoginInteractor {
@@ -25,10 +24,8 @@ class LoginInteractor {
                     if (task.isSuccessful) {
                         stateSubject.onNext(PartialLoginViewState.LoginSuccess())
                     } else {
-                        Observable.timer(100, TimeUnit.MILLISECONDS)
-                                .map { PartialLoginViewState.ErrorState(true) }
-                                .startWith(PartialLoginViewState.ErrorState())
-                                .subscribe(stateSubject)
+                        stateSubject.onNext(PartialLoginViewState.ErrorState())
+                        stateSubject.onNext(PartialLoginViewState.ErrorState(true))
                     }
                 })
         return stateSubject.observeOn(AndroidSchedulers.mainThread())
@@ -59,10 +56,8 @@ class LoginInteractor {
                     if (task.isSuccessful) {
                         stateSubject.onNext(PartialLoginViewState.LoginSuccess())
                     } else {
-                        Observable.timer(100, TimeUnit.MILLISECONDS)
-                                .map { PartialLoginViewState.ErrorState(true) }
-                                .startWith(PartialLoginViewState.ErrorState())
-                                .subscribe(stateSubject)
+                        stateSubject.onNext(PartialLoginViewState.ErrorState())
+                        stateSubject.onNext(PartialLoginViewState.ErrorState(true))
                     }
                 }
         return stateSubject.observeOn(AndroidSchedulers.mainThread())

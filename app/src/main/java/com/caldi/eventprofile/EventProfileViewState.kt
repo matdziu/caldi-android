@@ -2,7 +2,7 @@ package com.caldi.eventprofile
 
 import com.caldi.eventprofile.list.QuestionViewState
 
-data class EventProfileViewState(val successUpload: Boolean = false,
+data class EventProfileViewState(val updateSuccess: Boolean = false,
                                  val progress: Boolean = false,
                                  val error: Boolean = false,
                                  val dismissToast: Boolean = false,

@@ -5,7 +5,6 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
-import java.util.concurrent.TimeUnit
 
 
 class SignUpInteractor {
@@ -19,10 +18,8 @@ class SignUpInteractor {
                     if (task.isSuccessful) {
                         stateSubject.onNext(PartialSignUpViewState.SignUpSuccess())
                     } else {
-                        Observable.timer(100, TimeUnit.MILLISECONDS)
-                                .map { PartialSignUpViewState.ErrorState(true) }
-                                .startWith(PartialSignUpViewState.ErrorState())
-                                .subscribe(stateSubject)
+                        stateSubject.onNext(PartialSignUpViewState.ErrorState())
+                        stateSubject.onNext(PartialSignUpViewState.ErrorState(true))
                     }
                 })
         return stateSubject.observeOn(AndroidSchedulers.mainThread())

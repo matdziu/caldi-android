@@ -14,7 +14,6 @@ import com.google.firebase.database.ValueEventListener
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
-import java.util.concurrent.TimeUnit
 
 class OrganizerInteractor {
 
@@ -90,9 +89,7 @@ class OrganizerInteractor {
     }
 
     private fun emitError(stateSubject: Subject<PartialOrganizerViewState>) {
-        Observable.timer(100, TimeUnit.MILLISECONDS)
-                .map { PartialOrganizerViewState.ErrorState(true) }
-                .startWith(PartialOrganizerViewState.ErrorState())
-                .subscribe(stateSubject)
+        stateSubject.onNext(PartialOrganizerViewState.ErrorState())
+        stateSubject.onNext(PartialOrganizerViewState.ErrorState(true))
     }
 }

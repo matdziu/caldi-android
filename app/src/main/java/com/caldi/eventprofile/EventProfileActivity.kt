@@ -91,13 +91,15 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
         super.onStart()
         setNavigationSelection(R.id.event_profile_item)
         eventProfileViewModel.bind(this)
-        if (fetchEventProfile) triggerEventProfileFetchSubject.onNext(eventId)
+        if (fetchEventProfile) {
+            triggerEventProfileFetchSubject.onNext(eventId)
+            fetchEventProfile = false
+        }
     }
 
     override fun onStop() {
-        fetchEventProfile = false
-        hideSoftKeyboard()
         eventProfileViewModel.unbind()
+        hideSoftKeyboard()
         super.onStop()
     }
 
@@ -127,7 +129,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
 
     override fun emitEventProfileFetchingTrigger(): Observable<String> = triggerEventProfileFetchSubject
 
-    override fun emitInputData(): Observable<EventProfileData> {
+    override fun emitEventProfileData(): Observable<EventProfileData> {
         return RxView.clicks(saveProfileButton)
                 .map {
                     EventProfileData(eventUserNameEditText.text.toString(), questionsViewModel.getAnswerList(),
@@ -165,7 +167,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
                 eventUserNameEditText.setText(eventUserName)
             }
 
-            if (successUpload && !dismissToast) {
+            if (updateSuccess && !dismissToast) {
                 Toast.makeText(this@EventProfileActivity, getString(R.string.profile_updated), Toast.LENGTH_SHORT).show()
             }
             eventUserNameEditText.clearFocus()
