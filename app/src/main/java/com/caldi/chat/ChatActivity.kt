@@ -83,10 +83,12 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
         val imageUrl = intent.getStringExtra(CHAT_IMAGE_URL_KEY)
 
         chatInfoTextView.text = chatName
-        Picasso.get()
-                .load(imageUrl)
-                .placeholder(R.drawable.profile_picture_shape)
-                .into(chatInfoImageView)
+        if (imageUrl.isNotEmpty()) {
+            Picasso.get()
+                    .load(imageUrl)
+                    .placeholder(R.drawable.profile_picture_shape)
+                    .into(chatInfoImageView)
+        }
 
         chatViewModel = ViewModelProviders.of(this, chatViewModelFactory)[ChatViewModel::class.java]
 

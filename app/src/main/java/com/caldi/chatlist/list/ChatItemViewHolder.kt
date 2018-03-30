@@ -14,10 +14,12 @@ class ChatItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     fun bind(chatItem: ChatItem) {
         with(itemView) {
             chatItemTextView.text = chatItem.name
-            Picasso.get()
-                    .load(chatItem.imageUrl)
-                    .placeholder(R.drawable.profile_picture_shape)
-                    .into(chatItemImageView)
+            if (chatItem.imageUrl.isNotEmpty()) {
+                Picasso.get()
+                        .load(chatItem.imageUrl)
+                        .placeholder(R.drawable.profile_picture_shape)
+                        .into(chatItemImageView)
+            }
             setOnClickListener { ChatActivity.start(context, chatItem.chatId, chatItem.name, chatItem.imageUrl) }
         }
     }
