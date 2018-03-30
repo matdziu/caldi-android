@@ -46,12 +46,12 @@ class EventProfileViewModelTest {
                         progress = true),
                 EventProfileViewState(
                         eventUserName = "Matt the Android Dev",
-                        renderEventName = true,
+                        renderInputs = true,
                         questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
                                 "Looking for party!", "1"))),
                 EventProfileViewState(
                         eventUserName = "Matt the Android Dev",
-                        renderEventName = false,
+                        renderInputs = false,
                         questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
                                 "Looking for party!", "1")))
         )
@@ -87,22 +87,22 @@ class EventProfileViewModelTest {
                         progress = true),
                 EventProfileViewState(
                         eventUserName = "Matt the Android Dev",
-                        renderEventName = true,
+                        renderInputs = true,
                         questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
                                 "Looking for party!", "1"))),
                 EventProfileViewState(
                         eventUserName = "Matt the Android Dev",
-                        renderEventName = false,
+                        renderInputs = false,
                         questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
                                 "Looking for party!", "1"))),
                 EventProfileViewState(
                         eventUserName = "Matt the Android Dev",
-                        renderEventName = false,
+                        renderInputs = false,
                         questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
                                 " ", "1", false))),
                 EventProfileViewState(
                         eventUserName = " ",
-                        renderEventName = false,
+                        renderInputs = false,
                         eventUserNameValid = false,
                         questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
                                 "Looking for a party!", "1", true)))

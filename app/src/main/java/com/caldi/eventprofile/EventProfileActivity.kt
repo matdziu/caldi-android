@@ -160,8 +160,10 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
             showProgressBar(progress)
             showError(error, dismissToast)
             eventUserNameEditText.showError(!eventUserNameValid)
-            questionsAdapter.setQuestionsList(questionViewStateList)
-            if (eventProfileViewState.renderEventName) eventUserNameEditText.setText(eventUserName)
+            if (eventProfileViewState.renderInputs) {
+                questionsAdapter.setQuestionsList(questionViewStateList)
+                eventUserNameEditText.setText(eventUserName)
+            }
 
             if (successUpload && !dismissToast) {
                 Toast.makeText(this@EventProfileActivity, getString(R.string.profile_updated), Toast.LENGTH_SHORT).show()

@@ -8,6 +8,6 @@ data class EventProfileViewState(val successUpload: Boolean = false,
                                  val dismissToast: Boolean = false,
                                  val eventUserName: String = "",
                                  val eventUserNameValid: Boolean = true,
-                                 val renderEventName: Boolean = false,
+                                 val renderInputs: Boolean = false,
                                  val profilePictureUrl: String = "",
                                  val questionViewStateList: List<QuestionViewState> = arrayListOf())

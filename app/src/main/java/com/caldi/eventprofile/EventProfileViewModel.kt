@@ -12,7 +12,7 @@ import io.reactivex.subjects.BehaviorSubject
 class EventProfileViewModel(private val eventProfileInteractor: EventProfileInteractor) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
-    private val stateSubject = BehaviorSubject.create<PartialEventProfileViewState>()
+    private val stateSubject = BehaviorSubject.createDefault(EventProfileViewState())
     private var eventId: String = ""
 
     fun bind(eventProfileView: EventProfileView) {
@@ -35,12 +35,16 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
 
                     if (!eventUserNameValid || !eachAnswerValid) {
                         Observable.just(PartialEventProfileViewState.LocalValidation(it.eventUserName,
-                                eventUserNameValid, it.answerList, it.questionList))
+                                eventUserNameValid, it.answerList, it.questionList, false))
+                                .startWith(PartialEventProfileViewState.LocalValidation(it.eventUserName,
+                                        eventUserNameValid, it.answerList, it.questionList))
                     } else {
                         eventProfileInteractor.updateEventProfile(eventId, it)
                                 .startWith(listOf(
                                         PartialEventProfileViewState.LocalValidation(it.eventUserName,
                                                 eventUserNameValid, it.answerList, it.questionList),
+                                        PartialEventProfileViewState.LocalValidation(it.eventUserName,
+                                                eventUserNameValid, it.answerList, it.questionList, false),
                                         PartialEventProfileViewState.ProgressState()))
                     }
                 }
@@ -55,9 +59,10 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
                 fetchEventProfileObservable,
                 updateProfileObservable,
                 profilePictureFileObservable))
+                .scan(stateSubject.value, this::reduce)
                 .subscribeWith(stateSubject)
 
-        compositeDisposable.add(mergedObservable.scan(EventProfileViewState(), this::reduce)
+        compositeDisposable.add(mergedObservable
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ eventProfileView.render(it) }))
     }
@@ -78,7 +83,7 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
                         eventUserName = partialState.eventProfileData.eventUserName,
                         questionViewStateList = convertToQuestionViewStateList(partialState.eventProfileData.questionList,
                                 partialState.eventProfileData.answerList),
-                        renderEventName = partialState.renderEventName,
+                        renderInputs = partialState.renderInputs,
                         profilePictureUrl = partialState.eventProfileData.profilePictureUrl)
             is PartialEventProfileViewState.SuccessfulUpdateState ->
                 previousState.copy(
@@ -88,12 +93,15 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
                         dismissToast = partialState.dismissToast)
             is PartialEventProfileViewState.LocalValidation ->
                 previousState.copy(
+                        renderInputs = partialState.renderInputs,
+                        progress = false,
                         eventUserName = partialState.eventUserName,
                         eventUserNameValid = partialState.eventUserNameValid,
                         questionViewStateList = convertToQuestionViewStateList(partialState.questionList,
                                 partialState.answerList))
             is PartialEventProfileViewState.SuccessfulPictureUploadState ->
                 previousState.copy(
+                        renderInputs = false,
                         progress = false,
                         profilePictureUrl = partialState.pictureUrl
                 )
