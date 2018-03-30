@@ -1,9 +1,9 @@
 package com.caldi.eventprofile
 
-import com.caldi.eventprofile.list.QuestionViewState
 import com.caldi.common.models.Answer
-import com.caldi.eventprofile.models.EventProfileData
 import com.caldi.common.models.Question
+import com.caldi.eventprofile.list.QuestionViewState
+import com.caldi.eventprofile.models.EventProfileData
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
@@ -42,11 +42,16 @@ class EventProfileViewModelTest {
         eventProfileViewRobot.fetchEventProfile("geecon")
         eventProfileViewRobot.assertViewStates(
                 EventProfileViewState(),
-                EventProfileViewState(progress = true),
-                EventProfileViewState(eventUserName = "Matt the Android Dev", renderEventName = true,
+                EventProfileViewState(
+                        progress = true),
+                EventProfileViewState(
+                        eventUserName = "Matt the Android Dev",
+                        renderEventName = true,
                         questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
                                 "Looking for party!", "1"))),
-                EventProfileViewState(eventUserName = "Matt the Android Dev", renderEventName = false,
+                EventProfileViewState(
+                        eventUserName = "Matt the Android Dev",
+                        renderEventName = false,
                         questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
                                 "Looking for party!", "1")))
         )
@@ -78,17 +83,27 @@ class EventProfileViewModelTest {
         eventProfileViewRobot.emitInputData(eventProfileDataEmptyName)
         eventProfileViewRobot.assertViewStates(
                 EventProfileViewState(),
-                EventProfileViewState(progress = true),
-                EventProfileViewState(eventUserName = "Matt the Android Dev", renderEventName = true,
+                EventProfileViewState(
+                        progress = true),
+                EventProfileViewState(
+                        eventUserName = "Matt the Android Dev",
+                        renderEventName = true,
                         questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
                                 "Looking for party!", "1"))),
-                EventProfileViewState(eventUserName = "Matt the Android Dev", renderEventName = false,
+                EventProfileViewState(
+                        eventUserName = "Matt the Android Dev",
+                        renderEventName = false,
                         questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
                                 "Looking for party!", "1"))),
-                EventProfileViewState(eventUserName = "Matt the Android Dev", renderEventName = false,
+                EventProfileViewState(
+                        eventUserName = "Matt the Android Dev",
+                        renderEventName = false,
                         questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
                                 " ", "1", false))),
-                EventProfileViewState(eventUserName = " ", renderEventName = false, eventUserNameValid = false,
+                EventProfileViewState(
+                        eventUserName = " ",
+                        renderEventName = false,
+                        eventUserNameValid = false,
                         questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
                                 "Looking for a party!", "1", true)))
         )
@@ -108,11 +123,36 @@ class EventProfileViewModelTest {
         val eventProfileViewRobot = EventProfileViewRobot(eventProfileViewModel)
 
         eventProfileViewRobot.emitInputData(eventProfileData)
+
         eventProfileViewRobot.assertViewStates(
                 EventProfileViewState(),
-                EventProfileViewState(progress = true),
-                EventProfileViewState(successUpload = true, dismissToast = false),
-                EventProfileViewState(successUpload = true, dismissToast = true)
+                EventProfileViewState(
+                        eventUserName = "Matt the Android Dev",
+                        eventUserNameValid = true,
+                        questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
+                                "Looking for party!", "1", true))),
+                EventProfileViewState(
+                        progress = true,
+                        eventUserName = "Matt the Android Dev",
+                        eventUserNameValid = true,
+                        questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
+                                "Looking for party!", "1", true))),
+                EventProfileViewState(
+                        successUpload = true,
+                        dismissToast = false,
+                        progress = false,
+                        eventUserName = "Matt the Android Dev",
+                        eventUserNameValid = true,
+                        questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
+                                "Looking for party!", "1", true))),
+                EventProfileViewState(
+                        successUpload = true,
+                        dismissToast = true,
+                        progress = false,
+                        eventUserName = "Matt the Android Dev",
+                        eventUserNameValid = true,
+                        questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
+                                "Looking for party!", "1", true)))
         )
     }
 

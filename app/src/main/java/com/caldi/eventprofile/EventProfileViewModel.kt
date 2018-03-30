@@ -12,7 +12,7 @@ import io.reactivex.subjects.BehaviorSubject
 class EventProfileViewModel(private val eventProfileInteractor: EventProfileInteractor) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
-    private val stateSubject = BehaviorSubject.createDefault(EventProfileViewState())
+    private val stateSubject = BehaviorSubject.create<PartialEventProfileViewState>()
     private var eventId: String = ""
 
     fun bind(eventProfileView: EventProfileView) {
@@ -29,7 +29,7 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
                     var eachAnswerValid = true
 
                     for (answer in it.answerList) {
-                        answer.valid = !answer.answer.isBlank()
+                        answer.valid = answer.answer.isNotBlank()
                         if (!answer.valid) eachAnswerValid = false
                     }
 
@@ -38,7 +38,10 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
                                 eventUserNameValid, it.answerList, it.questionList))
                     } else {
                         eventProfileInteractor.updateEventProfile(eventId, it)
-                                .startWith(PartialEventProfileViewState.ProgressState())
+                                .startWith(listOf(
+                                        PartialEventProfileViewState.LocalValidation(it.eventUserName,
+                                                eventUserNameValid, it.answerList, it.questionList),
+                                        PartialEventProfileViewState.ProgressState()))
                     }
                 }
 
@@ -52,10 +55,9 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
                 fetchEventProfileObservable,
                 updateProfileObservable,
                 profilePictureFileObservable))
-                .scan(stateSubject.value, this::reduce)
                 .subscribeWith(stateSubject)
 
-        compositeDisposable.add(mergedObservable
+        compositeDisposable.add(mergedObservable.scan(EventProfileViewState(), this::reduce)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ eventProfileView.render(it) }))
     }
@@ -63,8 +65,14 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
     private fun reduce(previousState: EventProfileViewState, partialState: PartialEventProfileViewState)
             : EventProfileViewState {
         return when (partialState) {
-            is PartialEventProfileViewState.ProgressState -> EventProfileViewState(progress = true)
-            is PartialEventProfileViewState.ErrorState -> EventProfileViewState(error = true, dismissToast = partialState.dismissToast)
+            is PartialEventProfileViewState.ProgressState ->
+                previousState.copy(
+                        progress = true)
+            is PartialEventProfileViewState.ErrorState ->
+                previousState.copy(
+                        progress = false,
+                        error = true,
+                        dismissToast = partialState.dismissToast)
             is PartialEventProfileViewState.SuccessfulFetchState ->
                 EventProfileViewState(
                         eventUserName = partialState.eventProfileData.eventUserName,

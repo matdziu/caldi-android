@@ -128,10 +128,12 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
     override fun emitEventProfileFetchingTrigger(): Observable<String> = triggerEventProfileFetchSubject
 
     override fun emitInputData(): Observable<EventProfileData> {
-        return RxView.clicks(saveProfileButton).map {
-            EventProfileData(eventUserNameEditText.text.toString(), questionsViewModel.getAnswerList(),
-                    questionsViewModel.getQuestionList())
-        }
+        return RxView.clicks(saveProfileButton)
+                .map {
+                    EventProfileData(eventUserNameEditText.text.toString(), questionsViewModel.getAnswerList(),
+                            questionsViewModel.getQuestionList())
+                }
+                .doOnNext { hideSoftKeyboard() }
     }
 
     override fun emitProfilePictureFile(): Observable<File> = profilePictureFileSubject
@@ -163,7 +165,6 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
 
             if (successUpload && !dismissToast) {
                 Toast.makeText(this@EventProfileActivity, getString(R.string.profile_updated), Toast.LENGTH_SHORT).show()
-                finish()
             }
             eventUserNameEditText.clearFocus()
         }
