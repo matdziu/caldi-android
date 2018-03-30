@@ -59,11 +59,11 @@ class PersonProfileFragment : Fragment() {
     }
 
     private fun emitTagForDismiss(tag: String?) {
-        tag?.let { hostingActivity.dismissProfileSubject.onNext(it) }
+        tag?.let { hostingActivity.negativeMeetSubject.onNext(it) }
     }
 
     private fun emitTagForAccept(tag: String?) {
-        tag?.let { hostingActivity.acceptProfileSubject.onNext(it) }
+        tag?.let { hostingActivity.positiveMeetSubject.onNext(it) }
     }
 
     private fun render(personProfileViewState: PersonProfileViewState) {

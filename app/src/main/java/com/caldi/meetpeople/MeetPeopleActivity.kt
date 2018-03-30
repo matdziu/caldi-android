@@ -21,12 +21,9 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
 
     enum class ExitAnimDirection { LEFT, RIGHT }
 
-    val dismissProfileSubject: Subject<String> = PublishSubject.create()
-    val acceptProfileSubject: Subject<String> = PublishSubject.create()
-
     private val triggerProfilesFetchingSubject: Subject<Boolean> = PublishSubject.create()
-    private val positiveMetSubject: Subject<String> = PublishSubject.create()
-    private val negativeMeetSubject: Subject<String> = PublishSubject.create()
+    lateinit var positiveMeetSubject: Subject<String>
+    lateinit var negativeMeetSubject: Subject<String>
 
     private var fetchProfilesOnStart = true
 
@@ -44,14 +41,13 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
         super.onCreate(savedInstanceState)
 
         meetPeopleViewModel = ViewModelProviders.of(this, meetPeopleViewModelFactory)[MeetPeopleViewModel::class.java]
-
-        dismissProfileSubject.subscribe { removePersonProfileFragment(it, ExitAnimDirection.LEFT) }
-        acceptProfileSubject.subscribe { removePersonProfileFragment(it, ExitAnimDirection.RIGHT) }
     }
 
     override fun onStart() {
         super.onStart()
         setNavigationSelection(R.id.meet_people_item)
+        positiveMeetSubject = PublishSubject.create()
+        negativeMeetSubject = PublishSubject.create()
         meetPeopleViewModel.bind(this, eventId)
         if (fetchProfilesOnStart) {
             triggerProfilesFetchingSubject.onNext(true)
@@ -66,9 +62,13 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
 
     override fun emitProfilesFetchingTrigger(): Observable<Boolean> = triggerProfilesFetchingSubject
 
-    override fun emitPositiveMeet(): Observable<String> = positiveMetSubject
+    override fun emitPositiveMeet(): Observable<String> = positiveMeetSubject.doOnNext {
+        removePersonProfileFragment(it, ExitAnimDirection.RIGHT)
+    }
 
-    override fun emitNegativeMeet(): Observable<String> = negativeMeetSubject
+    override fun emitNegativeMeet(): Observable<String> = negativeMeetSubject.doOnNext {
+        removePersonProfileFragment(it, ExitAnimDirection.LEFT)
+    }
 
     override fun render(meetPeopleViewState: MeetPeopleViewState) {
         with(meetPeopleViewState) {
@@ -127,11 +127,9 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
         when (exitAnimDirection) {
             ExitAnimDirection.LEFT -> {
                 fragmentTransaction.setCustomAnimations(0, R.anim.left_exit)
-                negativeMeetSubject.onNext(userId)
             }
             ExitAnimDirection.RIGHT -> {
                 fragmentTransaction.setCustomAnimations(0, R.anim.right_exit)
-                positiveMetSubject.onNext(userId)
             }
         }
 
