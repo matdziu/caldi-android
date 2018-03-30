@@ -58,8 +58,6 @@ class OrganizerViewModelTest {
                         eventName = "testEventName",
                         eventImageUrl = "url/to/pic"),
                 OrganizerViewState(
-                        progress = true),
-                OrganizerViewState(
                         progress = true,
                         eventName = "testEventName",
                         eventImageUrl = "url/to/pic"))
@@ -80,7 +78,6 @@ class OrganizerViewModelTest {
         organizerViewRobot.assertViewStates(
                 OrganizerViewState(progress = true),
                 OrganizerViewState(messagesList = updatedMessagesList),
-                OrganizerViewState(progress = true),
                 OrganizerViewState(messagesList = updatedMessagesList)
         )
     }
@@ -100,7 +97,6 @@ class OrganizerViewModelTest {
         organizerViewRobot.assertViewStates(
                 OrganizerViewState(progress = true),
                 OrganizerViewState(messagesList = newMessagesList),
-                OrganizerViewState(progress = true),
                 OrganizerViewState(messagesList = newMessagesList)
         )
     }
@@ -118,7 +114,6 @@ class OrganizerViewModelTest {
         organizerViewRobot.startView("testEventId")
 
         organizerViewRobot.assertViewStates(
-                OrganizerViewState(progress = true),
                 OrganizerViewState(progress = true),
                 OrganizerViewState(progress = true),
                 OrganizerViewState(progress = true)
@@ -155,8 +150,6 @@ class OrganizerViewModelTest {
                         eventName = "testEventName",
                         eventImageUrl = "url/to/pic",
                         messagesList = updatedMessagesList),
-                OrganizerViewState(
-                        progress = true),
                 OrganizerViewState(
                         progress = false,
                         eventName = "testEventName",

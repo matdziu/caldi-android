@@ -8,7 +8,7 @@ import io.reactivex.subjects.BehaviorSubject
 class OrganizerViewModel(private val organizerInteractor: OrganizerInteractor) : ViewModel() {
 
     private val compositeDisposable = CompositeDisposable()
-    private val stateSubject = BehaviorSubject.create<PartialOrganizerViewState>()
+    private val stateSubject = BehaviorSubject.createDefault(OrganizerViewState(progress = true))
 
     fun bind(organizerView: OrganizerView, eventId: String) {
         val newMessagesListeningToggleObservable = organizerView.emitNewMessagesListeningToggle()
@@ -27,10 +27,10 @@ class OrganizerViewModel(private val organizerInteractor: OrganizerInteractor) :
                 newMessagesListeningToggleObservable,
                 eventInfoFetchTriggerObservable,
                 batchFetchTriggerObservable))
+                .scan(stateSubject.value, this::reduce)
                 .subscribeWith(stateSubject)
 
-        compositeDisposable.add(mergedObservable.scan(OrganizerViewState(progress = true), this::reduce)
-                .subscribe { organizerView.render(it) })
+        compositeDisposable.add(mergedObservable.subscribe { organizerView.render(it) })
     }
 
     private fun reduce(previousState: OrganizerViewState, partialState: PartialOrganizerViewState)
