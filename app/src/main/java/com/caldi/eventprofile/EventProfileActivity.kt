@@ -78,9 +78,13 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
                 .start(this)
     }
 
+    override fun onResume() {
+        super.onResume()
+        setNavigationSelection(R.id.event_profile_item)
+    }
+
     override fun onStart() {
         super.onStart()
-        setNavigationSelection(R.id.event_profile_item)
         eventProfileViewModel.bind(this)
         if (fetchEventProfile) {
             triggerEventProfileFetchSubject.onNext(eventId)

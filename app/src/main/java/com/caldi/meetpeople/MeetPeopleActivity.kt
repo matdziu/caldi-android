@@ -49,9 +49,13 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
         fetchProfilesOnStart = true
     }
 
+    override fun onResume() {
+        super.onResume()
+        setNavigationSelection(R.id.meet_people_item)
+    }
+
     override fun onStart() {
         super.onStart()
-        setNavigationSelection(R.id.meet_people_item)
         positiveMeetSubject = PublishSubject.create()
         negativeMeetSubject = PublishSubject.create()
         meetPeopleViewModel.bind(this, eventId)

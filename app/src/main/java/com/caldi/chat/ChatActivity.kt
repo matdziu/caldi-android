@@ -108,9 +108,13 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
         })
     }
 
+    override fun onResume() {
+        super.onResume()
+        setNavigationSelection(R.id.chat_item)
+    }
+
     override fun onStart() {
         super.onStart()
-        setNavigationSelection(R.id.chat_item)
         chatViewModel.bind(this, chatId)
         if (init) {
             newMessagesListeningToggleSubject.onNext(true)

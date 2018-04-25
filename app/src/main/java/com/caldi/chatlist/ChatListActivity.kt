@@ -47,9 +47,13 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
         fetchChatListOnStart = true
     }
 
+    override fun onResume() {
+        super.onResume()
+        setNavigationSelection(R.id.chat_item)
+    }
+
     override fun onStart() {
         super.onStart()
-        setNavigationSelection(R.id.chat_item)
         chatListViewModel.bind(this)
         if (fetchChatListOnStart) userChatListFetchTriggerSubject.onNext(eventId)
     }

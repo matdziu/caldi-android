@@ -87,9 +87,13 @@ class OrganizerActivity : BaseDrawerActivity(), OrganizerView {
         })
     }
 
+    override fun onResume() {
+        super.onResume()
+        setNavigationSelection(R.id.organizer_item)
+    }
+
     override fun onStart() {
         super.onStart()
-        setNavigationSelection(R.id.organizer_item)
         organizerViewModel.bind(this, eventId)
         if (init) {
             batchFetchTriggerSubject.onNext(getCurrentISODate())
