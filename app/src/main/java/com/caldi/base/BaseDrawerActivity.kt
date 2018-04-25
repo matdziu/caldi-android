@@ -54,10 +54,10 @@ open class BaseDrawerActivity : AppCompatActivity(), NavigationView.OnNavigation
             when (item.itemId) {
                 R.id.sign_out_item -> signOut()
                 R.id.events_item -> startActivity(Intent(this, HomeActivity::class.java))
-                R.id.event_profile_item -> EventProfileActivity.start(this, eventId)
+                R.id.event_profile_item -> startActivity(Intent(this, EventProfileActivity::class.java))
                 R.id.meet_people_item -> startActivity(Intent(this, MeetPeopleActivity::class.java))
                 R.id.chat_item -> startActivity(Intent(this, ChatListActivity::class.java))
-                R.id.organizer_item -> startActivity(Intent(this, OrganizerActivity::class.java))
+                R.id.organizer_item -> OrganizerActivity.start(this, eventId)
             }
             drawerLayout.closeDrawers()
             true

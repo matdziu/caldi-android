@@ -1,7 +1,6 @@
 package com.caldi.eventprofile
 
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
@@ -15,7 +14,6 @@ import android.widget.TextView
 import android.widget.Toast
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
-import com.caldi.constants.EVENT_ID_KEY
 import com.caldi.eventprofile.list.QuestionsAdapter
 import com.caldi.eventprofile.list.QuestionsViewModel
 import com.caldi.eventprofile.models.EventProfileData
@@ -55,22 +53,11 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
     @Inject
     lateinit var eventProfileViewModelFactory: EventProfileViewModelFactory
 
-    companion object {
-
-        fun start(context: Context, eventId: String) {
-            val intent = Intent(context, EventProfileActivity::class.java)
-            intent.putExtra(EVENT_ID_KEY, eventId)
-            context.startActivity(intent)
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         setContentView(R.layout.activity_event_profile)
         super.onCreate(savedInstanceState)
         setPromptText()
-
-        eventId = intent.getStringExtra(EVENT_ID_KEY)
 
         eventProfileViewModel = ViewModelProviders.of(this, eventProfileViewModelFactory)[EventProfileViewModel::class.java]
         questionsViewModel = ViewModelProviders.of(this)[QuestionsViewModel::class.java]

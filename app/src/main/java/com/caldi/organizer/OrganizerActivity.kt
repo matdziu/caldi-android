@@ -1,6 +1,8 @@
 package com.caldi.organizer
 
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -8,6 +10,7 @@ import android.view.View
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
 import com.caldi.common.utils.MessagesAdapterObserver
+import com.caldi.constants.EVENT_ID_KEY
 import com.caldi.extensions.getCurrentISODate
 import com.caldi.factories.OrganizerViewModelFactory
 import com.caldi.organizer.list.MessagesAdapter
@@ -50,10 +53,21 @@ class OrganizerActivity : BaseDrawerActivity(), OrganizerView {
     @Inject
     lateinit var organizerViewModelFactory: OrganizerViewModelFactory
 
+    companion object {
+
+        fun start(context: Context, eventId: String) {
+            val intent = Intent(context, OrganizerActivity::class.java)
+            intent.putExtra(EVENT_ID_KEY, eventId)
+            context.startActivity(intent)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         setContentView(R.layout.activity_organizer)
         super.onCreate(savedInstanceState)
+
+        eventId = intent.getStringExtra(EVENT_ID_KEY)
 
         organizerViewModel = ViewModelProviders.of(this, organizerViewModelFactory)[OrganizerViewModel::class.java]
 
