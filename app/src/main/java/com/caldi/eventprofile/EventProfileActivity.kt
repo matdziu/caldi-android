@@ -68,11 +68,14 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
         questionsRecyclerView.adapter = questionsAdapter
         ViewCompat.setNestedScrollingEnabled(questionsRecyclerView, false)
 
-        uploadPhotoButton.setOnClickListener {
-            CropImage.activity()
-                    .setAspectRatio(1, 1)
-                    .start(this)
-        }
+        uploadPhotoButton.setOnClickListener { askForImage() }
+        profilePictureImageView.setOnClickListener { askForImage() }
+    }
+
+    private fun askForImage() {
+        CropImage.activity()
+                .setAspectRatio(1, 1)
+                .start(this)
     }
 
     override fun onStart() {
