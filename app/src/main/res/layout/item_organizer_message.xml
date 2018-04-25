@@ -3,17 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:gravity="end"
+    android:gravity="start"
     android:padding="8dp">
 
     <TextView
         android:id="@+id/organizerMessageTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/round_full_green_background"
+        android:background="@drawable/round_full_gray_background"
         android:maxWidth="250dp"
         android:padding="8dp"
-        android:textColor="@android:color/white"
+        android:textColor="@android:color/black"
         android:textSize="16dp"
         tools:text="Hello, how are you? I'm glad to meet you!" />
 
