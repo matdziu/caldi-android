@@ -19,6 +19,7 @@ import com.caldi.eventprofile.list.QuestionsViewModel
 import com.caldi.eventprofile.models.EventProfileData
 import com.caldi.extensions.hideSoftKeyboard
 import com.caldi.factories.EventProfileViewModelFactory
+import com.caldi.meetpeople.MeetPeopleActivity
 import com.jakewharton.rxbinding2.view.RxView
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
@@ -156,6 +157,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
 
             if (updateSuccess && !dismissToast) {
                 Toast.makeText(this@EventProfileActivity, getString(R.string.profile_updated), Toast.LENGTH_SHORT).show()
+                startActivity(Intent(this@EventProfileActivity, MeetPeopleActivity::class.java))
             }
             eventUserNameEditText.clearFocus()
         }
