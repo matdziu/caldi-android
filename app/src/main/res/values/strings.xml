@@ -3,9 +3,9 @@
     <string name="email_hint">Email</string>
     <string name="password_hint_sign_up">Password (min. 6 chars)</string>
     <string name="password_hint_login">Password</string>
-    <string name="sign_in_text">Sign in</string>
-    <string name="sign_in_with_google_text">Sign in with Google</string>
-    <string name="sign_in_with_facebook_text">Sign in with Facebook</string>
+    <string name="sign_in_text">Log in</string>
+    <string name="sign_in_with_google_text">Log in with Google</string>
+    <string name="sign_in_with_facebook_text">Log in with Facebook</string>
     <string name="login_error_text">Something went wrong :(</string>
     <string name="sign_up_error_text">Something went wrong :(</string>
     <string name="event_list_fetching_error">Something went wrong :(</string>
@@ -14,7 +14,7 @@
     <string name="facebook_app_id">392822507809930</string>
     <string name="fb_login_protocol_scheme">fb392822507809930</string>
     <string name="events_item_text">Your events</string>
-    <string name="sign_out_item_text">Sign out</string>
+    <string name="sign_out_item_text">Log out</string>
     <string name="drawer_opened">Drawer opened</string>
     <string name="drawer_closed">Drawer closed</string>
     <string name="add_event_prompt">Enter event code received from the organizer</string>
