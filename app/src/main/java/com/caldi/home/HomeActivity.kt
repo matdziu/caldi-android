@@ -3,12 +3,12 @@ package com.caldi.home
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.Toast
 import com.caldi.R
 import com.caldi.addevent.AddEventActivity
-import com.caldi.base.BaseDrawerActivity
 import com.caldi.constants.ADD_EVENT_REQUEST_CODE
 import com.caldi.factories.HomeViewModelFactory
 import com.caldi.home.list.EventsAdapter
@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.activity_home.eventsRecyclerView
 import kotlinx.android.synthetic.main.activity_home.progressBar
 import javax.inject.Inject
 
-class HomeActivity : BaseDrawerActivity(), HomeView {
+class HomeActivity : AppCompatActivity(), HomeView {
 
     private val eventsAdapter: EventsAdapter = EventsAdapter()
 
@@ -51,7 +51,6 @@ class HomeActivity : BaseDrawerActivity(), HomeView {
 
     override fun onStart() {
         super.onStart()
-        setNavigationSelection(R.id.events_item)
         homeViewModel.bind(this)
         eventsFetchTriggerObservable.onNext(forceEventsFetching)
     }

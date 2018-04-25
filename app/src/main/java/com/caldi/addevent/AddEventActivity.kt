@@ -3,6 +3,7 @@ package com.caldi.addevent
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatActivity
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
@@ -10,7 +11,6 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import com.caldi.R
-import com.caldi.base.BaseDrawerActivity
 import com.caldi.extensions.hideSoftKeyboard
 import com.caldi.factories.AddEventViewModelFactory
 import com.jakewharton.rxbinding2.view.RxView
@@ -23,7 +23,7 @@ import kotlinx.android.synthetic.main.activity_add_event.eventCodePromptTextView
 import kotlinx.android.synthetic.main.activity_add_event.progressBar
 import javax.inject.Inject
 
-class AddEventActivity : BaseDrawerActivity(), AddEventView {
+class AddEventActivity : AppCompatActivity(), AddEventView {
 
     private lateinit var addEventViewModel: AddEventViewModel
 
@@ -41,7 +41,6 @@ class AddEventActivity : BaseDrawerActivity(), AddEventView {
 
     override fun onStart() {
         super.onStart()
-        setNavigationSelection(R.id.events_item)
         addEventViewModel.bind(this)
     }
 
