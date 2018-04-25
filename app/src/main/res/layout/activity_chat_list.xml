@@ -38,6 +38,6 @@
         app:itemBackground="@drawable/navigation_item_background"
         app:itemIconTint="@android:color/white"
         app:itemTextColor="@android:color/white"
-        app:menu="@menu/menu_navigation_items" />
+        app:menu="@menu/menu_navigation_event" />
 
 </android.support.v4.widget.DrawerLayout>

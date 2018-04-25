@@ -3,12 +3,12 @@ package com.caldi.home
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.Toast
 import com.caldi.R
 import com.caldi.addevent.AddEventActivity
+import com.caldi.base.BaseOverflowActivity
 import com.caldi.constants.ADD_EVENT_REQUEST_CODE
 import com.caldi.factories.HomeViewModelFactory
 import com.caldi.home.list.EventsAdapter
@@ -21,7 +21,7 @@ import kotlinx.android.synthetic.main.activity_home.eventsRecyclerView
 import kotlinx.android.synthetic.main.activity_home.progressBar
 import javax.inject.Inject
 
-class HomeActivity : AppCompatActivity(), HomeView {
+class HomeActivity : BaseOverflowActivity(), HomeView {
 
     private val eventsAdapter: EventsAdapter = EventsAdapter()
 

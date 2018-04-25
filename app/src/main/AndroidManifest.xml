@@ -62,6 +62,10 @@
             android:screenOrientation="portrait" />
 
         <activity
+            android:name=".base.BaseOverflowActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".addevent.AddEventActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />

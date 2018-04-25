@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import com.caldi.R
+import com.caldi.base.BaseOverflowActivity
 import com.caldi.extensions.hideSoftKeyboard
 import com.caldi.factories.AddEventViewModelFactory
 import com.jakewharton.rxbinding2.view.RxView
@@ -23,7 +24,7 @@ import kotlinx.android.synthetic.main.activity_add_event.eventCodePromptTextView
 import kotlinx.android.synthetic.main.activity_add_event.progressBar
 import javax.inject.Inject
 
-class AddEventActivity : AppCompatActivity(), AddEventView {
+class AddEventActivity : BaseOverflowActivity(), AddEventView {
 
     private lateinit var addEventViewModel: AddEventViewModel
 
