@@ -5,10 +5,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.caldi.R
 
-class QuestionsAdapter(private val questionsViewModel: QuestionsViewModel)
-    : RecyclerView.Adapter<QuestionViewHolder>() {
+class QuestionsAdapter : RecyclerView.Adapter<QuestionViewHolder>() {
 
-    override fun getItemCount(): Int = questionsViewModel.getItemCount()
+    private val questionViewStates = arrayListOf<QuestionViewState>()
+    val answers: HashMap<String, String> = hashMapOf()
+
+    override fun getItemCount(): Int = questionViewStates.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuestionViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_event_question,
@@ -17,12 +19,13 @@ class QuestionsAdapter(private val questionsViewModel: QuestionsViewModel)
     }
 
     override fun onBindViewHolder(holder: QuestionViewHolder, position: Int) {
-        questionsViewModel.bind(holder, position)
+        holder.bind(questionViewStates[position]).subscribe { answers[it.first] = it.second }
     }
 
-    fun setQuestionsList(questionViewStatesList: List<QuestionViewState>) {
-        if (questionViewStatesList.isNotEmpty() && questionViewStatesList != questionsViewModel.defaultViewStateList) {
-            questionsViewModel.setQuestionItemStateList(questionViewStatesList)
+    fun setQuestionViewStates(questionViewStates: List<QuestionViewState>) {
+        if (questionViewStates.isNotEmpty()) {
+            this.questionViewStates.clear()
+            this.questionViewStates.addAll(questionViewStates)
             notifyDataSetChanged()
         }
     }

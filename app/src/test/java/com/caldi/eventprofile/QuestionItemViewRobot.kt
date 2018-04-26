@@ -1,9 +1,7 @@
 package com.caldi.eventprofile
 
 import com.caldi.base.BaseViewRobot
-import com.caldi.eventprofile.list.QuestionItemView
 import com.caldi.eventprofile.list.QuestionViewState
-import com.caldi.eventprofile.list.QuestionsViewModel
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 
@@ -11,9 +9,9 @@ class QuestionItemViewRobot(private val questionsViewModel: QuestionsViewModel) 
 
     private val userInputObservable = PublishSubject.create<String>()
 
-    private val questionItemView = object : QuestionItemView {
+    private val questionItemView = object {
 
-        override fun defaultRender(questionViewState: QuestionViewState) {
+        override fun bind(questionViewState: QuestionViewState) {
             renderedStates.add(questionViewState)
         }
 

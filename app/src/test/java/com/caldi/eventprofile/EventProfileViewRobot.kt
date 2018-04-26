@@ -1,7 +1,7 @@
 package com.caldi.eventprofile
 
 import com.caldi.base.BaseViewRobot
-import com.caldi.eventprofile.models.EventProfileData
+import com.caldi.common.models.EventProfileData
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import java.io.File

@@ -14,9 +14,8 @@ import android.widget.TextView
 import android.widget.Toast
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
+import com.caldi.common.models.EventProfileData
 import com.caldi.eventprofile.list.QuestionsAdapter
-import com.caldi.eventprofile.list.QuestionsViewModel
-import com.caldi.eventprofile.models.EventProfileData
 import com.caldi.extensions.hideSoftKeyboard
 import com.caldi.factories.EventProfileViewModelFactory
 import com.caldi.meetpeople.MeetPeopleActivity
@@ -44,13 +43,14 @@ import javax.inject.Inject
 class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
 
     private lateinit var eventProfileViewModel: EventProfileViewModel
-    private lateinit var questionsViewModel: QuestionsViewModel
 
-    private lateinit var questionsAdapter: QuestionsAdapter
+    private val questionsAdapter = QuestionsAdapter()
 
     private var fetchEventProfile = true
     private val triggerEventProfileFetchSubject = PublishSubject.create<String>()
     private val profilePictureFileSubject = PublishSubject.create<File>()
+
+    private var currentProfilePictureUrl = ""
 
     @Inject
     lateinit var eventProfileViewModelFactory: EventProfileViewModelFactory
@@ -62,9 +62,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
         setPromptText()
 
         eventProfileViewModel = ViewModelProviders.of(this, eventProfileViewModelFactory)[EventProfileViewModel::class.java]
-        questionsViewModel = ViewModelProviders.of(this)[QuestionsViewModel::class.java]
 
-        questionsAdapter = QuestionsAdapter(questionsViewModel)
         questionsRecyclerView.layoutManager = LinearLayoutManager(this)
         questionsRecyclerView.adapter = questionsAdapter
         ViewCompat.setNestedScrollingEnabled(questionsRecyclerView, false)
@@ -130,9 +128,9 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
                 .map {
                     EventProfileData(
                             eventUserName = eventUserNameEditText.text.toString(),
-                            answerList = questionsViewModel.getAnswerList(),
-                            questionList = questionsViewModel.getQuestionList(),
-                            userLinkUrl = userLinkEditText.text.toString())
+                            userLinkUrl = userLinkEditText.text.toString(),
+                            answers = questionsAdapter.answers,
+                            profilePictureUrl = currentProfilePictureUrl)
                 }
                 .doOnNext { hideSoftKeyboard() }
     }
@@ -142,6 +140,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
     override fun render(eventProfileViewState: EventProfileViewState) {
         with(eventProfileViewState) {
             if (profilePictureUrl.isNotBlank()) {
+                currentProfilePictureUrl = profilePictureUrl
                 profilePictureImageView.adjustViewBounds = false
                 loadingPhotoTextView.visibility = View.VISIBLE
                 Picasso.get().load(profilePictureUrl).placeholder(R.drawable.profile_picture_shape)
@@ -162,7 +161,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
             showError(error, dismissToast)
             eventUserNameEditText.showError(!eventUserNameValid)
             if (eventProfileViewState.renderInputs) {
-                questionsAdapter.setQuestionsList(questionViewStateList)
+                questionsAdapter.setQuestionViewStates(questionViewStates)
                 eventUserNameEditText.setText(eventUserName)
                 userLinkEditText.setText(userLinkUrl)
             }

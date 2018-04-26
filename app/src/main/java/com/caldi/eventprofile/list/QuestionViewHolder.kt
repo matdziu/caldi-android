@@ -7,15 +7,12 @@ import io.reactivex.Observable
 import kotlinx.android.synthetic.main.item_event_question.view.questionEditText
 import kotlinx.android.synthetic.main.item_event_question.view.questionTextView
 
-class QuestionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), QuestionItemView {
+class QuestionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    override fun defaultRender(questionViewState: QuestionViewState) {
+    fun bind(questionViewState: QuestionViewState): Observable<Pair<String, String>> {
         itemView.questionTextView.text = questionViewState.questionText
         itemView.questionEditText.setText(questionViewState.answerText)
         itemView.questionEditText.showError(!questionViewState.answerValid)
-    }
-
-    override fun emitUserInput(): Observable<String> {
-        return RxTextView.textChanges(itemView.questionEditText).map { it.toString() }
+        return RxTextView.textChanges(itemView.questionEditText).map { Pair(questionViewState.questionId, it.toString()) }
     }
 }

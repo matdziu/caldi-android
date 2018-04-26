@@ -1,10 +1,7 @@
 package com.caldi.eventprofile
 
 import android.arch.lifecycle.ViewModel
-import com.caldi.common.models.Answer
-import com.caldi.common.models.Question
 import com.caldi.eventprofile.list.QuestionViewState
-import com.caldi.eventprofile.models.EventProfileData
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -26,19 +23,28 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
 
         val updateProfileObservable = eventProfileView.emitEventProfileData()
                 .flatMap {
-                    it.eventUserNameValid = it.eventUserName.isNotBlank()
-
+                    val eventUserNameValid = it.eventUserName.isNotBlank()
+                    val answerValidMap = hashMapOf<String, Boolean>()
                     var eachAnswerValid = true
-                    for (answer in it.answerList) {
-                        answer.valid = answer.answer.isNotBlank()
-                        if (!answer.valid) eachAnswerValid = false
+
+                    for ((questionId, answer) in it.answers) {
+                        val isAnswerValid = answer.isNotBlank()
+                        answerValidMap[questionId] = isAnswerValid
+                        if (!isAnswerValid) eachAnswerValid = false
                     }
 
-                    if (!it.eventUserNameValid || !eachAnswerValid) {
-                        getLocalValidationStateObservable(it)
+                    val localValidationState = PartialEventProfileViewState.LocalValidation(
+                            eventUserNameValid = eventUserNameValid,
+                            answerValidMap = answerValidMap,
+                            renderInputs = false
+                    )
+
+                    if (!eventUserNameValid || !eachAnswerValid) {
+                        Observable.just(localValidationState)
+                                .startWith(localValidationState.copy(renderInputs = true))
                     } else {
                         Observable.concat(
-                                getLocalValidationStateObservable(it),
+                                Observable.just(localValidationState),
                                 eventProfileInteractor.updateEventProfile(eventId, it)
                                         .startWith(PartialEventProfileViewState.ProgressState())
                         )
@@ -63,19 +69,6 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
                 .subscribe({ eventProfileView.render(it) }))
     }
 
-    private fun getLocalValidationStateObservable(eventProfileData: EventProfileData)
-            : Observable<PartialEventProfileViewState.LocalValidation> {
-        val localValidationState = with(eventProfileData) {
-            PartialEventProfileViewState.LocalValidation(eventUserName,
-                    userLinkUrl,
-                    eventUserNameValid,
-                    answerList,
-                    questionList, false)
-        }
-        return Observable.just(localValidationState)
-                .startWith(localValidationState.copy(renderInputs = true))
-    }
-
     private fun reduce(previousState: EventProfileViewState, partialState: PartialEventProfileViewState)
             : EventProfileViewState {
         return when (partialState) {
@@ -90,10 +83,9 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
             is PartialEventProfileViewState.SuccessfulFetchState ->
                 EventProfileViewState(
                         eventUserName = partialState.eventProfileData.eventUserName,
-                        userLinkUrl = partialState.eventProfileData.userLinkUrl,
-                        questionViewStateList = convertToQuestionViewStateList(partialState.eventProfileData.questionList,
-                                partialState.eventProfileData.answerList),
                         profilePictureUrl = partialState.eventProfileData.profilePictureUrl,
+                        userLinkUrl = partialState.eventProfileData.userLinkUrl,
+                        questionViewStates = convertToQuestionViewStates(partialState.questions, partialState.eventProfileData.answers),
                         renderInputs = partialState.renderInputs)
             is PartialEventProfileViewState.SuccessfulUpdateState ->
                 previousState.copy(
@@ -104,27 +96,35 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
             is PartialEventProfileViewState.LocalValidation ->
                 previousState.copy(
                         progress = false,
-                        eventUserName = partialState.eventUserName,
-                        userLinkUrl = partialState.userLinkUrl,
+                        questionViewStates = applyValidationToQuestionViewStates(previousState.questionViewStates, partialState.answerValidMap),
                         eventUserNameValid = partialState.eventUserNameValid,
-                        questionViewStateList = convertToQuestionViewStateList(partialState.questionList,
-                                partialState.answerList),
                         renderInputs = partialState.renderInputs)
             is PartialEventProfileViewState.SuccessfulPictureUploadState ->
                 previousState.copy(
-                        progress = false,
-                        profilePictureUrl = partialState.pictureUrl
+                        profilePictureUrl = partialState.profilePictureUrl,
+                        progress = false
                 )
         }
     }
 
-    private fun convertToQuestionViewStateList(questionList: List<Question>, answerList: List<Answer>)
-            : List<QuestionViewState> {
-        val answersMap = answerList.map { it.questionId to it }.toMap()
-        return questionList.map {
-            val currentAnswer = answersMap[it.id] ?: Answer()
-            QuestionViewState(it.question, currentAnswer.answer, it.id, currentAnswer.valid)
+    private fun convertToQuestionViewStates(questions: Map<String, String>,
+                                            answers: Map<String, String>): List<QuestionViewState> {
+        val questionViewStates = arrayListOf<QuestionViewState>()
+        for ((questionId, questionText) in questions) {
+            questionViewStates.add(QuestionViewState(questionText,
+                    answers[questionId] ?: "", questionId))
         }
+        return questionViewStates
+    }
+
+    private fun applyValidationToQuestionViewStates(questionViewStates: List<QuestionViewState>,
+                                                    answerValidMap: Map<String, Boolean>): List<QuestionViewState> {
+        val validatedQuestionViewStates = arrayListOf<QuestionViewState>()
+        for (questionViewState in questionViewStates) {
+            validatedQuestionViewStates.add(questionViewState.copy(
+                    answerValid = answerValidMap[questionViewState.questionId] ?: false))
+        }
+        return validatedQuestionViewStates
     }
 
     fun unbind() {

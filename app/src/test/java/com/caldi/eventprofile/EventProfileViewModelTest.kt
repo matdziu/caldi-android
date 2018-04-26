@@ -3,7 +3,7 @@ package com.caldi.eventprofile
 import com.caldi.common.models.Answer
 import com.caldi.common.models.Question
 import com.caldi.eventprofile.list.QuestionViewState
-import com.caldi.eventprofile.models.EventProfileData
+import com.caldi.common.models.EventProfileData
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever

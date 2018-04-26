@@ -1,6 +1,6 @@
 package com.caldi.eventprofile
 
-import com.caldi.eventprofile.models.EventProfileData
+import com.caldi.common.models.EventProfileData
 import io.reactivex.Observable
 import java.io.File
 

@@ -1,7 +1,6 @@
 package com.caldi.eventprofile
 
 import com.caldi.eventprofile.list.QuestionViewState
-import com.caldi.eventprofile.list.QuestionsViewModel
 import com.caldi.common.models.Answer
 import com.caldi.common.models.Question
 import junit.framework.Assert.assertEquals
