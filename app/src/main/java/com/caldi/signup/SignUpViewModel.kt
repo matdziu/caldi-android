@@ -15,16 +15,12 @@ class SignUpViewModel(private val signUpInteractor: SignUpInteractor) : ViewMode
                 .flatMap { inputData ->
                     val trimmedEmail = inputData.email.trim()
                     val trimmedPassword = inputData.password.trim()
-                    val trimmedRepeatPassword = inputData.repeatPassword.trim()
 
                     val emailValid = !trimmedEmail.isBlank() && !trimmedEmail.contains(" ")
                     val passwordValid = trimmedPassword.length >= 6 && !trimmedPassword.contains(" ")
-                    val repeatPasswordValid = !trimmedRepeatPassword.isBlank()
-                            && trimmedPassword == trimmedRepeatPassword
 
-                    return@flatMap if (!emailValid || !passwordValid || !repeatPasswordValid) {
-                        Observable.just(PartialSignUpViewState.LocalValidation(emailValid,
-                                passwordValid, repeatPasswordValid))
+                    return@flatMap if (!emailValid || !passwordValid) {
+                        Observable.just(PartialSignUpViewState.LocalValidation(emailValid, passwordValid))
                     } else {
                         signUpInteractor.createAccount(trimmedEmail, trimmedPassword)
                                 .startWith(PartialSignUpViewState.InProgressState())
@@ -39,10 +35,13 @@ class SignUpViewModel(private val signUpInteractor: SignUpInteractor) : ViewMode
     private fun reduce(previousState: SignUpViewState, partialState: PartialSignUpViewState)
             : SignUpViewState {
         return when (partialState) {
-            is PartialSignUpViewState.LocalValidation -> SignUpViewState(emailValid = partialState.emailValid,
-                    passwordValid = partialState.passwordValid, repeatPasswordValid = partialState.repeatPasswordValid)
+            is PartialSignUpViewState.LocalValidation -> SignUpViewState(
+                    emailValid = partialState.emailValid,
+                    passwordValid = partialState.passwordValid)
             is PartialSignUpViewState.InProgressState -> SignUpViewState(true)
-            is PartialSignUpViewState.ErrorState -> SignUpViewState(error = true, dismissToast = partialState.dismissToast)
+            is PartialSignUpViewState.ErrorState -> SignUpViewState(
+                    error = true,
+                    dismissToast = partialState.dismissToast)
             is PartialSignUpViewState.SignUpSuccess -> SignUpViewState(signUpSuccess = true)
         }
     }

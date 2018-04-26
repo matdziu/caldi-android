@@ -18,7 +18,6 @@ import kotlinx.android.synthetic.main.activity_sign_up.createAccountButton
 import kotlinx.android.synthetic.main.activity_sign_up.emailEditText
 import kotlinx.android.synthetic.main.activity_sign_up.passwordEditText
 import kotlinx.android.synthetic.main.activity_sign_up.progressBar
-import kotlinx.android.synthetic.main.activity_sign_up.repeatPasswordEditText
 import javax.inject.Inject
 
 class SignUpActivity : AppCompatActivity(), SignUpView {
@@ -48,8 +47,7 @@ class SignUpActivity : AppCompatActivity(), SignUpView {
     override fun emitInput(): Observable<InputData> {
         return RxView.clicks(createAccountButton).map {
             InputData(emailEditText.text.toString(),
-                    passwordEditText.text.toString(),
-                    repeatPasswordEditText.text.toString())
+                    passwordEditText.text.toString())
         }
     }
 
@@ -68,7 +66,6 @@ class SignUpActivity : AppCompatActivity(), SignUpView {
         showProgress(signUpViewState.inProgress)
         emailEditText.showError(!signUpViewState.emailValid)
         passwordEditText.showError(!signUpViewState.passwordValid)
-        repeatPasswordEditText.showError(!signUpViewState.repeatPasswordValid)
 
         if (signUpViewState.error && !signUpViewState.dismissToast) {
             Toast.makeText(this, getString(R.string.sign_up_error_text), Toast.LENGTH_SHORT).show()
@@ -76,7 +73,7 @@ class SignUpActivity : AppCompatActivity(), SignUpView {
 
         if (signUpViewState.signUpSuccess) {
             val intent = Intent(this, HomeActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             startActivity(intent)
             finish()
         }

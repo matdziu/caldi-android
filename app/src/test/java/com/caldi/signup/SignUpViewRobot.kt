@@ -22,7 +22,7 @@ class SignUpViewRobot(signUpViewModel: SignUpViewModel) : BaseViewRobot<SignUpVi
         signUpViewModel.bind(signUpView)
     }
 
-    fun clickCreateAccountButton(email: String, password: String, repeatPassword: String) {
-        inputObservable.onNext(InputData(email, password, repeatPassword))
+    fun clickCreateAccountButton(email: String, password: String) {
+        inputObservable.onNext(InputData(email, password))
     }
 }

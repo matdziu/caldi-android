@@ -16,7 +16,7 @@ class SignUpViewModelTest {
         val signUpViewRobot = SignUpViewRobot(signUpViewModel)
         whenever(signUpInteractor.createAccount(any(), any())).thenReturn(Observable.just(PartialSignUpViewState.SignUpSuccess()))
 
-        signUpViewRobot.clickCreateAccountButton("test@test.com", "qwerty", "qwerty")
+        signUpViewRobot.clickCreateAccountButton("test@test.com", "qwerty")
 
         signUpViewRobot.assertViewStates(SignUpViewState(),
                 SignUpViewState(inProgress = true),
@@ -27,22 +27,12 @@ class SignUpViewModelTest {
     fun testWithEmptyInput() {
         val signUpViewRobot = SignUpViewRobot(signUpViewModel)
 
-        signUpViewRobot.clickCreateAccountButton(" ", "\n", " ")
-        signUpViewRobot.clickCreateAccountButton("test@test", "\n", " ")
+        signUpViewRobot.clickCreateAccountButton(" ", "\n")
+        signUpViewRobot.clickCreateAccountButton("test@test", "\n")
 
         signUpViewRobot.assertViewStates(SignUpViewState(),
-                SignUpViewState(emailValid = false, passwordValid = false, repeatPasswordValid = false),
-                SignUpViewState(passwordValid = false, repeatPasswordValid = false))
-    }
-
-    @Test
-    fun testWithDifferentPasswords() {
-        val signUpViewRobot = SignUpViewRobot(signUpViewModel)
-
-        signUpViewRobot.clickCreateAccountButton("test@test.com", "qwerty", "qwerty1")
-
-        signUpViewRobot.assertViewStates(SignUpViewState(),
-                SignUpViewState(repeatPasswordValid = false))
+                SignUpViewState(emailValid = false, passwordValid = false),
+                SignUpViewState(passwordValid = false))
     }
 
     @Test
@@ -50,7 +40,7 @@ class SignUpViewModelTest {
         val signUpViewRobot = SignUpViewRobot(signUpViewModel)
         whenever(signUpInteractor.createAccount(any(), any())).thenReturn(Observable.just(PartialSignUpViewState.ErrorState()))
 
-        signUpViewRobot.clickCreateAccountButton("test@test.com", "qwerty", "qwerty")
+        signUpViewRobot.clickCreateAccountButton("test@test.com", "qwerty")
 
         signUpViewRobot.assertViewStates(SignUpViewState(),
                 SignUpViewState(inProgress = true),
