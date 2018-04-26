@@ -7,7 +7,6 @@ import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Observable
 import io.reactivex.android.plugins.RxAndroidPlugins
-import io.reactivex.plugins.RxJavaPlugins
 import io.reactivex.schedulers.Schedulers
 import org.junit.Test
 
@@ -24,7 +23,8 @@ class OrganizerViewModelTest {
         RxAndroidPlugins.setInitMainThreadSchedulerHandler { Schedulers.trampoline() }
 
         whenever(organizerInteractor.fetchEventInfo(any())).thenReturn(
-                Observable.just(PartialOrganizerViewState.EventInfoFetched(EventInfo("testEventName", "url/to/pic")))
+                Observable.just(PartialOrganizerViewState.EventInfoFetched(EventInfo("testEventName",
+                        "url/to/pic", "url/to/event")))
         )
         whenever(organizerInteractor.fetchMessagesBatch(any(), any())).thenReturn(
                 Observable.just(PartialOrganizerViewState.MessagesListChanged(updatedMessagesList))
@@ -55,11 +55,13 @@ class OrganizerViewModelTest {
                 OrganizerViewState(
                         progress = true,
                         eventName = "testEventName",
-                        eventImageUrl = "url/to/pic"),
+                        eventImageUrl = "url/to/pic",
+                        eventUrl = "url/to/event"),
                 OrganizerViewState(
                         progress = true,
                         eventName = "testEventName",
-                        eventImageUrl = "url/to/pic"))
+                        eventImageUrl = "url/to/pic",
+                        eventUrl = "url/to/event"))
     }
 
     @Test
@@ -148,11 +150,13 @@ class OrganizerViewModelTest {
                         progress = false,
                         eventName = "testEventName",
                         eventImageUrl = "url/to/pic",
+                        eventUrl = "url/to/event",
                         messagesList = updatedMessagesList),
                 OrganizerViewState(
                         progress = false,
                         eventName = "testEventName",
                         eventImageUrl = "url/to/pic",
+                        eventUrl = "url/to/event",
                         messagesList = updatedMessagesList)
         )
     }

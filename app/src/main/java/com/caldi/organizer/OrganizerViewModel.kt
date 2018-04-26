@@ -38,7 +38,8 @@ class OrganizerViewModel(private val organizerInteractor: OrganizerInteractor) :
         return when (partialState) {
             is PartialOrganizerViewState.EventInfoFetched -> previousState.copy(
                     eventName = partialState.eventInfo.name,
-                    eventImageUrl = partialState.eventInfo.imageUrl)
+                    eventImageUrl = partialState.eventInfo.imageUrl,
+                    eventUrl = partialState.eventInfo.eventUrl)
             is PartialOrganizerViewState.NewMessagesListenerRemoved -> previousState
             is PartialOrganizerViewState.ErrorState -> previousState.copy(
                     error = true,

@@ -3,6 +3,7 @@ package com.caldi.organizer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -127,8 +128,13 @@ class OrganizerActivity : BaseDrawerActivity(), OrganizerView {
             showProgressBar(progress)
             organizerInfoTextView.text = eventName
             loadEventImage(eventImageUrl)
+            organizerInfoView.setOnClickListener { openEventWebsite(eventUrl) }
             messagesAdapter.submitList(messagesList)
         }
+    }
+
+    private fun openEventWebsite(eventUrl: String) {
+        if (eventUrl.isNotEmpty()) startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(eventUrl)))
     }
 
     private fun loadEventImage(eventImageUrl: String) {
