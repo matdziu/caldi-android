@@ -28,7 +28,7 @@
     <string name="name_edit_text_hint">Your name for this event</string>
     <string name="create_profile_prompt">Create your profile for this event</string>
     <string name="create_profile_words_to_be_colored">this event</string>
-    <string name="upload_photo_text">Upload photo</string>
+    <string name="upload_photo_text">Upload photo (optional)</string>
     <string name="save_profile_text">Save profile</string>
     <string name="error_event_profile_text">Something went wrong :(</string>
     <string name="profile_updated">Profile updated</string>
