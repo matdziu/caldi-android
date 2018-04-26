@@ -17,5 +17,6 @@ const val ORGANIZER_MESSAGES_NODE = "messages"
 
 const val EVENT_CODE_CHILD = "code"
 const val EVENT_USER_NAME_CHILD = "eventUserName"
+const val USER_LINK_URL_CHILD = "userLinkUrl"
 const val PROFILE_PICTURE_CHILD = "profilePicture"
 const val TIMESTAMP_CHILD = "timestamp"

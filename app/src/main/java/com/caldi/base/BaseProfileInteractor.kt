@@ -9,6 +9,7 @@ import com.caldi.constants.EVENT_USER_NAME_CHILD
 import com.caldi.constants.PROFILE_PICTURE_CHILD
 import com.caldi.constants.QUESTIONS_NODE
 import com.caldi.constants.USERS_NODE
+import com.caldi.constants.USER_LINK_URL_CHILD
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -112,5 +113,10 @@ open class BaseProfileInteractor {
     protected fun getEventProfilePictureNodeRef(eventId: String, userId: String): DatabaseReference {
         return firebaseDatabase.getReference(
                 "$USERS_NODE/$userId/$EVENT_PROFILE_NODE/$eventId/$PROFILE_PICTURE_CHILD")
+    }
+
+    protected fun getUserLinkUrlNodeRef(eventId: String, userId: String): DatabaseReference {
+        return firebaseDatabase.getReference(
+                "$USERS_NODE/$userId/$EVENT_PROFILE_NODE/$eventId/$USER_LINK_URL_CHILD")
     }
 }

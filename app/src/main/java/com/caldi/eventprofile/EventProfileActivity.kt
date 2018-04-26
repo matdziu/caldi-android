@@ -36,6 +36,7 @@ import kotlinx.android.synthetic.main.activity_event_profile.progressBar
 import kotlinx.android.synthetic.main.activity_event_profile.questionsRecyclerView
 import kotlinx.android.synthetic.main.activity_event_profile.saveProfileButton
 import kotlinx.android.synthetic.main.activity_event_profile.uploadPhotoButton
+import kotlinx.android.synthetic.main.activity_event_profile.userLinkEditText
 import java.io.File
 import java.lang.Exception
 import javax.inject.Inject
@@ -127,8 +128,11 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
     override fun emitEventProfileData(): Observable<EventProfileData> {
         return RxView.clicks(saveProfileButton)
                 .map {
-                    EventProfileData(eventUserNameEditText.text.toString(), questionsViewModel.getAnswerList(),
-                            questionsViewModel.getQuestionList())
+                    EventProfileData(
+                            eventUserName = eventUserNameEditText.text.toString(),
+                            answerList = questionsViewModel.getAnswerList(),
+                            questionList = questionsViewModel.getQuestionList(),
+                            userLinkUrl = userLinkEditText.text.toString())
                 }
                 .doOnNext { hideSoftKeyboard() }
     }

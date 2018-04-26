@@ -13,7 +13,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import io.reactivex.Observable
-import io.reactivex.functions.Function3
 import io.reactivex.functions.Function4
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
@@ -43,9 +42,10 @@ class EventProfileInteractor : BaseProfileInteractor() {
                 updateEventUserName(eventId, eventProfileData.eventUserName),
                 updateAnswers(eventId, eventProfileData.answerList),
                 saveUserIdToAttendeesWithProfile(eventId),
-                Function3<Boolean, Boolean, Boolean, Boolean>
-                { successUpdateName, successUpdateAnswers, successSavingAttendee ->
-                    successUpdateName && successUpdateAnswers && successSavingAttendee
+                updateUserLinkUrl(eventId, eventProfileData.userLinkUrl),
+                Function4<Boolean, Boolean, Boolean, Boolean, Boolean>
+                { successUpdateName, successUpdateAnswers, successSavingAttendee, successUpdateUserLinkUrl ->
+                    successUpdateName && successUpdateAnswers && successSavingAttendee && successUpdateUserLinkUrl
                 })
                 .flatMap { if (it) emitSuccessfulUpdateState() else emitError() }
     }
@@ -54,6 +54,13 @@ class EventProfileInteractor : BaseProfileInteractor() {
         val resultSubject = PublishSubject.create<Boolean>()
         val userEventNameRef = getEventUserNameNodeRef(eventId, currentUserId)
         userEventNameRef.setValue(eventUserName).addOnCompleteListener { resultSubject.onNext(true) }
+        return resultSubject
+    }
+
+    private fun updateUserLinkUrl(eventId: String, userLinkUrl: String): Observable<Boolean> {
+        val resultSubject = PublishSubject.create<Boolean>()
+        val userLinkUrlRef = getUserLinkUrlNodeRef(eventId, currentUserId)
+        userLinkUrlRef.setValue(userLinkUrl).addOnCompleteListener { resultSubject.onNext(true) }
         return resultSubject
     }
 
