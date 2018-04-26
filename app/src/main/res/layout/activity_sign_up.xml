@@ -8,33 +8,38 @@
 
     <LinearLayout
         android:id="@+id/contentViewGroup"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:gravity="center"
+        android:layout_gravity="center"
+        android:gravity="center_vertical"
         android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/emailHintTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text="@string/email_hint" />
 
         <com.caldi.customviews.CaldiEditText
             android:id="@+id/emailEditText"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:hint="@string/email_hint"
+            android:layout_marginBottom="8dp"
             android:inputType="textEmailAddress" />
+
+        <TextView
+            android:id="@+id/passwordHintTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text="@string/password_hint_sign_up" />
 
         <com.caldi.customviews.CaldiEditText
             android:id="@+id/passwordEditText"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:hint="@string/password_hint_sign_up"
-            android:inputType="textPassword" />
-
-        <com.caldi.customviews.CaldiEditText
-            android:id="@+id/repeatPasswordEditText"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:hint="@string/repeat_password_hint"
             android:inputType="textPassword" />
 
         <com.caldi.customviews.CaldiButton
