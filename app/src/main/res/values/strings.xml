@@ -39,4 +39,5 @@
     <string name="chat_menu_text">Chat</string>
     <string name="chat_message_hint">Aa</string>
     <string name="organizer_messages_text">Organizer messages</string>
+    <string name="user_link_hint">Share one link e. g. Instagram (optional)</string>
 </resources>
