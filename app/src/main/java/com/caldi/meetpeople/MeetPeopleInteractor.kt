@@ -17,7 +17,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
-import io.reactivex.functions.Function4
+import io.reactivex.functions.Function5
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 
@@ -132,9 +132,10 @@ class MeetPeopleInteractor : BaseProfileInteractor() {
                 fetchAnswers(eventId, userId),
                 fetchEventUserName(eventId, userId),
                 fetchEventProfilePictureUrl(eventId, userId),
-                Function4<List<Question>, List<Answer>, String, String, AttendeeProfile>
-                { questionList, answerList, eventUserName, profilePictureUrl ->
-                    AttendeeProfile(userId, eventUserName, profilePictureUrl, answerList, questionList)
+                fetchUserLinkUrl(eventId, userId),
+                Function5<List<Question>, List<Answer>, String, String, String, AttendeeProfile>
+                { questionList, answerList, eventUserName, profilePictureUrl, userLinkUrl ->
+                    AttendeeProfile(userId, eventUserName, userLinkUrl, profilePictureUrl, answerList, questionList)
                 })
     }
 

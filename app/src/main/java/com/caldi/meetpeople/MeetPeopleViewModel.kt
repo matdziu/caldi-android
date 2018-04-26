@@ -66,6 +66,7 @@ class MeetPeopleViewModel(private val meetPeopleInteractor: MeetPeopleInteractor
                     it.userId,
                     it.eventUserName,
                     it.profilePictureUrl,
+                    it.userLinkUrl,
                     convertToAnswerViewStateList(it.questionList, it.answerList))
         }
     }

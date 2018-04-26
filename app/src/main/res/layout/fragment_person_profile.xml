@@ -57,6 +57,24 @@
             android:layout_height="1dp"
             android:background="@color/colorPrimary" />
 
+        <TextView
+            android:id="@+id/userLinkUrlTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="8dp"
+            android:textColor="@color/colorPrimaryText"
+            android:textSize="16dp"
+            android:visibility="gone"
+            tools:text="medium.com/@matdziu" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorPrimary"
+            android:visibility="gone" />
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

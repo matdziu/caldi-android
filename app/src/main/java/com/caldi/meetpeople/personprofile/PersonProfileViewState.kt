@@ -10,4 +10,5 @@ import kotlinx.android.parcel.Parcelize
 data class PersonProfileViewState(val userId: String = "",
                                   val eventUserName: String = "",
                                   val profilePictureUrl: String = "",
+                                  val userLinkUrl: String = "",
                                   val answerViewStateList: List<AnswerViewState> = listOf()) : Parcelable

@@ -164,6 +164,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
             if (eventProfileViewState.renderInputs) {
                 questionsAdapter.setQuestionsList(questionViewStateList)
                 eventUserNameEditText.setText(eventUserName)
+                userLinkEditText.setText(userLinkUrl)
             }
 
             if (updateSuccess && !dismissToast) {

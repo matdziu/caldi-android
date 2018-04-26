@@ -1,5 +1,8 @@
 package com.caldi.meetpeople.personprofile
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.view.ViewCompat
@@ -7,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.caldi.R
 import com.caldi.constants.PERSON_PROFILE_VIEW_STATE_KEY
 import com.caldi.meetpeople.MeetPeopleActivity
@@ -16,9 +20,11 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_person_profile.acceptProfileButton
 import kotlinx.android.synthetic.main.fragment_person_profile.answersRecyclerView
 import kotlinx.android.synthetic.main.fragment_person_profile.dismissProfileButton
+import kotlinx.android.synthetic.main.fragment_person_profile.divider
 import kotlinx.android.synthetic.main.fragment_person_profile.eventUserNameTextView
 import kotlinx.android.synthetic.main.fragment_person_profile.loadingPhotoTextView
 import kotlinx.android.synthetic.main.fragment_person_profile.profilePictureImageView
+import kotlinx.android.synthetic.main.fragment_person_profile.userLinkUrlTextView
 import java.lang.Exception
 
 class PersonProfileFragment : Fragment() {
@@ -69,6 +75,7 @@ class PersonProfileFragment : Fragment() {
     private fun render(personProfileViewState: PersonProfileViewState) {
         with(personProfileViewState) {
             eventUserNameTextView.text = eventUserName
+            setUserLinkUrl(userLinkUrl)
             if (profilePictureUrl.isNotBlank()) {
                 loadingPhotoTextView.visibility = View.VISIBLE
                 Picasso.get().load(profilePictureUrl).placeholder(R.drawable.profile_picture_shape)
@@ -86,6 +93,21 @@ class PersonProfileFragment : Fragment() {
                         })
             }
             answersAdapter.setAnswerList(answerViewStateList)
+        }
+    }
+
+    private fun setUserLinkUrl(userLinkUrl: String) {
+        if (userLinkUrl.isNotBlank()) {
+            userLinkUrlTextView.visibility = View.VISIBLE
+            divider.visibility = View.VISIBLE
+            userLinkUrlTextView.text = userLinkUrl
+            userLinkUrlTextView.setOnClickListener {
+                try {
+                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(userLinkUrl)))
+                } catch (exception: ActivityNotFoundException) {
+                    Toast.makeText(activity, getString(R.string.failed_to_open_link), Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 }

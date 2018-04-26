@@ -67,6 +67,7 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
             : Observable<PartialEventProfileViewState.LocalValidation> {
         val localValidationState = with(eventProfileData) {
             PartialEventProfileViewState.LocalValidation(eventUserName,
+                    userLinkUrl,
                     eventUserNameValid,
                     answerList,
                     questionList, false)
@@ -89,6 +90,7 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
             is PartialEventProfileViewState.SuccessfulFetchState ->
                 EventProfileViewState(
                         eventUserName = partialState.eventProfileData.eventUserName,
+                        userLinkUrl = partialState.eventProfileData.userLinkUrl,
                         questionViewStateList = convertToQuestionViewStateList(partialState.eventProfileData.questionList,
                                 partialState.eventProfileData.answerList),
                         profilePictureUrl = partialState.eventProfileData.profilePictureUrl,
@@ -103,6 +105,7 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
                 previousState.copy(
                         progress = false,
                         eventUserName = partialState.eventUserName,
+                        userLinkUrl = partialState.userLinkUrl,
                         eventUserNameValid = partialState.eventUserNameValid,
                         questionViewStateList = convertToQuestionViewStateList(partialState.questionList,
                                 partialState.answerList),

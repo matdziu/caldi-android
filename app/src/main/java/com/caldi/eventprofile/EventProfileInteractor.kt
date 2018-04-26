@@ -14,6 +14,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import io.reactivex.Observable
 import io.reactivex.functions.Function4
+import io.reactivex.functions.Function5
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import java.io.File
@@ -30,9 +31,10 @@ class EventProfileInteractor : BaseProfileInteractor() {
                 fetchAnswers(eventId, currentUserId),
                 fetchEventUserName(eventId, currentUserId),
                 fetchEventProfilePictureUrl(eventId, currentUserId),
-                Function4<List<Question>, List<Answer>, String, String, EventProfileData>
-                { questionList, answerList, eventUserName, profilePictureUrl ->
-                    EventProfileData(eventUserName, answerList, questionList, profilePictureUrl)
+                fetchUserLinkUrl(eventId, currentUserId),
+                Function5<List<Question>, List<Answer>, String, String, String, EventProfileData>
+                { questionList, answerList, eventUserName, profilePictureUrl, userLinkUrl ->
+                    EventProfileData(eventUserName, answerList, questionList, profilePictureUrl, userLinkUrl)
                 })
                 .flatMap { emitSuccessfulFetchState(it) }
     }

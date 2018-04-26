@@ -77,6 +77,25 @@ open class BaseProfileInteractor {
         return resultSubject
     }
 
+    protected fun fetchUserLinkUrl(eventId: String, userId: String): Observable<String> {
+        val resultSubject = PublishSubject.create<String>()
+        val userLinkNodeRef = getUserLinkUrlNodeRef(eventId, userId)
+        userLinkNodeRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot?) {
+                if (dataSnapshot?.value != null) {
+                    resultSubject.onNext(dataSnapshot.value as String)
+                } else {
+                    resultSubject.onNext("")
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                resultSubject.onNext("")
+            }
+        })
+        return resultSubject
+    }
+
     protected fun fetchEventProfilePictureUrl(eventId: String, userId: String): Observable<String> {
         val resultSubject = PublishSubject.create<String>()
         val eventProfilePictureNode = getEventProfilePictureNodeRef(eventId, userId)
