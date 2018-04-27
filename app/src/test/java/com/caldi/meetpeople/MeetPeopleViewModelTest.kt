@@ -1,7 +1,5 @@
 package com.caldi.meetpeople
 
-import com.caldi.common.models.Answer
-import com.caldi.common.models.Question
 import com.caldi.meetpeople.list.AnswerViewState
 import com.caldi.meetpeople.models.AttendeeProfile
 import com.caldi.meetpeople.personprofile.PersonProfileViewState
@@ -26,9 +24,15 @@ class MeetPeopleViewModelTest {
 
     @Test
     fun testSuccessfulProfilesFetching() {
-        val questionList = listOf(Question("1", "What is your favourite color?"))
-        val answerList = listOf(Answer("1", "Red"))
-        val attendeesList = listOf(AttendeeProfile("123", "Matt", "url/to/pic", answerList, questionList))
+        val questions = mapOf("1" to "What is your favourite color?")
+        val answers = mapOf("1" to "Red")
+        val attendeesList = listOf(AttendeeProfile(
+                "123",
+                "Matt",
+                "user/url",
+                "url/to/pic",
+                answers,
+                questions))
         whenever(meetPeopleInteractor.fetchAttendeesProfiles(any())).thenReturn(
                 Observable.just(PartialMeetPeopleViewState.SuccessfulAttendeesFetchState(attendeesList)))
         whenever(meetPeopleInteractor.checkIfEventProfileIsFilled(any())).thenReturn(
@@ -43,6 +47,7 @@ class MeetPeopleViewModelTest {
                 MeetPeopleViewState(progress = true),
                 MeetPeopleViewState(personProfileViewStateList = listOf(PersonProfileViewState(
                         "123", "Matt", "url/to/pic",
+                        "user/url",
                         listOf(AnswerViewState("What is your favourite color?", "Red")))))
         )
     }

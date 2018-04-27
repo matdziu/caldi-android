@@ -1,9 +1,7 @@
 package com.caldi.eventprofile
 
-import com.caldi.common.models.Answer
-import com.caldi.common.models.Question
-import com.caldi.eventprofile.list.QuestionViewState
 import com.caldi.common.models.EventProfileData
+import com.caldi.eventprofile.list.QuestionViewState
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
@@ -24,12 +22,14 @@ class EventProfileViewModelTest {
 
     @Test
     fun testEventProfileDataFetchingSuccess() {
+        val questions = mapOf("1" to "What are you looking for?")
         val eventProfileData = EventProfileData("Matt the Android Dev",
-                listOf(Answer("1", "Looking for party!", true)),
-                listOf(Question("1", "What are you looking for here?")))
+                mapOf("1" to "Looking for party!"),
+                "url/to/pic",
+                "user/link")
         whenever(eventProfileInteractor.fetchEventProfile(any())).thenReturn(
-                Observable.just(PartialEventProfileViewState.SuccessfulFetchState(eventProfileData, false))
-                        .startWith(PartialEventProfileViewState.SuccessfulFetchState(eventProfileData, true))
+                Observable.just(PartialEventProfileViewState.SuccessfulFetchState(eventProfileData, questions, false))
+                        .startWith(PartialEventProfileViewState.SuccessfulFetchState(eventProfileData, questions))
                         as Observable<PartialEventProfileViewState>
         )
 
@@ -42,34 +42,42 @@ class EventProfileViewModelTest {
                         progress = true),
                 EventProfileViewState(
                         eventUserName = "Matt the Android Dev",
+                        profilePictureUrl = "url/to/pic",
+                        userLinkUrl = "user/link",
                         renderInputs = true,
-                        questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
+                        questionViewStates = listOf(QuestionViewState("What are you looking for?",
                                 "Looking for party!", "1"))),
                 EventProfileViewState(
                         eventUserName = "Matt the Android Dev",
+                        profilePictureUrl = "url/to/pic",
+                        userLinkUrl = "user/link",
                         renderInputs = false,
-                        questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
+                        questionViewStates = listOf(QuestionViewState("What are you looking for?",
                                 "Looking for party!", "1")))
         )
     }
 
     @Test
     fun testEventProfileUpdateInvalid() {
+        val questions = mapOf("1" to "What are you looking for?")
         val eventProfileData = EventProfileData("Matt the Android Dev",
-                listOf(Answer("1", "Looking for a party!", true)),
-                listOf(Question("1", "What are you looking for here?")))
+                mapOf("1" to "Looking for a party!"),
+                "url/to/pic",
+                "user/link")
         whenever(eventProfileInteractor.fetchEventProfile(any())).thenReturn(
-                Observable.just(PartialEventProfileViewState.SuccessfulFetchState(eventProfileData, false))
-                        .startWith(PartialEventProfileViewState.SuccessfulFetchState(eventProfileData, true))
+                Observable.just(PartialEventProfileViewState.SuccessfulFetchState(eventProfileData, questions, false))
+                        .startWith(PartialEventProfileViewState.SuccessfulFetchState(eventProfileData, questions))
                         as Observable<PartialEventProfileViewState>
         )
         val eventProfileDataEmptyAnswer = EventProfileData("Matt the Android Dev",
-                listOf(Answer("1", " ", true)),
-                listOf(Question("1", "What are you looking for here?")))
+                mapOf("1" to " "),
+                "url/to/pic",
+                "user/link")
 
         val eventProfileDataEmptyName = EventProfileData(" ",
-                listOf(Answer("1", "Looking for a party!", true)),
-                listOf(Question("1", "What are you looking for here?")))
+                mapOf("1" to "Looking for a party!"),
+                "url/to/pic",
+                "user/link")
 
         val eventProfileViewRobot = EventProfileViewRobot(eventProfileViewModel)
 
@@ -79,9 +87,9 @@ class EventProfileViewModelTest {
 
         eventProfileViewRobot.emitInputData(eventProfileDataEmptyName)
 
-        val fetchedQuestionViewStateList = listOf(QuestionViewState("What are you looking for here?",
+        val fetchedQuestionViewStateList = listOf(QuestionViewState("What are you looking for?",
                 "Looking for a party!", "1"))
-        val errorQuestionViewState = listOf(QuestionViewState("What are you looking for here?",
+        val errorQuestionViewState = listOf(QuestionViewState("What are you looking for?",
                 " ", "1", answerValid = false))
         eventProfileViewRobot.assertViewStates(
                 EventProfileViewState(),
@@ -90,88 +98,119 @@ class EventProfileViewModelTest {
                         eventUserName = "Matt the Android Dev",
                         eventUserNameValid = true,
                         renderInputs = true,
-                        questionViewStateList = fetchedQuestionViewStateList),
+                        profilePictureUrl = "url/to/pic",
+                        userLinkUrl = "user/link",
+                        questionViewStates = fetchedQuestionViewStateList),
                 EventProfileViewState(
                         eventUserName = "Matt the Android Dev",
                         eventUserNameValid = true,
                         renderInputs = false,
-                        questionViewStateList = fetchedQuestionViewStateList),
+                        profilePictureUrl = "url/to/pic",
+                        userLinkUrl = "user/link",
+                        questionViewStates = fetchedQuestionViewStateList),
                 EventProfileViewState(
                         eventUserName = "Matt the Android Dev",
                         eventUserNameValid = true,
                         renderInputs = true,
-                        questionViewStateList = errorQuestionViewState),
+                        profilePictureUrl = "url/to/pic",
+                        userLinkUrl = "user/link",
+                        questionViewStates = errorQuestionViewState),
                 EventProfileViewState(
                         eventUserName = "Matt the Android Dev",
                         eventUserNameValid = true,
                         renderInputs = false,
-                        questionViewStateList = errorQuestionViewState),
+                        profilePictureUrl = "url/to/pic",
+                        userLinkUrl = "user/link",
+                        questionViewStates = errorQuestionViewState),
                 EventProfileViewState(
                         eventUserName = " ",
                         eventUserNameValid = false,
                         renderInputs = true,
-                        questionViewStateList = fetchedQuestionViewStateList),
+                        profilePictureUrl = "url/to/pic",
+                        userLinkUrl = "user/link",
+                        questionViewStates = fetchedQuestionViewStateList),
                 EventProfileViewState(
                         eventUserName = " ",
                         eventUserNameValid = false,
                         renderInputs = false,
-                        questionViewStateList = fetchedQuestionViewStateList)
+                        profilePictureUrl = "url/to/pic",
+                        userLinkUrl = "user/link",
+                        questionViewStates = fetchedQuestionViewStateList)
         )
     }
 
     @Test
     fun testEventProfileUpdateValid() {
+        val questions = mapOf("1" to "What are you looking for?")
         val eventProfileData = EventProfileData("Matt the Android Dev",
-                listOf(Answer("1", "Looking for party!", true)),
-                listOf(Question("1", "What are you looking for here?")))
+                mapOf("1" to "Looking for party!"))
         whenever(eventProfileInteractor.updateEventProfile(any(), any())).thenReturn(
                 Observable.just(PartialEventProfileViewState.SuccessfulUpdateState(true))
                         .startWith(PartialEventProfileViewState.SuccessfulUpdateState())
                         as Observable<PartialEventProfileViewState>
         )
+        whenever(eventProfileInteractor.fetchEventProfile(any())).thenReturn(
+                Observable.just(PartialEventProfileViewState.SuccessfulFetchState(eventProfileData, questions, false))
+                        .startWith(PartialEventProfileViewState.SuccessfulFetchState(eventProfileData, questions))
+                        as Observable<PartialEventProfileViewState>
+        )
 
         val eventProfileViewRobot = EventProfileViewRobot(eventProfileViewModel)
 
+        eventProfileViewRobot.fetchEventProfile("droidcon")
+
         eventProfileViewRobot.emitInputData(eventProfileData)
 
-        val questionViewStateList = listOf(QuestionViewState("What are you looking for here?",
+        val questionViewStateList = listOf(QuestionViewState("What are you looking for?",
                 "Looking for party!", "1", true))
         eventProfileViewRobot.assertViewStates(
                 EventProfileViewState(),
+                EventProfileViewState(progress = true),
                 EventProfileViewState(
                         eventUserName = "Matt the Android Dev",
                         eventUserNameValid = true,
-                        questionViewStateList = questionViewStateList,
+                        questionViewStates = questionViewStateList,
                         renderInputs = true
                 ),
                 EventProfileViewState(
                         eventUserName = "Matt the Android Dev",
                         eventUserNameValid = true,
-                        questionViewStateList = questionViewStateList,
+                        questionViewStates = questionViewStateList,
+                        renderInputs = false
+                ),
+                EventProfileViewState(
+                        eventUserName = "Matt the Android Dev",
+                        eventUserNameValid = true,
+                        questionViewStates = questionViewStateList,
+                        renderInputs = true
+                ),
+                EventProfileViewState(
+                        eventUserName = "Matt the Android Dev",
+                        eventUserNameValid = true,
+                        questionViewStates = questionViewStateList,
                         renderInputs = false
                 ),
                 EventProfileViewState(
                         progress = true,
                         eventUserName = "Matt the Android Dev",
                         eventUserNameValid = true,
-                        questionViewStateList = questionViewStateList,
+                        questionViewStates = questionViewStateList,
                         renderInputs = false
                 ),
                 EventProfileViewState(
                         updateSuccess = true,
-                        progress = false,
+                        dismissToast = false,
                         eventUserName = "Matt the Android Dev",
                         eventUserNameValid = true,
-                        questionViewStateList = questionViewStateList,
+                        questionViewStates = questionViewStateList,
                         renderInputs = false
                 ),
                 EventProfileViewState(
                         updateSuccess = true,
-                        progress = false,
                         dismissToast = true,
                         eventUserName = "Matt the Android Dev",
                         eventUserNameValid = true,
-                        questionViewStateList = questionViewStateList,
+                        questionViewStates = questionViewStateList,
                         renderInputs = false
                 )
         )
