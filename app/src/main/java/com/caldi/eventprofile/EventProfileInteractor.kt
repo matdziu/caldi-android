@@ -58,8 +58,8 @@ class EventProfileInteractor : BaseProfileInteractor() {
                             attendeesWithProfileNodeRef
                                     .push()
                                     .setValue(currentUserId)
-                                    .addOnSuccessListener { emitSuccessfulUpdateState(resultSubject) }
                         }
+                        emitSuccessfulUpdateState(resultSubject)
                     }
 
                     override fun onCancelled(databaseError: DatabaseError?) {

@@ -16,7 +16,8 @@ sealed class PartialEventProfileViewState {
 
     class ErrorState(val dismissToast: Boolean = false) : PartialEventProfileViewState()
 
-    data class LocalValidation(val eventUserNameValid: Boolean,
+    data class LocalValidation(val eventProfileData: EventProfileData,
+                               val eventUserNameValid: Boolean,
                                val answerValidMap: Map<String, Boolean> = mapOf(),
                                val renderInputs: Boolean = true) : PartialEventProfileViewState()
 }

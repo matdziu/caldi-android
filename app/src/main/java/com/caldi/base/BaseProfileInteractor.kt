@@ -38,7 +38,9 @@ open class BaseProfileInteractor {
         val eventProfileNodeRef = getEventProfileNodeRef(eventId, userId)
         eventProfileNodeRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                dataSnapshot.getValue(EventProfileData::class.java)?.let { resultSubject.onNext(it) }
+                val eventProfileData = dataSnapshot.getValue(EventProfileData::class.java)
+                        ?: EventProfileData()
+                resultSubject.onNext(eventProfileData)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {

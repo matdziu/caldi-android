@@ -4,10 +4,14 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.caldi.R
+import com.jakewharton.rxbinding2.widget.RxTextView
+import io.reactivex.disposables.CompositeDisposable
 
 class QuestionsAdapter : RecyclerView.Adapter<QuestionViewHolder>() {
 
     private val questionViewStates = arrayListOf<QuestionViewState>()
+    private val compositeDisposable = CompositeDisposable()
+
     val answers: HashMap<String, String> = hashMapOf()
 
     override fun getItemCount(): Int = questionViewStates.size
@@ -19,11 +23,16 @@ class QuestionsAdapter : RecyclerView.Adapter<QuestionViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: QuestionViewHolder, position: Int) {
-        holder.bind(questionViewStates[position]).subscribe { answers[it.first] = it.second }
+        val currentQuestionViewState = questionViewStates[position]
+        holder.bind(currentQuestionViewState)
+        compositeDisposable.add(RxTextView.textChanges(holder.questionEditText)
+                .map { it.toString() }
+                .subscribe { answers[currentQuestionViewState.questionId] = it })
     }
 
     fun setQuestionViewStates(questionViewStates: List<QuestionViewState>) {
-        if (questionViewStates.isNotEmpty()) {
+        if (questionViewStates.isNotEmpty() && this.questionViewStates != questionViewStates) {
+            compositeDisposable.clear()
             this.questionViewStates.clear()
             this.questionViewStates.addAll(questionViewStates)
             notifyDataSetChanged()

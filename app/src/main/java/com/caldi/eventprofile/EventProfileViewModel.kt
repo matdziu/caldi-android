@@ -1,6 +1,7 @@
 package com.caldi.eventprofile
 
 import android.arch.lifecycle.ViewModel
+import com.caldi.common.models.EventProfileData
 import com.caldi.eventprofile.list.QuestionViewState
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -34,6 +35,7 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
                     }
 
                     val localValidationState = PartialEventProfileViewState.LocalValidation(
+                            eventProfileData = it,
                             eventUserNameValid = eventUserNameValid,
                             answerValidMap = answerValidMap,
                             renderInputs = false
@@ -96,7 +98,13 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
             is PartialEventProfileViewState.LocalValidation ->
                 previousState.copy(
                         progress = false,
-                        questionViewStates = applyValidationToQuestionViewStates(previousState.questionViewStates, partialState.answerValidMap),
+                        eventUserName = partialState.eventProfileData.eventUserName,
+                        userLinkUrl = partialState.eventProfileData.userLinkUrl,
+                        profilePictureUrl = partialState.eventProfileData.profilePictureUrl,
+                        questionViewStates = applyValidationToQuestionViewStates(
+                                previousState.questionViewStates,
+                                partialState.eventProfileData,
+                                partialState.answerValidMap),
                         eventUserNameValid = partialState.eventUserNameValid,
                         renderInputs = partialState.renderInputs)
             is PartialEventProfileViewState.SuccessfulPictureUploadState ->
@@ -118,10 +126,12 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
     }
 
     private fun applyValidationToQuestionViewStates(questionViewStates: List<QuestionViewState>,
+                                                    eventProfileData: EventProfileData,
                                                     answerValidMap: Map<String, Boolean>): List<QuestionViewState> {
         val validatedQuestionViewStates = arrayListOf<QuestionViewState>()
         for (questionViewState in questionViewStates) {
             validatedQuestionViewStates.add(questionViewState.copy(
+                    answerText = eventProfileData.answers[questionViewState.questionId] ?: "",
                     answerValid = answerValidMap[questionViewState.questionId] ?: false))
         }
         return validatedQuestionViewStates

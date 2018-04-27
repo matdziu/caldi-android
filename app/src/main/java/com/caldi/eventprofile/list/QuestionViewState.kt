@@ -1,6 +1,6 @@
 package com.caldi.eventprofile.list
 
-data class QuestionViewState(val questionText: String = "",
+data class QuestionViewState(var questionText: String = "",
                              var answerText: String = "",
                              val questionId: String = "",
                              val answerValid: Boolean = true)
