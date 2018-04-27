@@ -23,7 +23,7 @@ open class BaseProfileInteractor {
         val questionsNodeRef = getEventQuestionsNodeRef(eventId)
         questionsNodeRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                resultSubject.onNext(dataSnapshot.value as Map<String, String>)
+                resultSubject.onNext((dataSnapshot.value as Map<String, String>).toSortedMap())
             }
 
             override fun onCancelled(databaseError: DatabaseError) {

@@ -42,11 +42,10 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
                     )
 
                     if (!eventUserNameValid || !eachAnswerValid) {
-                        Observable.just(localValidationState)
-                                .startWith(localValidationState.copy(renderInputs = true))
+                        emitLocalValidationState(localValidationState)
                     } else {
                         Observable.concat(
-                                Observable.just(localValidationState),
+                                emitLocalValidationState(localValidationState),
                                 eventProfileInteractor.updateEventProfile(eventId, it)
                                         .startWith(PartialEventProfileViewState.ProgressState())
                         )
@@ -69,6 +68,12 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
         compositeDisposable.add(mergedObservable
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ eventProfileView.render(it) }))
+    }
+
+    private fun emitLocalValidationState(localValidationState: PartialEventProfileViewState.LocalValidation)
+            : Observable<PartialEventProfileViewState.LocalValidation> {
+        return Observable.just(localValidationState)
+                .startWith(localValidationState.copy(renderInputs = true))
     }
 
     private fun reduce(previousState: EventProfileViewState, partialState: PartialEventProfileViewState)
@@ -119,8 +124,10 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
                                             answers: Map<String, String>): List<QuestionViewState> {
         val questionViewStates = arrayListOf<QuestionViewState>()
         for ((questionId, questionText) in questions) {
-            questionViewStates.add(QuestionViewState(questionText,
-                    answers[questionId] ?: "", questionId))
+            questionViewStates.add(QuestionViewState(
+                    questionText,
+                    answers[questionId] ?: "",
+                    questionId))
         }
         return questionViewStates
     }

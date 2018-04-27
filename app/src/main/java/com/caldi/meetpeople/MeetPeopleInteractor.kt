@@ -129,7 +129,12 @@ class MeetPeopleInteractor : BaseProfileInteractor() {
                 fetchQuestions(eventId),
                 BiFunction { eventProfileData, questions ->
                     with(eventProfileData) {
-                        AttendeeProfile(userId, eventUserName, userLinkUrl, profilePictureUrl, answers, questions)
+                        AttendeeProfile(userId,
+                                eventUserName,
+                                userLinkUrl,
+                                profilePictureUrl,
+                                answers,
+                                questions)
                     }
                 })
     }

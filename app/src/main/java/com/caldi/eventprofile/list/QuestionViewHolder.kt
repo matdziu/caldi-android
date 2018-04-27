@@ -2,16 +2,19 @@ package com.caldi.eventprofile.list
 
 import android.support.v7.widget.RecyclerView
 import android.view.View
+import com.caldi.customviews.CaldiEditText
 import kotlinx.android.synthetic.main.item_event_question.view.questionEditText
 import kotlinx.android.synthetic.main.item_event_question.view.questionTextView
 
 class QuestionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    val questionEditText = itemView.questionEditText
+    val questionEditText: CaldiEditText = itemView.questionEditText
 
     fun bind(questionViewState: QuestionViewState) {
         questionEditText.setText(questionViewState.answerText)
-        itemView.questionTextView.text = questionViewState.questionText
-        itemView.questionEditText.showError(!questionViewState.answerValid)
+        with(itemView) {
+            questionTextView.text = questionViewState.questionText
+            questionEditText.showError(!questionViewState.answerValid)
+        }
     }
 }
