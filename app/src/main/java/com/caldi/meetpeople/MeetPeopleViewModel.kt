@@ -1,8 +1,6 @@
 package com.caldi.meetpeople
 
 import android.arch.lifecycle.ViewModel
-import com.caldi.common.models.Answer
-import com.caldi.common.models.Question
 import com.caldi.meetpeople.list.AnswerViewState
 import com.caldi.meetpeople.models.AttendeeProfile
 import com.caldi.meetpeople.personprofile.PersonProfileViewState
@@ -67,17 +65,17 @@ class MeetPeopleViewModel(private val meetPeopleInteractor: MeetPeopleInteractor
                     it.eventUserName,
                     it.profilePictureUrl,
                     it.userLinkUrl,
-                    convertToAnswerViewStateList(it.questionList, it.answerList))
+                    convertToAnswerViewStateList(it.questions, it.answers))
         }
     }
 
-    private fun convertToAnswerViewStateList(questionList: List<Question>, answerList: List<Answer>)
+    private fun convertToAnswerViewStateList(questions: Map<String, String>, answers: Map<String, String>)
             : List<AnswerViewState> {
-        val answersMap = answerList.map { it.questionId to it.answer }.toMap()
-        return questionList.map {
-            val currentAnswer = answersMap[it.id] ?: ""
-            AnswerViewState(it.question, currentAnswer)
+        val answerViewStateList = arrayListOf<AnswerViewState>()
+        for ((questionId, question) in questions) {
+            answerViewStateList.add(AnswerViewState(question, answers[questionId] ?: ""))
         }
+        return answerViewStateList
     }
 
     fun unbind() {

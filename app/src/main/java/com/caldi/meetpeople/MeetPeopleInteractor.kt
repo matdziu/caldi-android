@@ -1,8 +1,6 @@
 package com.caldi.meetpeople
 
 import com.caldi.base.BaseProfileInteractor
-import com.caldi.common.models.Answer
-import com.caldi.common.models.Question
 import com.caldi.constants.ATTENDEES_WITH_PROFILE_NODE
 import com.caldi.constants.EVENTS_NODE
 import com.caldi.constants.MEET_NODE
@@ -17,7 +15,6 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
-import io.reactivex.functions.Function5
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 
@@ -128,14 +125,12 @@ class MeetPeopleInteractor : BaseProfileInteractor() {
 
     private fun fetchAttendeeProfile(eventId: String, userId: String): Observable<AttendeeProfile> {
         return Observable.zip(
+                fetchEventProfileData(eventId, userId),
                 fetchQuestions(eventId),
-                fetchAnswers(eventId, userId),
-                fetchEventUserName(eventId, userId),
-                fetchEventProfilePictureUrl(eventId, userId),
-                fetchUserLinkUrl(eventId, userId),
-                Function5<List<Question>, List<Answer>, String, String, String, AttendeeProfile>
-                { questionList, answerList, eventUserName, profilePictureUrl, userLinkUrl ->
-                    AttendeeProfile(userId, eventUserName, userLinkUrl, profilePictureUrl, answerList, questionList)
+                BiFunction { eventProfileData, questions ->
+                    with(eventProfileData) {
+                        AttendeeProfile(userId, eventUserName, userLinkUrl, profilePictureUrl, answers, questions)
+                    }
                 })
     }
 
