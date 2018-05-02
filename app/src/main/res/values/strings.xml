@@ -34,7 +34,7 @@
     <string name="profile_updated">Profile updated</string>
     <string name="loading_photo">Loading a picture…</string>
     <string name="meet_people_text">Meet people</string>
-    <string name="no_people_to_meet_text">Currently there is nobody here ;(</string>
+    <string name="no_people_to_meet_text">Currently there is no attendees to meet, but we\'ll inform you when more people show up. \nCheck notification settings for more info.</string>
     <string name="fill_event_profile_first_prompt">First fill in your event profile</string>
     <string name="chat_menu_text">Chat</string>
     <string name="chat_message_hint">Aa</string>
