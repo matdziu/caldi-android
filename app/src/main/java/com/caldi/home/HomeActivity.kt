@@ -77,18 +77,16 @@ class HomeActivity : BaseOverflowActivity(), HomeView {
         with(homeViewState) {
             showProgressBar(inProgress)
             showError(error, dismissToast)
-            if (eventList.isNotEmpty()) {
-                noEventsTextView.visibility = View.GONE
-                setEventList(inProgress, error, eventList)
-            } else {
-                noEventsTextView.visibility = View.VISIBLE
-            }
+            setEventList(inProgress, error, eventList)
         }
     }
 
     private fun setEventList(progress: Boolean, error: Boolean, eventList: List<Event>) {
-        if (!error && !progress) {
+        noEventsTextView.visibility = View.GONE
+        if (!error && !progress && eventList.isNotEmpty()) {
             eventsAdapter.setEventList(eventList)
+        } else if (!error && !progress && eventList.isEmpty()) {
+            noEventsTextView.visibility = View.VISIBLE
         }
     }
 

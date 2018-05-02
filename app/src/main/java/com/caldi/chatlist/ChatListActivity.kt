@@ -71,12 +71,7 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
         with(chatListViewState) {
             showProgress(progress)
             showError(error, dismissToast)
-            if (chatItemList.isNotEmpty()) {
-                noPeopleToChatTextView.visibility = View.GONE
-                setChatItemList(progress, error, chatItemList)
-            } else {
-                noPeopleToChatTextView.visibility = View.VISIBLE
-            }
+            setChatItemList(progress, error, chatItemList)
         }
     }
 
@@ -97,8 +92,11 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
     }
 
     private fun setChatItemList(progress: Boolean, error: Boolean, chatItemList: List<ChatItem>) {
-        if (!progress && !error) {
+        noPeopleToChatTextView.visibility = View.GONE
+        if (!progress && !error && chatItemList.isNotEmpty()) {
             chatItemsAdapter.setChatItemList(chatItemList)
+        } else if (!progress && !error && chatItemList.isEmpty()) {
+            noPeopleToChatTextView.visibility = View.VISIBLE
         }
     }
 }
