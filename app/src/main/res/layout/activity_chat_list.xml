@@ -20,6 +20,18 @@
             android:scrollbars="vertical"
             tools:ignore="UnknownIdInLayout" />
 
+        <TextView
+            android:id="@+id/noPeopleToChatTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:padding="16dp"
+            android:text="@string/no_chats_info"
+            android:textAlignment="center"
+            android:textColor="@color/colorPrimaryText"
+            android:textSize="16dp"
+            android:visibility="gone" />
+
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="56dp"

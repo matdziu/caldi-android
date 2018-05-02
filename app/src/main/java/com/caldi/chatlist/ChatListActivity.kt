@@ -15,6 +15,7 @@ import dagger.android.AndroidInjection
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_chat_list.chatItemsRecyclerView
+import kotlinx.android.synthetic.main.activity_chat_list.noPeopleToChatTextView
 import kotlinx.android.synthetic.main.activity_chat_list.progressBar
 import javax.inject.Inject
 
@@ -70,7 +71,12 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
         with(chatListViewState) {
             showProgress(progress)
             showError(error, dismissToast)
-            setChatItemList(progress, error, chatItemList)
+            if (chatItemList.isNotEmpty()) {
+                noPeopleToChatTextView.visibility = View.GONE
+                setChatItemList(progress, error, chatItemList)
+            } else {
+                noPeopleToChatTextView.visibility = View.VISIBLE
+            }
         }
     }
 
