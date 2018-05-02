@@ -42,4 +42,5 @@
     <string name="user_link_hint">Share one link e. g. Instagram (optional)</string>
     <string name="failed_to_open_link">Failed to open this link</string>
     <string name="no_chats_info">You don\'t have any chats yet.</string>
+    <string name="no_events_yet">You are not attending any events yet.</string>
 </resources>

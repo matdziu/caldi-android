@@ -12,12 +12,14 @@ import com.caldi.base.BaseOverflowActivity
 import com.caldi.constants.ADD_EVENT_REQUEST_CODE
 import com.caldi.factories.HomeViewModelFactory
 import com.caldi.home.list.EventsAdapter
+import com.caldi.home.models.Event
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import kotlinx.android.synthetic.main.activity_home.addEventButton
 import kotlinx.android.synthetic.main.activity_home.eventsRecyclerView
+import kotlinx.android.synthetic.main.activity_home.noEventsTextView
 import kotlinx.android.synthetic.main.activity_home.progressBar
 import javax.inject.Inject
 
@@ -70,6 +72,26 @@ class HomeActivity : BaseOverflowActivity(), HomeView {
 
     override fun emitEventsFetchTrigger(): Observable<Boolean> = eventsFetchTriggerObservable
 
+
+    override fun render(homeViewState: HomeViewState) {
+        with(homeViewState) {
+            showProgressBar(inProgress)
+            showError(error, dismissToast)
+            if (eventList.isNotEmpty()) {
+                noEventsTextView.visibility = View.GONE
+                setEventList(inProgress, error, eventList)
+            } else {
+                noEventsTextView.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    private fun setEventList(progress: Boolean, error: Boolean, eventList: List<Event>) {
+        if (!error && !progress) {
+            eventsAdapter.setEventList(eventList)
+        }
+    }
+
     private fun showProgressBar(show: Boolean) {
         if (show) {
             progressBar.visibility = View.VISIBLE
@@ -82,13 +104,9 @@ class HomeActivity : BaseOverflowActivity(), HomeView {
         }
     }
 
-    override fun render(homeViewState: HomeViewState) {
-        showProgressBar(homeViewState.inProgress)
-        if (homeViewState.error && !homeViewState.dismissToast) {
+    private fun showError(error: Boolean, dismissToast: Boolean) {
+        if (error && !dismissToast) {
             Toast.makeText(this, getString(R.string.event_list_fetching_error), Toast.LENGTH_SHORT).show()
-        }
-        if (!homeViewState.error && !homeViewState.inProgress) {
-            eventsAdapter.setEventList(homeViewState.eventList)
         }
     }
 }

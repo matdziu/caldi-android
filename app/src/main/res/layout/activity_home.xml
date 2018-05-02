@@ -15,6 +15,18 @@
         android:scrollbars="vertical"
         tools:ignore="UnknownIdInLayout" />
 
+    <TextView
+        android:id="@+id/noEventsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:padding="16dp"
+        android:text="@string/no_events_yet"
+        android:textAlignment="center"
+        android:textColor="@color/colorPrimaryText"
+        android:textSize="16dp"
+        android:visibility="gone" />
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/addEventButton"
         android:layout_width="56dp"
