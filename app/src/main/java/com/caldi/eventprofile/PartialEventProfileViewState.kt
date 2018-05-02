@@ -4,9 +4,9 @@ import com.caldi.common.models.EventProfileData
 
 sealed class PartialEventProfileViewState {
 
-    class SuccessfulFetchState(val eventProfileData: EventProfileData = EventProfileData(),
-                               val questions: Map<String, String> = mapOf(),
-                               val renderInputs: Boolean = true) : PartialEventProfileViewState()
+    data class SuccessfulFetchState(val eventProfileData: EventProfileData = EventProfileData(),
+                                    val questions: Map<String, String> = mapOf(),
+                                    val renderInputs: Boolean = true) : PartialEventProfileViewState()
 
     class SuccessfulUpdateState(val dismissToast: Boolean = false) : PartialEventProfileViewState()
 

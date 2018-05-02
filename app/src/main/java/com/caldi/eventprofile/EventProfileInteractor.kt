@@ -23,12 +23,13 @@ class EventProfileInteractor : BaseProfileInteractor() {
     private val currentUserId = firebaseAuth.currentUser?.uid ?: ""
 
     fun fetchEventProfile(eventId: String): Observable<PartialEventProfileViewState> {
-        return Observable.zip(
+        return Observable.zip<EventProfileData, Map<String, String>, PartialEventProfileViewState.SuccessfulFetchState>(
                 fetchEventProfileData(eventId, currentUserId),
                 fetchQuestions(eventId),
                 BiFunction { eventProfileData, questions ->
                     PartialEventProfileViewState.SuccessfulFetchState(eventProfileData, questions)
                 })
+                .flatMap { Observable.just(it.copy(renderInputs = false)).startWith(it) }
     }
 
     fun updateEventProfile(eventId: String, eventProfileData: EventProfileData): Observable<PartialEventProfileViewState> {
