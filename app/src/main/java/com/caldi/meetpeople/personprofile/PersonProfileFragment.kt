@@ -1,8 +1,5 @@
 package com.caldi.meetpeople.personprofile
 
-import android.content.ActivityNotFoundException
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.view.ViewCompat
@@ -10,7 +7,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.caldi.R
 import com.caldi.constants.PERSON_PROFILE_VIEW_STATE_KEY
 import com.caldi.meetpeople.MeetPeopleActivity
@@ -101,13 +97,6 @@ class PersonProfileFragment : Fragment() {
             userLinkUrlTextView.visibility = View.VISIBLE
             divider.visibility = View.VISIBLE
             userLinkUrlTextView.text = userLinkUrl
-            userLinkUrlTextView.setOnClickListener {
-                try {
-                    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(userLinkUrl)))
-                } catch (exception: ActivityNotFoundException) {
-                    Toast.makeText(activity, getString(R.string.failed_to_open_link), Toast.LENGTH_SHORT).show()
-                }
-            }
         }
     }
 }
