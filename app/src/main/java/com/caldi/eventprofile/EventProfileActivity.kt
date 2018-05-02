@@ -130,7 +130,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
                             eventUserName = eventUserNameEditText.text.toString(),
                             userLinkUrl = userLinkEditText.text.toString(),
                             answers = questionsAdapter.answers,
-                            profilePictureUrl = currentProfilePictureUrl)
+                            profilePicture = currentProfilePictureUrl)
                 }
                 .doOnNext { hideSoftKeyboard() }
     }

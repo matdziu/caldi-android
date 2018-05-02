@@ -90,7 +90,7 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
             is PartialEventProfileViewState.SuccessfulFetchState ->
                 EventProfileViewState(
                         eventUserName = partialState.eventProfileData.eventUserName,
-                        profilePictureUrl = partialState.eventProfileData.profilePictureUrl,
+                        profilePictureUrl = partialState.eventProfileData.profilePicture,
                         userLinkUrl = partialState.eventProfileData.userLinkUrl,
                         questionViewStates = convertToQuestionViewStates(partialState.questions, partialState.eventProfileData.answers),
                         renderInputs = partialState.renderInputs)
@@ -105,7 +105,7 @@ class EventProfileViewModel(private val eventProfileInteractor: EventProfileInte
                         progress = false,
                         eventUserName = partialState.eventProfileData.eventUserName,
                         userLinkUrl = partialState.eventProfileData.userLinkUrl,
-                        profilePictureUrl = partialState.eventProfileData.profilePictureUrl,
+                        profilePictureUrl = partialState.eventProfileData.profilePicture,
                         questionViewStates = applyValidationToQuestionViewStates(
                                 previousState.questionViewStates,
                                 partialState.eventProfileData,

@@ -132,7 +132,7 @@ class MeetPeopleInteractor : BaseProfileInteractor() {
                         AttendeeProfile(userId,
                                 eventUserName,
                                 userLinkUrl,
-                                profilePictureUrl,
+                                profilePicture,
                                 answers,
                                 questions)
                     }
