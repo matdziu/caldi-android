@@ -26,6 +26,7 @@ import com.theartofdev.edmodo.cropper.CropImage
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.Subject
 import kotlinx.android.synthetic.main.activity_event_profile.contentViewGroup
 import kotlinx.android.synthetic.main.activity_event_profile.createProfilePromptTextView
 import kotlinx.android.synthetic.main.activity_event_profile.eventUserNameEditText
@@ -48,9 +49,10 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
 
     private var fetchEventProfile = true
     private val triggerEventProfileFetchSubject = PublishSubject.create<String>()
-    private val profilePictureFileSubject = PublishSubject.create<File>()
+    private lateinit var profilePictureFileSubject: Subject<File>
 
     private var currentProfilePictureUrl = ""
+    private var selectedProfilePictureFile: File? = null
 
     @Inject
     lateinit var eventProfileViewModelFactory: EventProfileViewModelFactory
@@ -84,7 +86,12 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
 
     override fun onStart() {
         super.onStart()
+        profilePictureFileSubject = PublishSubject.create()
         eventProfileViewModel.bind(this)
+        selectedProfilePictureFile?.let {
+            profilePictureFileSubject.onNext(it)
+            selectedProfilePictureFile = null
+        }
         if (fetchEventProfile) {
             triggerEventProfileFetchSubject.onNext(eventId)
             fetchEventProfile = false
@@ -101,7 +108,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             val result = CropImage.getActivityResult(data)
             if (resultCode == RESULT_OK) {
-                profilePictureFileSubject.onNext(File(result.uri.path))
+                selectedProfilePictureFile = File(result.uri.path)
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 showError(true)
             }
