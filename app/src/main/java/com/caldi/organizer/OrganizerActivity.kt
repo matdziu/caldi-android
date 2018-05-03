@@ -19,6 +19,7 @@ import com.squareup.picasso.Picasso
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.Subject
 import kotlinx.android.synthetic.main.activity_organizer.messagesRecyclerView
 import kotlinx.android.synthetic.main.activity_organizer.organizerInfoImageView
 import kotlinx.android.synthetic.main.activity_organizer.organizerInfoTextView
@@ -28,11 +29,9 @@ import javax.inject.Inject
 
 class OrganizerActivity : BaseDrawerActivity(), OrganizerView {
 
-    private val batchFetchTriggerSubject = PublishSubject.create<String>()
-
-    private val eventInfoFetchTriggerSubject = PublishSubject.create<Boolean>()
-
-    private val newMessagesListeningToggleSubject = PublishSubject.create<Boolean>()
+    private lateinit var batchFetchTriggerSubject: Subject<String>
+    private lateinit var eventInfoFetchTriggerSubject: Subject<Boolean>
+    private lateinit var newMessagesListeningToggleSubject: Subject<Boolean>
 
     private var init = true
     private var isBatchLoading = false
@@ -95,6 +94,7 @@ class OrganizerActivity : BaseDrawerActivity(), OrganizerView {
 
     override fun onStart() {
         super.onStart()
+        initEmitters()
         organizerViewModel.bind(this, eventId)
         if (init) {
             batchFetchTriggerSubject.onNext(getCurrentISODate())
@@ -104,6 +104,12 @@ class OrganizerActivity : BaseDrawerActivity(), OrganizerView {
         }
 
         messagesAdapter.registerAdapterDataObserver(messagesAdapterObserver)
+    }
+
+    private fun initEmitters() {
+        batchFetchTriggerSubject = PublishSubject.create()
+        eventInfoFetchTriggerSubject = PublishSubject.create()
+        newMessagesListeningToggleSubject = PublishSubject.create()
     }
 
     override fun onStop() {

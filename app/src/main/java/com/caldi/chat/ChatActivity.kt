@@ -21,6 +21,7 @@ import com.squareup.picasso.Picasso
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.Subject
 import kotlinx.android.synthetic.main.activity_chat.chatInfoImageView
 import kotlinx.android.synthetic.main.activity_chat.chatInfoTextView
 import kotlinx.android.synthetic.main.activity_chat.chatInfoView
@@ -38,8 +39,8 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
 
     private lateinit var chatViewModel: ChatViewModel
 
-    private val newMessagesListeningToggleSubject = PublishSubject.create<Boolean>()
-    private val batchFetchTriggerSubject = PublishSubject.create<String>()
+    private lateinit var newMessagesListeningToggleSubject: Subject<Boolean>
+    private lateinit var batchFetchTriggerSubject: Subject<String>
 
     private var chatId = ""
 
@@ -115,6 +116,7 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
 
     override fun onStart() {
         super.onStart()
+        initEmitters()
         chatViewModel.bind(this, chatId)
         if (init) {
             newMessagesListeningToggleSubject.onNext(true)
@@ -123,6 +125,11 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
         }
 
         messagesAdapter.registerAdapterDataObserver(messagesAdapterObserver)
+    }
+
+    private fun initEmitters() {
+        newMessagesListeningToggleSubject = PublishSubject.create()
+        batchFetchTriggerSubject = PublishSubject.create()
     }
 
     override fun onStop() {

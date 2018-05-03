@@ -48,11 +48,10 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
     private val questionsAdapter = QuestionsAdapter()
 
     private var fetchEventProfile = true
-    private val triggerEventProfileFetchSubject = PublishSubject.create<String>()
+    private lateinit var triggerEventProfileFetchSubject: Subject<String>
     private lateinit var profilePictureFileSubject: Subject<File>
 
     private var currentProfilePictureUrl = ""
-    private var selectedProfilePictureFile: File? = null
 
     @Inject
     lateinit var eventProfileViewModelFactory: EventProfileViewModelFactory
@@ -86,16 +85,17 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
 
     override fun onStart() {
         super.onStart()
-        profilePictureFileSubject = PublishSubject.create()
+        initEmitters()
         eventProfileViewModel.bind(this)
-        selectedProfilePictureFile?.let {
-            profilePictureFileSubject.onNext(it)
-            selectedProfilePictureFile = null
-        }
         if (fetchEventProfile) {
             triggerEventProfileFetchSubject.onNext(eventId)
             fetchEventProfile = false
         }
+    }
+
+    private fun initEmitters() {
+        profilePictureFileSubject = PublishSubject.create()
+        triggerEventProfileFetchSubject = PublishSubject.create()
     }
 
     override fun onStop() {
@@ -108,7 +108,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             val result = CropImage.getActivityResult(data)
             if (resultCode == RESULT_OK) {
-                selectedProfilePictureFile = File(result.uri.path)
+                profilePictureFileSubject.onNext(File(result.uri.path))
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 showError(true)
             }

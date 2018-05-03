@@ -14,6 +14,7 @@ import com.caldi.factories.ChatListViewModelFactory
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.Subject
 import kotlinx.android.synthetic.main.activity_chat_list.chatItemsRecyclerView
 import kotlinx.android.synthetic.main.activity_chat_list.noPeopleToChatTextView
 import kotlinx.android.synthetic.main.activity_chat_list.progressBar
@@ -26,7 +27,7 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
 
     private lateinit var chatListViewModel: ChatListViewModel
 
-    private val userChatListFetchTriggerSubject = PublishSubject.create<String>()
+    private lateinit var userChatListFetchTriggerSubject: Subject<String>
 
     private val chatItemsAdapter = ChatItemsAdapter()
 
@@ -55,8 +56,13 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
 
     override fun onStart() {
         super.onStart()
+        initEmitters()
         chatListViewModel.bind(this)
         if (fetchChatListOnStart) userChatListFetchTriggerSubject.onNext(eventId)
+    }
+
+    private fun initEmitters() {
+        userChatListFetchTriggerSubject = PublishSubject.create()
     }
 
     override fun onStop() {

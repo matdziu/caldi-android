@@ -43,8 +43,8 @@ import javax.inject.Inject
 
 class LoginActivity : AppCompatActivity(), LoginView {
 
-    private val googleSignInObservable: Subject<GoogleSignInAccount> = PublishSubject.create()
-    private val facebookSignInObservable: Subject<AccessToken> = PublishSubject.create()
+    private lateinit var googleSignInSubject: Subject<GoogleSignInAccount>
+    private lateinit var facebookSignInSubject: Subject<AccessToken>
 
     private lateinit var loginViewModel: LoginViewModel
 
@@ -81,7 +81,13 @@ class LoginActivity : AppCompatActivity(), LoginView {
 
     override fun onStart() {
         super.onStart()
+        initEmitters()
         loginViewModel.bind(this)
+    }
+
+    private fun initEmitters() {
+        googleSignInSubject = PublishSubject.create()
+        facebookSignInSubject = PublishSubject.create()
     }
 
     override fun onStop() {
@@ -93,7 +99,7 @@ class LoginActivity : AppCompatActivity(), LoginView {
         loginManager.registerCallback(callbackManager,
                 object : FacebookCallback<LoginResult> {
                     override fun onSuccess(loginResult: LoginResult) {
-                        facebookSignInObservable.onNext(loginResult.accessToken)
+                        facebookSignInSubject.onNext(loginResult.accessToken)
                     }
 
                     override fun onCancel() {
@@ -122,7 +128,7 @@ class LoginActivity : AppCompatActivity(), LoginView {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 val account = task.getResult(ApiException::class.java)
-                googleSignInObservable.onNext(account)
+                googleSignInSubject.onNext(account)
             } catch (exception: ApiException) {
                 if (exception.statusCode == SIGN_IN_FAILED || exception.statusCode == NETWORK_ERROR) {
                     Toast.makeText(this, getString(R.string.login_error_text), Toast.LENGTH_SHORT).show()
@@ -132,9 +138,9 @@ class LoginActivity : AppCompatActivity(), LoginView {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    override fun emitGoogleSignIn(): Observable<GoogleSignInAccount> = googleSignInObservable
+    override fun emitGoogleSignIn(): Observable<GoogleSignInAccount> = googleSignInSubject
 
-    override fun emitFacebookSignIn(): Observable<AccessToken> = facebookSignInObservable
+    override fun emitFacebookSignIn(): Observable<AccessToken> = facebookSignInSubject
 
     override fun emitInput(): Observable<InputData> {
         return RxView.clicks(loginButton).map { InputData(emailEditText.text.toString(), passwordEditText.text.toString()) }

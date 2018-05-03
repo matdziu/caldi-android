@@ -29,7 +29,7 @@ class HomeActivity : BaseOverflowActivity(), HomeView {
 
     private lateinit var homeViewModel: HomeViewModel
 
-    private val eventsFetchTriggerObservable: Subject<Boolean> = PublishSubject.create()
+    private lateinit var eventsFetchTriggerSubject: Subject<Boolean>
 
     @Inject
     lateinit var homeViewModelFactory: HomeViewModelFactory
@@ -53,8 +53,13 @@ class HomeActivity : BaseOverflowActivity(), HomeView {
 
     override fun onStart() {
         super.onStart()
+        initEmitters()
         homeViewModel.bind(this)
-        eventsFetchTriggerObservable.onNext(forceEventsFetching)
+        eventsFetchTriggerSubject.onNext(forceEventsFetching)
+    }
+
+    private fun initEmitters() {
+        eventsFetchTriggerSubject = PublishSubject.create()
     }
 
     override fun onStop() {
@@ -66,11 +71,11 @@ class HomeActivity : BaseOverflowActivity(), HomeView {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == ADD_EVENT_REQUEST_CODE && resultCode == RESULT_OK) {
-            eventsFetchTriggerObservable.onNext(true)
+            eventsFetchTriggerSubject.onNext(true)
         }
     }
 
-    override fun emitEventsFetchTrigger(): Observable<Boolean> = eventsFetchTriggerObservable
+    override fun emitEventsFetchTrigger(): Observable<Boolean> = eventsFetchTriggerSubject
 
 
     override fun render(homeViewState: HomeViewState) {

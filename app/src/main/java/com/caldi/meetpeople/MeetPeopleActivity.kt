@@ -22,7 +22,7 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
 
     enum class ExitAnimDirection { LEFT, RIGHT }
 
-    private val triggerProfilesFetchingSubject: Subject<Boolean> = PublishSubject.create()
+    private lateinit var triggerProfilesFetchingSubject: Subject<Boolean>
     lateinit var positiveMeetSubject: Subject<String>
     lateinit var negativeMeetSubject: Subject<String>
 
@@ -56,12 +56,17 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
 
     override fun onStart() {
         super.onStart()
-        positiveMeetSubject = PublishSubject.create()
-        negativeMeetSubject = PublishSubject.create()
+        initEmitters()
         meetPeopleViewModel.bind(this, eventId)
         if (fetchProfilesOnStart) {
             triggerProfilesFetchingSubject.onNext(true)
         }
+    }
+
+    private fun initEmitters() {
+        positiveMeetSubject = PublishSubject.create()
+        negativeMeetSubject = PublishSubject.create()
+        triggerProfilesFetchingSubject = PublishSubject.create()
     }
 
     override fun onStop() {
