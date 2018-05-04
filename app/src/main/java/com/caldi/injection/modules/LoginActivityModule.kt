@@ -17,7 +17,7 @@ class LoginActivityModule {
 
     @Provides
     @ActivityScope
-    fun provideLoginRepository(): LoginInteractor {
+    fun provideLoginInteractor(): LoginInteractor {
         return LoginInteractor()
     }
 }

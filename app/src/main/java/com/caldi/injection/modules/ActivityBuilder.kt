@@ -4,6 +4,7 @@ import com.caldi.addevent.AddEventActivity
 import com.caldi.chat.ChatActivity
 import com.caldi.chatlist.ChatListActivity
 import com.caldi.eventprofile.EventProfileActivity
+import com.caldi.filterpeople.FilterPeopleActivity
 import com.caldi.home.HomeActivity
 import com.caldi.injection.ActivityScope
 import com.caldi.login.LoginActivity
@@ -53,4 +54,8 @@ abstract class ActivityBuilder {
     @ActivityScope
     @ContributesAndroidInjector(modules = [OrganizerActivityModule::class])
     abstract fun bindOrganizerActivityModule(): OrganizerActivity
+
+    @ActivityScope
+    @ContributesAndroidInjector(modules = [FilterPeopleActivityModule::class])
+    abstract fun bindFilterPeopleActivityModule(): FilterPeopleActivity
 }
