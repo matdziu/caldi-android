@@ -12,6 +12,32 @@
 
         <include layout="@layout/toolbar" />
 
+        <RelativeLayout
+            android:id="@+id/contentViewGroup"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Spinner
+                android:id="@+id/filterSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/filterSpinner"
+                android:background="@color/colorPrimary" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_centerInParent="true"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
     </LinearLayout>
 
     <android.support.design.widget.NavigationView
