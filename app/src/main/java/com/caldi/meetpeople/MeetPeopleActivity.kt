@@ -3,11 +3,14 @@ package com.caldi.meetpeople
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
 import com.caldi.factories.MeetPeopleViewModelFactory
+import com.caldi.filterpeople.FilterPeopleActivity
 import com.caldi.meetpeople.personprofile.PersonProfileFragment
 import com.caldi.meetpeople.personprofile.PersonProfileViewState
 import dagger.android.AndroidInjection
@@ -47,6 +50,19 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         fetchProfilesOnStart = true
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_people_view, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.change_people_view_item -> startActivity(Intent(this, FilterPeopleActivity::class.java))
+        }
+        finish()
+        return false
     }
 
     override fun onResume() {

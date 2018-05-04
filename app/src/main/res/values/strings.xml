@@ -43,4 +43,5 @@
     <string name="failed_to_open_link">Failed to open this link</string>
     <string name="no_chats_info">You don\'t have any chats yet.</string>
     <string name="no_events_yet">You are not attending any events yet.</string>
+    <string name="change_people_view_text">Change Meet People view</string>
 </resources>

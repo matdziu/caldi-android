@@ -1,10 +1,14 @@
 package com.caldi.filterpeople
 
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
 import com.caldi.factories.FilterPeopleViewModelFactory
+import com.caldi.meetpeople.MeetPeopleActivity
 import dagger.android.AndroidInjection
 import javax.inject.Inject
 
@@ -23,6 +27,19 @@ class FilterPeopleActivity : BaseDrawerActivity(), FilterPeopleView {
         filterPeopleViewModel = ViewModelProviders.of(this, filterPeopleViewModelFactory)[FilterPeopleViewModel::class.java]
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_people_view, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.change_people_view_item -> startActivity(Intent(this, MeetPeopleActivity::class.java))
+        }
+        finish()
+        return false
+    }
+
     override fun onResume() {
         super.onResume()
         setNavigationSelection(R.id.meet_people_item)
@@ -31,7 +48,7 @@ class FilterPeopleActivity : BaseDrawerActivity(), FilterPeopleView {
     override fun onStart() {
         super.onStart()
         initEmitters()
-        filterPeopleViewModel.bind(this)
+//        filterPeopleViewModel.bind(this)
     }
 
     private fun initEmitters() {
