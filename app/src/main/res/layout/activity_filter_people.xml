@@ -24,10 +24,17 @@
                 android:layout_margin="16dp" />
 
             <View
+                android:id="@+id/divider"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_below="@id/filterSpinner"
                 android:background="@color/colorPrimary" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/peopleRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/divider" />
 
             <ProgressBar
                 android:id="@+id/progressBar"

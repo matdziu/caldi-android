@@ -1,6 +1,6 @@
 package com.caldi.meetpeople
 
-import com.caldi.meetpeople.personprofile.PersonProfileViewState
+import com.caldi.common.states.PersonProfileViewState
 
 data class MeetPeopleViewState(val progress: Boolean = false,
                                val error: Boolean = false,

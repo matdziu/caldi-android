@@ -7,19 +7,19 @@
     android:padding="16dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/eventImageView"
+        android:id="@+id/personImageView"
         android:layout_width="56dp"
         android:layout_height="56dp"
-        android:src="@drawable/event_placeholder" />
+        android:src="@drawable/profile_picture_shape" />
 
     <TextView
-        android:id="@+id/eventTextView"
+        android:id="@+id/personTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="16dp"
         android:textColor="@color/colorPrimaryText"
         android:textSize="16dp"
-        tools:text="AndroidCan 2017" />
+        tools:text="Romek" />
 
 </LinearLayout>

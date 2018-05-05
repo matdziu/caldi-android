@@ -1,8 +1,8 @@
 package com.caldi.meetpeople
 
+import com.caldi.common.states.PersonProfileViewState
 import com.caldi.meetpeople.list.AnswerViewState
 import com.caldi.meetpeople.models.AttendeeProfile
-import com.caldi.meetpeople.personprofile.PersonProfileViewState
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.eq
 import com.nhaarman.mockito_kotlin.mock

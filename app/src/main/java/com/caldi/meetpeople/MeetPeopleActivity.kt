@@ -12,7 +12,7 @@ import com.caldi.base.BaseDrawerActivity
 import com.caldi.factories.MeetPeopleViewModelFactory
 import com.caldi.filterpeople.FilterPeopleActivity
 import com.caldi.meetpeople.personprofile.PersonProfileFragment
-import com.caldi.meetpeople.personprofile.PersonProfileViewState
+import com.caldi.common.states.PersonProfileViewState
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject

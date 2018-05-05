@@ -3,18 +3,23 @@ package com.caldi.filterpeople
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
+import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
+import com.caldi.common.states.PersonProfileViewState
 import com.caldi.factories.FilterPeopleViewModelFactory
+import com.caldi.filterpeople.list.PersonProfilesAdapter
 import com.caldi.filterpeople.models.spinner.NameSpinnerItem
 import com.caldi.filterpeople.spinner.FilterSpinnerAdapter
 import com.caldi.meetpeople.MeetPeopleActivity
+import com.caldi.meetpeople.list.AnswerViewState
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_filter_people.filterSpinner
+import kotlinx.android.synthetic.main.activity_filter_people.peopleRecyclerView
 import javax.inject.Inject
 
 class FilterPeopleActivity : BaseDrawerActivity(), FilterPeopleView {
@@ -26,19 +31,29 @@ class FilterPeopleActivity : BaseDrawerActivity(), FilterPeopleView {
 
     private lateinit var filterSpinnerAdapter: FilterSpinnerAdapter
 
+    private val personProfilesAdapter = PersonProfilesAdapter()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         setContentView(R.layout.activity_filter_people)
         super.onCreate(savedInstanceState)
         initSpinner()
+        initRecyclerView()
 
         filterPeopleViewModel = ViewModelProviders.of(this, filterPeopleViewModelFactory)[FilterPeopleViewModel::class.java]
 
         filterSpinnerAdapter.setFilterSpinnerItemList(listOf(
                 NameSpinnerItem("Attendee name"),
                 NameSpinnerItem("Posted link (optional)"),
-                NameSpinnerItem("What is your favourite drink?"),
-                NameSpinnerItem("What is your beloved music?")
+                NameSpinnerItem("What's your favourite drink"),
+                NameSpinnerItem("What's your favourite song")
+        ))
+
+        personProfilesAdapter.submitList(listOf(
+                PersonProfileViewState("abcdefgh", "Matt, the Android Guy", "https://themify.me/demo/themes/pinshop/files/2012/12/man-in-suit2.jpg", "medium.com/@matdziu", listOf(
+                        AnswerViewState("What's your favourite drink", "Beer"),
+                        AnswerViewState("What's your favourite song", "Stairway to heaven")
+                ))
         ))
     }
 
@@ -55,6 +70,11 @@ class FilterPeopleActivity : BaseDrawerActivity(), FilterPeopleView {
                 // unused
             }
         }
+    }
+
+    private fun initRecyclerView() {
+        peopleRecyclerView.layoutManager = LinearLayoutManager(this)
+        peopleRecyclerView.adapter = personProfilesAdapter
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

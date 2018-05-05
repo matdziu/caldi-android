@@ -1,4 +1,4 @@
-package com.caldi.meetpeople.personprofile
+package com.caldi.common.states
 
 import android.annotation.SuppressLint
 import android.os.Parcelable

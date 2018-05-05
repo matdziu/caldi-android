@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.caldi.R
+import com.caldi.common.states.PersonProfileViewState
 import com.caldi.constants.PERSON_PROFILE_VIEW_STATE_KEY
 import com.caldi.meetpeople.MeetPeopleActivity
 import com.caldi.meetpeople.list.AnswersAdapter

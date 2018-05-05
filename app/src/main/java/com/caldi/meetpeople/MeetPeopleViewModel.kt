@@ -3,7 +3,7 @@ package com.caldi.meetpeople
 import android.arch.lifecycle.ViewModel
 import com.caldi.meetpeople.list.AnswerViewState
 import com.caldi.meetpeople.models.AttendeeProfile
-import com.caldi.meetpeople.personprofile.PersonProfileViewState
+import com.caldi.common.states.PersonProfileViewState
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
