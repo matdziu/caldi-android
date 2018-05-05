@@ -6,20 +6,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import com.caldi.filterpeople.models.spinner.FilterSpinnerItem
 
 class FilterSpinnerAdapter(context: Context, @LayoutRes resource: Int)
-    : ArrayAdapter<FilterSpinnerItem>(context, resource) {
+    : ArrayAdapter<FilterType>(context, resource) {
 
-    private val filterSpinnerItemList = arrayListOf<FilterSpinnerItem>()
+    private val filterTypeList = arrayListOf<FilterType>()
 
-    override fun getItem(position: Int): FilterSpinnerItem = filterSpinnerItemList[position]
+    override fun getItem(position: Int): FilterType = filterTypeList[position]
 
-    override fun getCount(): Int = filterSpinnerItemList.size
+    override fun getCount(): Int = filterTypeList.size
 
-    fun setFilterSpinnerItemList(filterSpinnerItemList: List<FilterSpinnerItem>) {
-        this.filterSpinnerItemList.clear()
-        this.filterSpinnerItemList.addAll(filterSpinnerItemList)
+    fun setFilterTypeList(filterTypeList: List<FilterType>) {
+        this.filterTypeList.clear()
+        this.filterTypeList.addAll(filterTypeList)
         notifyDataSetChanged()
     }
 
@@ -32,7 +31,7 @@ class FilterSpinnerAdapter(context: Context, @LayoutRes resource: Int)
     }
 
     private fun setLabelTextView(labelTextView: TextView, position: Int): TextView {
-        labelTextView.text = filterSpinnerItemList[position].text
+        labelTextView.text = filterTypeList[position].text
         return labelTextView
     }
 }

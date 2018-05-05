@@ -13,8 +13,10 @@ import com.caldi.base.BaseDrawerActivity
 import com.caldi.common.states.PersonProfileViewState
 import com.caldi.factories.FilterPeopleViewModelFactory
 import com.caldi.filterpeople.list.PersonProfilesAdapter
-import com.caldi.filterpeople.models.spinner.NameSpinnerItem
 import com.caldi.filterpeople.spinner.FilterSpinnerAdapter
+import com.caldi.filterpeople.spinner.FilterType.LinkFilterType
+import com.caldi.filterpeople.spinner.FilterType.NameFilterType
+import com.caldi.filterpeople.spinner.FilterType.QuestionFilterType
 import com.caldi.meetpeople.MeetPeopleActivity
 import com.caldi.meetpeople.list.AnswerViewState
 import dagger.android.AndroidInjection
@@ -42,11 +44,11 @@ class FilterPeopleActivity : BaseDrawerActivity(), FilterPeopleView {
 
         filterPeopleViewModel = ViewModelProviders.of(this, filterPeopleViewModelFactory)[FilterPeopleViewModel::class.java]
 
-        filterSpinnerAdapter.setFilterSpinnerItemList(listOf(
-                NameSpinnerItem("Attendee name"),
-                NameSpinnerItem("Posted link (optional)"),
-                NameSpinnerItem("What's your favourite drink"),
-                NameSpinnerItem("What's your favourite song")
+        filterSpinnerAdapter.setFilterTypeList(listOf(
+                NameFilterType("Attendee name"),
+                LinkFilterType("Posted link (optional)"),
+                QuestionFilterType("What's your favourite drink"),
+                QuestionFilterType("What's your favourite song")
         ))
 
         personProfilesAdapter.submitList(listOf(
@@ -63,7 +65,8 @@ class FilterPeopleActivity : BaseDrawerActivity(), FilterPeopleView {
         filterSpinner.adapter = filterSpinnerAdapter
         filterSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                val selectedFilterSpinnerItem = filterSpinnerAdapter.getItem(position)
+                val selectedFilterType = filterSpinnerAdapter.getItem(position)
+                personProfilesAdapter.filterType = selectedFilterType
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
