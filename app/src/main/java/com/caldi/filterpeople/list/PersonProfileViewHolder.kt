@@ -1,6 +1,7 @@
 package com.caldi.filterpeople.list
 
 import android.support.v7.widget.RecyclerView
+import android.text.util.Linkify
 import android.view.View
 import android.widget.TextView
 import com.caldi.R
@@ -14,6 +15,7 @@ class PersonProfileViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView
 
     fun bind(personProfileViewState: PersonProfileViewState, filterType: FilterType?) {
         with(itemView) {
+            personTextView.autoLinkMask = 0
             displayDesiredText(personTextView, personProfileViewState, filterType)
             Picasso.get()
                     .load(personProfileViewState.profilePictureUrl)
@@ -26,7 +28,7 @@ class PersonProfileViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView
                                    filterType: FilterType?) {
         when (filterType) {
             is FilterType.NameFilterType -> personTextView.text = personProfileViewState.eventUserName
-            is FilterType.LinkFilterType -> personTextView.text = personProfileViewState.userLinkUrl
+            is FilterType.LinkFilterType -> displayUserLink(personTextView, personProfileViewState.userLinkUrl)
             is FilterType.QuestionFilterType -> personTextView.text = searchForAnswer(filterType.text, personProfileViewState)
         }
     }
@@ -38,5 +40,11 @@ class PersonProfileViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView
             }
         }
         return ""
+    }
+
+    private fun displayUserLink(personTextView: TextView, userLinkUrl: String) {
+        val formattedUserLink = if (userLinkUrl.isBlank()) "-" else userLinkUrl
+        personTextView.autoLinkMask = Linkify.WEB_URLS
+        personTextView.text = formattedUserLink
     }
 }

@@ -19,6 +19,7 @@
         android:layout_gravity="center_vertical"
         android:layout_marginStart="16dp"
         android:textColor="@color/colorPrimaryText"
+        android:textColorLink="@color/colorLightGreen"
         android:textSize="16dp"
         tools:text="Romek" />
 

@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -20,6 +21,9 @@ import com.caldi.filterpeople.spinner.FilterType.QuestionFilterType
 import com.caldi.meetpeople.MeetPeopleActivity
 import com.caldi.meetpeople.list.AnswerViewState
 import dagger.android.AndroidInjection
+import io.reactivex.Observable
+import io.reactivex.subjects.PublishSubject
+import io.reactivex.subjects.Subject
 import kotlinx.android.synthetic.main.activity_filter_people.filterSpinner
 import kotlinx.android.synthetic.main.activity_filter_people.peopleRecyclerView
 import javax.inject.Inject
@@ -34,6 +38,10 @@ class FilterPeopleActivity : BaseDrawerActivity(), FilterPeopleView {
     private lateinit var filterSpinnerAdapter: FilterSpinnerAdapter
 
     private val personProfilesAdapter = PersonProfilesAdapter()
+
+    private lateinit var profilesFetchingSubject: Subject<Boolean>
+
+    private var isBatchLoading = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -52,7 +60,7 @@ class FilterPeopleActivity : BaseDrawerActivity(), FilterPeopleView {
         ))
 
         personProfilesAdapter.submitList(listOf(
-                PersonProfileViewState("abcdefgh", "Matt, the Android Guy", "https://themify.me/demo/themes/pinshop/files/2012/12/man-in-suit2.jpg", "medium.com/@matdziu", listOf(
+                PersonProfileViewState("abcdefgh", "Matt, the Android Dude", "https://themify.me/demo/themes/pinshop/files/2012/12/man-in-suit2.jpg", "medium.com/@matdziu", listOf(
                         AnswerViewState("What's your favourite drink", "Beer"),
                         AnswerViewState("What's your favourite song", "Stairway to heaven")
                 ))
@@ -78,6 +86,14 @@ class FilterPeopleActivity : BaseDrawerActivity(), FilterPeopleView {
     private fun initRecyclerView() {
         peopleRecyclerView.layoutManager = LinearLayoutManager(this)
         peopleRecyclerView.adapter = personProfilesAdapter
+        peopleRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (!recyclerView.canScrollVertically(1) && !isBatchLoading) {
+                    isBatchLoading = true
+                    profilesFetchingSubject.onNext(true)
+                }
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -105,13 +121,15 @@ class FilterPeopleActivity : BaseDrawerActivity(), FilterPeopleView {
     }
 
     private fun initEmitters() {
-
+        profilesFetchingSubject = PublishSubject.create()
     }
 
     override fun onStop() {
         filterPeopleViewModel.unbind()
         super.onStop()
     }
+
+    override fun emitProfilesFetchingTrigger(): Observable<Boolean> = profilesFetchingSubject
 
     override fun render(filterPeopleViewState: FilterPeopleViewState) {
 
