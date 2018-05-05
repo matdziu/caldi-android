@@ -43,6 +43,8 @@ class FilterPeopleActivity : BaseDrawerActivity(), FilterPeopleView {
 
     private var isBatchLoading = false
 
+    private var showChangePeopleViewButton = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         setContentView(R.layout.activity_filter_people)
@@ -75,6 +77,17 @@ class FilterPeopleActivity : BaseDrawerActivity(), FilterPeopleView {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 val selectedFilterType = filterSpinnerAdapter.getItem(position)
                 personProfilesAdapter.filterType = selectedFilterType
+
+                if (position == 1) {
+                    toggleBackArrow(false)
+                    showChangePeopleViewButton = true
+                    invalidateOptionsMenu()
+                }
+                if (position == 2) {
+                    toggleBackArrow(true)
+                    showChangePeopleViewButton = false
+                    invalidateOptionsMenu()
+                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
@@ -97,7 +110,9 @@ class FilterPeopleActivity : BaseDrawerActivity(), FilterPeopleView {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_people_view, menu)
+        if (showChangePeopleViewButton) {
+            menuInflater.inflate(R.menu.menu_people_view, menu)
+        }
         return true
     }
 

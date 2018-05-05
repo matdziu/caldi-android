@@ -3,7 +3,6 @@ package com.caldi.base
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
-import android.support.v4.content.ContextCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
@@ -30,6 +29,8 @@ open class BaseDrawerActivity : AppCompatActivity(), NavigationView.OnNavigation
         findViewById<Toolbar>(R.id.toolbar)
     }
 
+    private lateinit var toggle: ActionBarDrawerToggle
+
     companion object {
         var eventId = ""
     }
@@ -40,9 +41,8 @@ open class BaseDrawerActivity : AppCompatActivity(), NavigationView.OnNavigation
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        val toggle = ActionBarDrawerToggle(this, drawerLayout, toolbar,
+        toggle = ActionBarDrawerToggle(this, drawerLayout, toolbar,
                 R.string.drawer_opened, R.string.drawer_closed)
-        toggle.drawerArrowDrawable.color = ContextCompat.getColor(this, android.R.color.white)
 
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
@@ -75,5 +75,17 @@ open class BaseDrawerActivity : AppCompatActivity(), NavigationView.OnNavigation
 
     fun setNavigationSelection(menuItemId: Int) {
         navigationView.setCheckedItem(menuItemId)
+    }
+
+    fun toggleBackArrow(showBackArrow: Boolean) {
+        if (showBackArrow) {
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+            toggle.isDrawerIndicatorEnabled = false
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        } else {
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+            supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            toggle.isDrawerIndicatorEnabled = true
+        }
     }
 }
