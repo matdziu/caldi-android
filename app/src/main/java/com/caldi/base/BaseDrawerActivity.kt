@@ -77,8 +77,8 @@ open class BaseDrawerActivity : AppCompatActivity(), NavigationView.OnNavigation
         navigationView.setCheckedItem(menuItemId)
     }
 
-    fun toggleBackArrow(showBackArrow: Boolean, backAction: () -> Unit = {}) {
-        if (showBackArrow) {
+    fun showBackToolbarArrow(show: Boolean, backAction: () -> Unit = {}) {
+        if (show) {
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
             toggle.isDrawerIndicatorEnabled = false
             supportActionBar?.setDisplayHomeAsUpEnabled(true)

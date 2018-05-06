@@ -10,7 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import com.caldi.R
-import com.caldi.base.BaseDrawerActivity
+import com.caldi.base.BasePeopleActivity
 import com.caldi.common.states.PersonProfileViewState
 import com.caldi.factories.FilterPeopleViewModelFactory
 import com.caldi.filterpeople.list.PersonProfilesAdapter
@@ -28,7 +28,7 @@ import kotlinx.android.synthetic.main.activity_filter_people.filterSpinner
 import kotlinx.android.synthetic.main.activity_filter_people.peopleRecyclerView
 import javax.inject.Inject
 
-class FilterPeopleActivity : BaseDrawerActivity(), FilterPeopleView {
+class FilterPeopleActivity : BasePeopleActivity(), FilterPeopleView {
 
     @Inject
     lateinit var filterPeopleViewModelFactory: FilterPeopleViewModelFactory
@@ -37,13 +37,13 @@ class FilterPeopleActivity : BaseDrawerActivity(), FilterPeopleView {
 
     private lateinit var filterSpinnerAdapter: FilterSpinnerAdapter
 
-    private val personProfilesAdapter = PersonProfilesAdapter()
+    private val personProfilesAdapter = PersonProfilesAdapter(this)
 
     private lateinit var profilesFetchingSubject: Subject<Boolean>
 
     private var isBatchLoading = false
 
-    private var showChangePeopleViewButton = true
+    private var viewPersonProfileMode = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -99,7 +99,7 @@ class FilterPeopleActivity : BaseDrawerActivity(), FilterPeopleView {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        if (showChangePeopleViewButton) {
+        if (!viewPersonProfileMode) {
             menuInflater.inflate(R.menu.menu_people_view, menu)
         }
         return true
@@ -137,5 +137,20 @@ class FilterPeopleActivity : BaseDrawerActivity(), FilterPeopleView {
 
     override fun render(filterPeopleViewState: FilterPeopleViewState) {
 
+    }
+
+    fun enableViewPersonProfileMode(enable: Boolean) {
+        showBackToolbarArrow(enable, { onBackPressed() })
+        viewPersonProfileMode = enable
+        invalidateOptionsMenu()
+    }
+
+    override fun onBackPressed() {
+        if (!viewPersonProfileMode) {
+            super.onBackPressed()
+        } else {
+            enableViewPersonProfileMode(false)
+            removePersonProfileFragment(exitAnimDirection = ExitAnimDirection.UP)
+        }
     }
 }

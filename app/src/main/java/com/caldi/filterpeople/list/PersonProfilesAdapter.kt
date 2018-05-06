@@ -5,10 +5,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.caldi.R
 import com.caldi.common.states.PersonProfileViewState
+import com.caldi.filterpeople.FilterPeopleActivity
 import com.caldi.filterpeople.spinner.FilterType
 import com.caldi.filterpeople.utils.PersonProfileViewStateDiffCallback
 
-class PersonProfilesAdapter :
+class PersonProfilesAdapter(private val filterPeopleActivity: FilterPeopleActivity) :
         ListAdapter<PersonProfileViewState, PersonProfileViewHolder>(PersonProfileViewStateDiffCallback()) {
 
     var filterType: FilterType? = null
@@ -23,6 +24,13 @@ class PersonProfilesAdapter :
     }
 
     override fun onBindViewHolder(holder: PersonProfileViewHolder, position: Int) {
-        holder.bind(getItem(position), filterType)
+        val currentPersonProfile = getItem(position)
+        holder.bind(currentPersonProfile, filterType)
+        holder.itemView.setOnClickListener {
+            with(filterPeopleActivity) {
+                addPersonProfileFragment(currentPersonProfile)
+                enableViewPersonProfileMode(true)
+            }
+        }
     }
 }

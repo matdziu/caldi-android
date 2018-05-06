@@ -8,9 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.caldi.R
+import com.caldi.base.BasePeopleActivity
 import com.caldi.common.states.PersonProfileViewState
 import com.caldi.constants.PERSON_PROFILE_VIEW_STATE_KEY
-import com.caldi.meetpeople.MeetPeopleActivity
 import com.caldi.meetpeople.list.AnswersAdapter
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
@@ -26,7 +26,7 @@ import java.lang.Exception
 
 class PersonProfileFragment : Fragment() {
 
-    private lateinit var hostingActivity: MeetPeopleActivity
+    private lateinit var hostingActivity: BasePeopleActivity
     private val answersAdapter = AnswersAdapter()
 
     companion object {
@@ -46,7 +46,7 @@ class PersonProfileFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        hostingActivity = activity as MeetPeopleActivity
+        hostingActivity = activity as BasePeopleActivity
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

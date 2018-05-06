@@ -8,11 +8,10 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import com.caldi.R
-import com.caldi.base.BaseDrawerActivity
+import com.caldi.base.BasePeopleActivity
+import com.caldi.common.states.PersonProfileViewState
 import com.caldi.factories.MeetPeopleViewModelFactory
 import com.caldi.filterpeople.FilterPeopleActivity
-import com.caldi.meetpeople.personprofile.PersonProfileFragment
-import com.caldi.common.states.PersonProfileViewState
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
@@ -21,13 +20,9 @@ import kotlinx.android.synthetic.main.activity_meet_people.noPeopleToMeetTextVie
 import kotlinx.android.synthetic.main.activity_meet_people.progressBar
 import javax.inject.Inject
 
-class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
-
-    enum class ExitAnimDirection { LEFT, RIGHT }
+class MeetPeopleActivity : BasePeopleActivity(), MeetPeopleView {
 
     private lateinit var triggerProfilesFetchingSubject: Subject<Boolean>
-    lateinit var positiveMeetSubject: Subject<String>
-    lateinit var negativeMeetSubject: Subject<String>
 
     private var fetchProfilesOnStart = true
 
@@ -80,8 +75,6 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
     }
 
     private fun initEmitters() {
-        positiveMeetSubject = PublishSubject.create()
-        negativeMeetSubject = PublishSubject.create()
         triggerProfilesFetchingSubject = PublishSubject.create()
     }
 
@@ -140,31 +133,11 @@ class MeetPeopleActivity : BaseDrawerActivity(), MeetPeopleView {
         }
     }
 
-    private fun addPersonProfileFragment(personProfileViewState: PersonProfileViewState) {
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction
-                .setCustomAnimations(R.anim.up_enter, 0)
-                .add(R.id.fragmentsContainer, PersonProfileFragment.newInstance(personProfileViewState), personProfileViewState.userId)
-        fragmentTransaction.commit()
-    }
-
-    private fun removePersonProfileFragment(userId: String, exitAnimDirection: ExitAnimDirection) {
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
+    override fun removePersonProfileFragment(userId: String, exitAnimDirection: ExitAnimDirection) {
         currentProfilesBatchSize -= 1
         if (currentProfilesBatchSize == 0) {
             triggerProfilesFetchingSubject.onNext(true)
         }
-
-        when (exitAnimDirection) {
-            ExitAnimDirection.LEFT -> {
-                fragmentTransaction.setCustomAnimations(0, R.anim.left_exit)
-            }
-            ExitAnimDirection.RIGHT -> {
-                fragmentTransaction.setCustomAnimations(0, R.anim.right_exit)
-            }
-        }
-
-        fragmentTransaction.remove(supportFragmentManager.findFragmentByTag(userId))
-        fragmentTransaction.commit()
+        super.removePersonProfileFragment(userId, exitAnimDirection)
     }
 }
