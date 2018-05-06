@@ -43,7 +43,7 @@ class FilterPeopleActivity : BasePeopleActivity(), FilterPeopleView {
 
     private var isBatchLoading = false
 
-    private var viewPersonProfileMode = false
+    var viewPersonProfileMode = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)

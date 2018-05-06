@@ -28,8 +28,10 @@ class PersonProfilesAdapter(private val filterPeopleActivity: FilterPeopleActivi
         holder.bind(currentPersonProfile, filterType)
         holder.itemView.setOnClickListener {
             with(filterPeopleActivity) {
-                addPersonProfileFragment(currentPersonProfile)
-                enableViewPersonProfileMode(true)
+                if (!viewPersonProfileMode) {
+                    addPersonProfileFragment(currentPersonProfile)
+                    enableViewPersonProfileMode(true)
+                }
             }
         }
     }
