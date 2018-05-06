@@ -21,9 +21,6 @@ import com.caldi.filterpeople.spinner.FilterType.QuestionFilterType
 import com.caldi.meetpeople.MeetPeopleActivity
 import com.caldi.meetpeople.list.AnswerViewState
 import dagger.android.AndroidInjection
-import io.reactivex.Observable
-import io.reactivex.subjects.PublishSubject
-import io.reactivex.subjects.Subject
 import kotlinx.android.synthetic.main.activity_filter_people.filterSpinner
 import kotlinx.android.synthetic.main.activity_filter_people.peopleRecyclerView
 import javax.inject.Inject
@@ -38,8 +35,6 @@ class FilterPeopleActivity : BasePeopleActivity(), FilterPeopleView {
     private lateinit var filterSpinnerAdapter: FilterSpinnerAdapter
 
     private val personProfilesAdapter = PersonProfilesAdapter(this)
-
-    private lateinit var profilesFetchingSubject: Subject<Boolean>
 
     private var isBatchLoading = false
 
@@ -120,20 +115,13 @@ class FilterPeopleActivity : BasePeopleActivity(), FilterPeopleView {
 
     override fun onStart() {
         super.onStart()
-        initEmitters()
 //        filterPeopleViewModel.bind(this)
-    }
-
-    private fun initEmitters() {
-        profilesFetchingSubject = PublishSubject.create()
     }
 
     override fun onStop() {
         filterPeopleViewModel.unbind()
         super.onStop()
     }
-
-    override fun emitProfilesFetchingTrigger(): Observable<Boolean> = profilesFetchingSubject
 
     override fun render(filterPeopleViewState: FilterPeopleViewState) {
 

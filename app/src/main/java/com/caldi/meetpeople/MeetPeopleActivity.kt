@@ -13,16 +13,11 @@ import com.caldi.common.states.PersonProfileViewState
 import com.caldi.factories.MeetPeopleViewModelFactory
 import com.caldi.filterpeople.FilterPeopleActivity
 import dagger.android.AndroidInjection
-import io.reactivex.Observable
-import io.reactivex.subjects.PublishSubject
-import io.reactivex.subjects.Subject
 import kotlinx.android.synthetic.main.activity_meet_people.noPeopleToMeetTextView
 import kotlinx.android.synthetic.main.activity_meet_people.progressBar
 import javax.inject.Inject
 
 class MeetPeopleActivity : BasePeopleActivity(), MeetPeopleView {
-
-    private lateinit var triggerProfilesFetchingSubject: Subject<Boolean>
 
     private var fetchProfilesOnStart = true
 
@@ -67,31 +62,16 @@ class MeetPeopleActivity : BasePeopleActivity(), MeetPeopleView {
 
     override fun onStart() {
         super.onStart()
-        initEmitters()
         meetPeopleViewModel.bind(this, eventId)
         if (fetchProfilesOnStart) {
-            triggerProfilesFetchingSubject.onNext(true)
+            profilesFetchingSubject.onNext(true)
         }
-    }
-
-    private fun initEmitters() {
-        triggerProfilesFetchingSubject = PublishSubject.create()
     }
 
     override fun onStop() {
         fetchProfilesOnStart = false
         meetPeopleViewModel.unbind()
         super.onStop()
-    }
-
-    override fun emitProfilesFetchingTrigger(): Observable<Boolean> = triggerProfilesFetchingSubject
-
-    override fun emitPositiveMeet(): Observable<String> = positiveMeetSubject.doOnNext {
-        removePersonProfileFragment(it, ExitAnimDirection.RIGHT)
-    }
-
-    override fun emitNegativeMeet(): Observable<String> = negativeMeetSubject.doOnNext {
-        removePersonProfileFragment(it, ExitAnimDirection.LEFT)
     }
 
     override fun render(meetPeopleViewState: MeetPeopleViewState) {
@@ -136,7 +116,7 @@ class MeetPeopleActivity : BasePeopleActivity(), MeetPeopleView {
     override fun removePersonProfileFragment(userId: String, exitAnimDirection: ExitAnimDirection) {
         currentProfilesBatchSize -= 1
         if (currentProfilesBatchSize == 0) {
-            triggerProfilesFetchingSubject.onNext(true)
+            profilesFetchingSubject.onNext(true)
         }
         super.removePersonProfileFragment(userId, exitAnimDirection)
     }

@@ -1,10 +1,8 @@
 package com.caldi.filterpeople
 
-import io.reactivex.Observable
+import com.caldi.base.BasePeopleView
 
-interface FilterPeopleView {
-
-    fun emitProfilesFetchingTrigger(): Observable<Boolean>
+interface FilterPeopleView : BasePeopleView {
 
     fun render(filterPeopleViewState: FilterPeopleViewState)
 }

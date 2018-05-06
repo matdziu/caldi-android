@@ -1,14 +1,8 @@
 package com.caldi.meetpeople
 
-import io.reactivex.Observable
+import com.caldi.base.BasePeopleView
 
-interface MeetPeopleView {
-
-    fun emitPositiveMeet(): Observable<String>
-
-    fun emitNegativeMeet(): Observable<String>
-
-    fun emitProfilesFetchingTrigger(): Observable<Boolean>
+interface MeetPeopleView : BasePeopleView {
 
     fun render(meetPeopleViewState: MeetPeopleViewState)
 }
