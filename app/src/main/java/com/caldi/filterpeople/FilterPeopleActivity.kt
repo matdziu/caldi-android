@@ -77,17 +77,6 @@ class FilterPeopleActivity : BaseDrawerActivity(), FilterPeopleView {
             override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                 val selectedFilterType = filterSpinnerAdapter.getItem(position)
                 personProfilesAdapter.filterType = selectedFilterType
-
-                if (position == 1) {
-                    toggleBackArrow(false)
-                    showChangePeopleViewButton = true
-                    invalidateOptionsMenu()
-                }
-                if (position == 2) {
-                    toggleBackArrow(true)
-                    showChangePeopleViewButton = false
-                    invalidateOptionsMenu()
-                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
