@@ -4,12 +4,12 @@ import com.caldi.addevent.AddEventActivity
 import com.caldi.chat.ChatActivity
 import com.caldi.chatlist.ChatListActivity
 import com.caldi.eventprofile.EventProfileActivity
-import com.caldi.filterpeople.FilterPeopleActivity
 import com.caldi.home.HomeActivity
 import com.caldi.injection.ActivityScope
 import com.caldi.login.LoginActivity
-import com.caldi.meetpeople.MeetPeopleActivity
 import com.caldi.organizer.OrganizerActivity
+import com.caldi.people.filterpeople.FilterPeopleActivity
+import com.caldi.people.meetpeople.MeetPeopleActivity
 import com.caldi.signup.SignUpActivity
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
@@ -40,22 +40,22 @@ abstract class ActivityBuilder {
     abstract fun bindEventProfileActivity(): EventProfileActivity
 
     @ActivityScope
-    @ContributesAndroidInjector(modules = [MeetPeopleActivityModule::class])
-    abstract fun bindMeetPeopleActivityModule(): MeetPeopleActivity
+    @ContributesAndroidInjector(modules = [PeopleModule::class])
+    abstract fun bindMeetPeopleActivity(): MeetPeopleActivity
+
+    @ActivityScope
+    @ContributesAndroidInjector(modules = [PeopleModule::class])
+    abstract fun bindFilterPeopleActivity(): FilterPeopleActivity
 
     @ActivityScope
     @ContributesAndroidInjector(modules = [ChatListActivityModule::class])
-    abstract fun bindChatListActivityModule(): ChatListActivity
+    abstract fun bindChatListActivity(): ChatListActivity
 
     @ActivityScope
     @ContributesAndroidInjector(modules = [ChatActivityModule::class])
-    abstract fun bindChatActivityModule(): ChatActivity
+    abstract fun bindChatActivity(): ChatActivity
 
     @ActivityScope
     @ContributesAndroidInjector(modules = [OrganizerActivityModule::class])
-    abstract fun bindOrganizerActivityModule(): OrganizerActivity
-
-    @ActivityScope
-    @ContributesAndroidInjector(modules = [FilterPeopleActivityModule::class])
-    abstract fun bindFilterPeopleActivityModule(): FilterPeopleActivity
+    abstract fun bindOrganizerActivity(): OrganizerActivity
 }

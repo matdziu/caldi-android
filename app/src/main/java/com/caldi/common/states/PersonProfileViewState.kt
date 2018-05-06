@@ -2,7 +2,7 @@ package com.caldi.common.states
 
 import android.annotation.SuppressLint
 import android.os.Parcelable
-import com.caldi.meetpeople.list.AnswerViewState
+import com.caldi.people.meetpeople.list.AnswerViewState
 import kotlinx.android.parcel.Parcelize
 
 @SuppressLint("ParcelCreator")

@@ -71,7 +71,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".base.BasePeopleActivity"
+            android:name="com.caldi.people.common.PeopleActivity"
             android:screenOrientation="portrait" />
 
         <activity
@@ -90,7 +90,7 @@
             android:theme="@style/Base.Theme.AppCompat" />
 
         <activity
-            android:name=".meetpeople.MeetPeopleActivity"
+            android:name=".people.meetpeople.MeetPeopleActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
@@ -110,7 +110,7 @@
             android:screenOrientation="portrait" />
 
         <activity
-            android:name=".filterpeople.FilterPeopleActivity"
+            android:name=".people.filterpeople.FilterPeopleActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 

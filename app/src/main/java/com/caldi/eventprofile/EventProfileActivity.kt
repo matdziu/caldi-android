@@ -18,7 +18,7 @@ import com.caldi.common.models.EventProfileData
 import com.caldi.eventprofile.list.QuestionsAdapter
 import com.caldi.extensions.hideSoftKeyboard
 import com.caldi.factories.EventProfileViewModelFactory
-import com.caldi.meetpeople.MeetPeopleActivity
+import com.caldi.people.meetpeople.MeetPeopleActivity
 import com.jakewharton.rxbinding2.view.RxView
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso

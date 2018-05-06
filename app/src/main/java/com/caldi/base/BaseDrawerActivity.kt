@@ -13,7 +13,7 @@ import com.caldi.chatlist.ChatListActivity
 import com.caldi.eventprofile.EventProfileActivity
 import com.caldi.home.HomeActivity
 import com.caldi.login.LoginActivity
-import com.caldi.meetpeople.MeetPeopleActivity
+import com.caldi.people.meetpeople.MeetPeopleActivity
 import com.caldi.organizer.OrganizerActivity
 import com.google.firebase.auth.FirebaseAuth
 
