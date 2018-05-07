@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.caldi.R
@@ -88,6 +89,7 @@ class PersonProfileFragment : Fragment() {
         GlideApp.with(this)
                 .load(profilePictureUrl)
                 .placeholder(R.drawable.profile_picture_shape)
+                .transition(DrawableTransitionOptions.withCrossFade())
                 .listener(object : RequestListener<Drawable> {
                     override fun onResourceReady(resource: Drawable,
                                                  model: Any?, target:

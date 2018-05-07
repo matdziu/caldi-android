@@ -15,6 +15,7 @@ import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.caldi.R
@@ -176,6 +177,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
         GlideApp.with(this)
                 .load(profilePictureUrl)
                 .placeholder(R.drawable.profile_picture_shape)
+                .transition(DrawableTransitionOptions.withCrossFade())
                 .listener(object : RequestListener<Drawable> {
                     override fun onResourceReady(resource: Drawable,
                                                  model: Any,
