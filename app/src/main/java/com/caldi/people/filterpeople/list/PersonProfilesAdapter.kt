@@ -46,6 +46,6 @@ class PersonProfilesAdapter(private val filterPeopleActivity: FilterPeopleActivi
     fun removeProfileFromList(profileId: String) {
         val indexToRemove = currentProfileViewStateList.indexOfFirst { it.userId == profileId }
         currentProfileViewStateList.removeAt(indexToRemove)
-        submitList(currentProfileViewStateList)
+        notifyItemRemoved(indexToRemove)
     }
 }
