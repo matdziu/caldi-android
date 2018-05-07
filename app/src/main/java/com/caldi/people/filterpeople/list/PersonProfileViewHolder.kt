@@ -17,10 +17,16 @@ class PersonProfileViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView
         with(itemView) {
             personTextView.autoLinkMask = 0
             displayDesiredText(personTextView, personProfileViewState, filterType)
-            Picasso.get()
-                    .load(personProfileViewState.profilePictureUrl)
-                    .placeholder(R.drawable.profile_picture_shape)
-                    .into(personImageView)
+            if (personProfileViewState.profilePictureUrl.isNotEmpty()) {
+                Picasso.get()
+                        .load(personProfileViewState.profilePictureUrl)
+                        .placeholder(R.drawable.profile_picture_shape)
+                        .into(personImageView)
+            } else {
+                Picasso.get()
+                        .load(R.drawable.profile_picture_shape)
+                        .into(personImageView)
+            }
         }
     }
 

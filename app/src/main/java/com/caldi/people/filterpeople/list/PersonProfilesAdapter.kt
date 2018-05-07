@@ -12,6 +12,8 @@ import com.caldi.people.filterpeople.utils.PersonProfileViewStateDiffCallback
 class PersonProfilesAdapter(private val filterPeopleActivity: FilterPeopleActivity) :
         ListAdapter<PersonProfileViewState, PersonProfileViewHolder>(PersonProfileViewStateDiffCallback()) {
 
+    private val currentProfileViewStateList = arrayListOf<PersonProfileViewState>()
+
     var filterType: FilterType? = null
         set(value) {
             field = value
@@ -34,5 +36,10 @@ class PersonProfilesAdapter(private val filterPeopleActivity: FilterPeopleActivi
                 }
             }
         }
+    }
+
+    fun addProfilesBatch(personProfileViewStateList: List<PersonProfileViewState>) {
+        currentProfileViewStateList.addAll(personProfileViewStateList)
+        submitList(currentProfileViewStateList)
     }
 }

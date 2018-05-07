@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.Toast
 import com.caldi.R
+import com.caldi.common.states.PersonProfileViewState
 import com.caldi.people.common.PeopleActivity
 import com.caldi.people.common.PeopleViewState
 import com.caldi.people.filterpeople.list.PersonProfilesAdapter
@@ -28,6 +29,8 @@ class FilterPeopleActivity : PeopleActivity() {
     private lateinit var filterSpinnerAdapter: FilterSpinnerAdapter
 
     private val personProfilesAdapter = PersonProfilesAdapter(this)
+
+    private var recentProfilesBatch = listOf<PersonProfileViewState>()
 
     private var isBatchLoading = false
 
@@ -104,6 +107,11 @@ class FilterPeopleActivity : PeopleActivity() {
             showError(error, dismissToast)
 
             filterSpinnerAdapter.setFilterTypeList(defaultFilterTypeList + convertToQuestionFilterTypes(eventQuestions))
+            if (recentProfilesBatch != personProfileViewStateList) {
+                recentProfilesBatch = personProfileViewStateList
+                personProfilesAdapter.addProfilesBatch(personProfileViewStateList)
+                isBatchLoading = false
+            }
         }
     }
 

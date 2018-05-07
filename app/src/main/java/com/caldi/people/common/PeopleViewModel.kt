@@ -65,7 +65,6 @@ class PeopleViewModel(private val peopleInteractor: PeopleInteractor) : ViewMode
                     eventProfileBlank = true,
                     dismissToast = partialState.dismissToast)
             is PartialPeopleViewState.SuccessfulQuestionsFetchState -> previousState.copy(
-                    progress = false,
                     eventQuestions = partialState.questions)
         }
     }
