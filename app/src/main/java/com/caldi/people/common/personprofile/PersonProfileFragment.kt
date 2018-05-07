@@ -1,5 +1,6 @@
 package com.caldi.people.common.personprofile
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.view.ViewCompat
@@ -7,13 +8,16 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.caldi.R
 import com.caldi.common.states.PersonProfileViewState
 import com.caldi.constants.PERSON_PROFILE_VIEW_STATE_KEY
+import com.caldi.injection.modules.GlideApp
 import com.caldi.people.common.PeopleActivity
 import com.caldi.people.meetpeople.list.AnswersAdapter
-import com.squareup.picasso.Callback
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_person_profile.acceptProfileButton
 import kotlinx.android.synthetic.main.fragment_person_profile.answersRecyclerView
 import kotlinx.android.synthetic.main.fragment_person_profile.dismissProfileButton
@@ -22,7 +26,6 @@ import kotlinx.android.synthetic.main.fragment_person_profile.eventUserNameTextV
 import kotlinx.android.synthetic.main.fragment_person_profile.loadingPhotoTextView
 import kotlinx.android.synthetic.main.fragment_person_profile.profilePictureImageView
 import kotlinx.android.synthetic.main.fragment_person_profile.userLinkUrlTextView
-import java.lang.Exception
 
 class PersonProfileFragment : Fragment() {
 
@@ -74,23 +77,39 @@ class PersonProfileFragment : Fragment() {
             eventUserNameTextView.text = eventUserName
             setUserLinkUrl(userLinkUrl)
             if (profilePictureUrl.isNotBlank()) {
-                loadingPhotoTextView.visibility = View.VISIBLE
-                Picasso.get().load(profilePictureUrl).placeholder(R.drawable.profile_picture_shape)
-                        .into(profilePictureImageView, object : Callback {
-                            override fun onSuccess() {
-                                profilePictureImageView?.adjustViewBounds = true
-                                loadingPhotoTextView?.visibility = View.GONE
-                            }
-
-                            override fun onError(e: Exception?) {
-                                profilePictureImageView?.adjustViewBounds = false
-                                profilePictureImageView?.setImageResource(R.drawable.profile_picture_shape)
-                                loadingPhotoTextView?.visibility = View.GONE
-                            }
-                        })
+                loadProfilePicture(profilePictureUrl)
             }
             answersAdapter.setAnswerList(answerViewStateList)
         }
+    }
+
+    private fun loadProfilePicture(profilePictureUrl: String) {
+        loadingPhotoTextView.visibility = View.VISIBLE
+        GlideApp.with(this)
+                .load(profilePictureUrl)
+                .placeholder(R.drawable.profile_picture_shape)
+                .listener(object : RequestListener<Drawable> {
+                    override fun onResourceReady(resource: Drawable,
+                                                 model: Any?, target:
+                                                 Target<Drawable>,
+                                                 dataSource: DataSource,
+                                                 isFirstResource: Boolean): Boolean {
+                        profilePictureImageView?.adjustViewBounds = true
+                        loadingPhotoTextView?.visibility = View.GONE
+                        return false
+                    }
+
+                    override fun onLoadFailed(e: GlideException?,
+                                              model: Any,
+                                              target: Target<Drawable>,
+                                              isFirstResource: Boolean): Boolean {
+                        profilePictureImageView?.adjustViewBounds = false
+                        profilePictureImageView?.setImageResource(R.drawable.profile_picture_shape)
+                        loadingPhotoTextView?.visibility = View.GONE
+                        return false
+                    }
+                })
+                .into(profilePictureImageView)
     }
 
     private fun setUserLinkUrl(userLinkUrl: String) {

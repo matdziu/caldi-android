@@ -16,8 +16,8 @@ import com.caldi.constants.CHAT_IMAGE_URL_KEY
 import com.caldi.constants.CHAT_NAME_KEY
 import com.caldi.extensions.getCurrentISODate
 import com.caldi.factories.ChatViewModelFactory
+import com.caldi.injection.modules.GlideApp
 import com.jakewharton.rxbinding2.view.RxView
-import com.squareup.picasso.Picasso
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
@@ -85,7 +85,7 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
 
         chatInfoTextView.text = chatName
         if (imageUrl.isNotEmpty()) {
-            Picasso.get()
+            GlideApp.with(this)
                     .load(imageUrl)
                     .placeholder(R.drawable.profile_picture_shape)
                     .into(chatInfoImageView)

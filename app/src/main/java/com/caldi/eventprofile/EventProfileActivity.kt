@@ -2,6 +2,7 @@ package com.caldi.eventprofile
 
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.ViewCompat
@@ -12,16 +13,19 @@ import android.text.style.ForegroundColorSpan
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
 import com.caldi.common.models.EventProfileData
 import com.caldi.eventprofile.list.QuestionsAdapter
 import com.caldi.extensions.hideSoftKeyboard
 import com.caldi.factories.EventProfileViewModelFactory
+import com.caldi.injection.modules.GlideApp
 import com.caldi.people.meetpeople.MeetPeopleActivity
 import com.jakewharton.rxbinding2.view.RxView
-import com.squareup.picasso.Callback
-import com.squareup.picasso.Picasso
 import com.theartofdev.edmodo.cropper.CropImage
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
@@ -38,7 +42,6 @@ import kotlinx.android.synthetic.main.activity_event_profile.saveProfileButton
 import kotlinx.android.synthetic.main.activity_event_profile.uploadPhotoButton
 import kotlinx.android.synthetic.main.activity_event_profile.userLinkEditText
 import java.io.File
-import java.lang.Exception
 import javax.inject.Inject
 
 class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
@@ -148,21 +151,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
         with(eventProfileViewState) {
             if (profilePictureUrl.isNotBlank()) {
                 currentProfilePictureUrl = profilePictureUrl
-                profilePictureImageView.adjustViewBounds = false
-                loadingPhotoTextView.visibility = View.VISIBLE
-                Picasso.get().load(profilePictureUrl).placeholder(R.drawable.profile_picture_shape)
-                        .into(profilePictureImageView, object : Callback {
-                            override fun onSuccess() {
-                                profilePictureImageView.adjustViewBounds = true
-                                loadingPhotoTextView.visibility = View.GONE
-                            }
-
-                            override fun onError(e: Exception?) {
-                                profilePictureImageView.adjustViewBounds = false
-                                profilePictureImageView.setImageResource(R.drawable.profile_picture_shape)
-                                loadingPhotoTextView.visibility = View.GONE
-                            }
-                        })
+                loadProfilePicture(profilePictureUrl)
             }
             showProgressBar(progress)
             showError(error, dismissToast)
@@ -179,6 +168,36 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
             }
             eventUserNameEditText.clearFocus()
         }
+    }
+
+    private fun loadProfilePicture(profilePictureUrl: String) {
+        profilePictureImageView.adjustViewBounds = false
+        loadingPhotoTextView.visibility = View.VISIBLE
+        GlideApp.with(this)
+                .load(profilePictureUrl)
+                .placeholder(R.drawable.profile_picture_shape)
+                .listener(object : RequestListener<Drawable> {
+                    override fun onResourceReady(resource: Drawable,
+                                                 model: Any,
+                                                 target: Target<Drawable>,
+                                                 dataSource: DataSource,
+                                                 isFirstResource: Boolean): Boolean {
+                        profilePictureImageView.adjustViewBounds = true
+                        loadingPhotoTextView.visibility = View.GONE
+                        return false
+                    }
+
+                    override fun onLoadFailed(e: GlideException?,
+                                              model: Any,
+                                              target: Target<Drawable>,
+                                              isFirstResource: Boolean): Boolean {
+                        profilePictureImageView.adjustViewBounds = false
+                        profilePictureImageView.setImageResource(R.drawable.profile_picture_shape)
+                        loadingPhotoTextView.visibility = View.GONE
+                        return false
+                    }
+                })
+                .into(profilePictureImageView)
     }
 
     private fun showProgressBar(show: Boolean) {

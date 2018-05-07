@@ -14,8 +14,8 @@ import com.caldi.common.utils.MessagesAdapterObserver
 import com.caldi.constants.EVENT_ID_KEY
 import com.caldi.extensions.getCurrentISODate
 import com.caldi.factories.OrganizerViewModelFactory
+import com.caldi.injection.modules.GlideApp
 import com.caldi.organizer.list.MessagesAdapter
-import com.squareup.picasso.Picasso
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
@@ -145,7 +145,7 @@ class OrganizerActivity : BaseDrawerActivity(), OrganizerView {
 
     private fun loadEventImage(eventImageUrl: String) {
         if (eventImageUrl.isNotEmpty()) {
-            Picasso.get()
+            GlideApp.with(this)
                     .load(eventImageUrl)
                     .placeholder(R.drawable.event_placeholder)
                     .into(organizerInfoImageView)

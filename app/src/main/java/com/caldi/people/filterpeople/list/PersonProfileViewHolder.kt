@@ -6,8 +6,8 @@ import android.view.View
 import android.widget.TextView
 import com.caldi.R
 import com.caldi.common.states.PersonProfileViewState
+import com.caldi.injection.modules.GlideApp
 import com.caldi.people.filterpeople.spinner.FilterType
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_person.view.personImageView
 import kotlinx.android.synthetic.main.item_person.view.personTextView
 
@@ -17,16 +17,20 @@ class PersonProfileViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView
         with(itemView) {
             personTextView.autoLinkMask = 0
             displayDesiredText(personTextView, personProfileViewState, filterType)
-            if (personProfileViewState.profilePictureUrl.isNotEmpty()) {
-                Picasso.get()
-                        .load(personProfileViewState.profilePictureUrl)
-                        .placeholder(R.drawable.profile_picture_shape)
-                        .into(personImageView)
-            } else {
-                Picasso.get()
-                        .load(R.drawable.profile_picture_shape)
-                        .into(personImageView)
-            }
+            loadProfilePicture(personProfileViewState.profilePictureUrl, this)
+        }
+    }
+
+    private fun loadProfilePicture(profilePictureUrl: String, itemView: View) {
+        if (profilePictureUrl.isNotEmpty()) {
+            GlideApp.with(itemView)
+                    .load(profilePictureUrl)
+                    .placeholder(R.drawable.profile_picture_shape)
+                    .into(itemView.personImageView)
+        } else {
+            GlideApp.with(itemView)
+                    .load(R.drawable.profile_picture_shape)
+                    .into(itemView.personImageView)
         }
     }
 
