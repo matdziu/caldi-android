@@ -78,7 +78,7 @@ class PeopleInteractor : BaseProfileInteractor() {
                         if (dataSnapshot != null) {
                             val attendeesIdsList = dataSnapshot.children
                                     .map { it.value as String }
-                                    .filter { it != currentUserId }
+                                    .filter { it != currentUserId && it != fromUserId }
 
                             fetchUnmetAttendeesProfiles(attendeesIdsList, eventId, stateSubject)
                         }

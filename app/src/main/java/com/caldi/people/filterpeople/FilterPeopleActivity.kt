@@ -75,7 +75,9 @@ class FilterPeopleActivity : PeopleActivity() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (!recyclerView.canScrollVertically(1) && !isBatchLoading) {
                     isBatchLoading = true
-                    profilesFetchingSubject.onNext(recentProfilesBatch.first().userId)
+                    profilesFetchingSubject.onNext(
+                            if (recentProfilesBatch.isNotEmpty()) recentProfilesBatch.first().userId else ""
+                    )
                 }
             }
         })
@@ -108,7 +110,7 @@ class FilterPeopleActivity : PeopleActivity() {
             showError(error, dismissToast)
 
             filterSpinnerAdapter.setFilterTypeList(defaultFilterTypeList + convertToQuestionFilterTypes(eventQuestions))
-            if (recentProfilesBatch != personProfileViewStateList) {
+            if (personProfileViewStateList.isNotEmpty() && recentProfilesBatch != personProfileViewStateList) {
                 recentProfilesBatch = personProfileViewStateList
                 personProfilesAdapter.addProfilesBatch(personProfileViewStateList)
                 isBatchLoading = false
