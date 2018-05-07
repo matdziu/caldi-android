@@ -71,16 +71,17 @@ class PeopleInteractor : BaseProfileInteractor() {
                                       stateSubject: Subject<PartialPeopleViewState>) {
         getAttendeesWithProfileNodeRef(eventId)
                 .orderByValue()
-                .limitToFirst(profilesBatchSize)
-                .startAt(fromUserId)
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot?) {
                         if (dataSnapshot != null) {
                             val attendeesIdsList = dataSnapshot.children
                                     .map { it.value as String }
-                                    .filter { it != currentUserId && it != fromUserId }
+                                    .filter { it != currentUserId }
 
-                            fetchUnmetAttendeesProfiles(attendeesIdsList, eventId, stateSubject)
+                            fetchUnmetAttendeesProfiles(attendeesIdsList,
+                                    fromUserId,
+                                    eventId,
+                                    stateSubject)
                         }
                     }
 
@@ -91,6 +92,7 @@ class PeopleInteractor : BaseProfileInteractor() {
     }
 
     private fun fetchUnmetAttendeesProfiles(attendeesIdsList: List<String>,
+                                            fromUserId: String,
                                             eventId: String,
                                             stateSubject: Subject<PartialPeopleViewState>) {
         val notMetAttendeesList = arrayListOf<EventProfileData>()
@@ -103,7 +105,11 @@ class PeopleInteractor : BaseProfileInteractor() {
                 { positiveAttendeesList, negativeAttendeesList ->
                     positiveAttendeesList + negativeAttendeesList
                 })
-                .map { metAttendeesIdsList -> attendeesIdsList - metAttendeesIdsList }
+                .map { metAttendeesIdsList ->
+                    (attendeesIdsList - metAttendeesIdsList)
+                            .takeLastWhile { it > fromUserId }
+                            .take(profilesBatchSize)
+                }
                 .doOnNext {
                     notMetAttendeesNumber = it.size
                     if (notMetAttendeesNumber == 0) {
