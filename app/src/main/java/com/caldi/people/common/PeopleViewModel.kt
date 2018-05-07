@@ -1,8 +1,8 @@
 package com.caldi.people.common
 
 import android.arch.lifecycle.ViewModel
+import com.caldi.common.models.EventProfileData
 import com.caldi.common.states.PersonProfileViewState
-import com.caldi.people.common.models.AttendeeProfile
 import com.caldi.people.meetpeople.list.AnswerViewState
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -13,6 +13,8 @@ class PeopleViewModel(private val peopleInteractor: PeopleInteractor) : ViewMode
 
     private val compositeDisposable = CompositeDisposable()
     private val stateSubject = BehaviorSubject.createDefault(PeopleViewState())
+
+    private var currentEventQuestions = mapOf<String, String>()
 
     fun bind(peopleView: PeopleView, eventId: String) {
         val fetchProfilesObservable = peopleView.emitProfilesFetchingTrigger()
@@ -27,10 +29,16 @@ class PeopleViewModel(private val peopleInteractor: PeopleInteractor) : ViewMode
         val negativeMeetObservable = peopleView.emitNegativeMeet()
                 .flatMap { peopleInteractor.saveMetAttendee(it, eventId, PeopleInteractor.MeetType.NEGATIVE) }
 
+        val fetchQuestionsObservable = peopleView.emitQuestionsFetchingTrigger()
+                .flatMap { peopleInteractor.fetchQuestions(eventId) }
+                .map { PartialPeopleViewState.SuccessfulQuestionsFetchState(it) }
+                .doOnNext { currentEventQuestions = it.questions }
+
         val mergedObservable = Observable.merge(listOf(
                 fetchProfilesObservable,
                 positiveMeetObservable,
                 negativeMeetObservable,
+                fetchQuestionsObservable,
                 peopleInteractor.checkIfEventProfileIsFilled(eventId)))
                 .scan(stateSubject.value, this::reduce)
                 .subscribeWith(stateSubject)
@@ -54,18 +62,21 @@ class PeopleViewModel(private val peopleInteractor: PeopleInteractor) : ViewMode
             is PartialPeopleViewState.BlankEventProfileState -> PeopleViewState(
                     eventProfileBlank = true,
                     dismissToast = partialState.dismissToast)
+            is PartialPeopleViewState.SuccessfulQuestionsFetchState -> previousState.copy(
+                    progress = false,
+                    eventQuestions = partialState.questions)
         }
     }
 
-    private fun convertToPersonProfileViewStateList(attendeesProfilesList: List<AttendeeProfile>)
+    private fun convertToPersonProfileViewStateList(attendeesProfilesList: List<EventProfileData>)
             : List<PersonProfileViewState> {
         return attendeesProfilesList.map {
             PersonProfileViewState(
                     it.userId,
                     it.eventUserName,
-                    it.profilePictureUrl,
+                    it.profilePicture,
                     it.userLinkUrl,
-                    convertToAnswerViewStateList(it.questions, it.answers))
+                    convertToAnswerViewStateList(currentEventQuestions, it.answers))
         }
     }
 

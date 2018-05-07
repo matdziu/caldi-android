@@ -1,6 +1,7 @@
 package com.caldi.people.common
 
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
 import android.os.Bundle
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
@@ -24,7 +25,11 @@ abstract class PeopleActivity : BaseDrawerActivity(), PeopleView {
 
     lateinit var positiveMeetSubject: Subject<String>
     lateinit var negativeMeetSubject: Subject<String>
+
     protected lateinit var profilesFetchingSubject: Subject<Boolean>
+    private lateinit var questionsFetchingSubject: Subject<Boolean>
+
+    private var initialFetch = true
 
     private var recentlyAddedProfileId: String = ""
 
@@ -35,15 +40,32 @@ abstract class PeopleActivity : BaseDrawerActivity(), PeopleView {
         peopleViewModel = ViewModelProviders.of(this, peopleViewModelFactory)[PeopleViewModel::class.java]
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        initialFetch = true
+    }
+
     override fun onStart() {
         super.onStart()
         initEmitters()
+        peopleViewModel.bind(this, eventId)
+        if (initialFetch) {
+            profilesFetchingSubject.onNext(true)
+            questionsFetchingSubject.onNext(true)
+        }
     }
 
     private fun initEmitters() {
         positiveMeetSubject = PublishSubject.create()
         negativeMeetSubject = PublishSubject.create()
         profilesFetchingSubject = PublishSubject.create()
+        questionsFetchingSubject = PublishSubject.create()
+    }
+
+    override fun onStop() {
+        initialFetch = false
+        peopleViewModel.unbind()
+        super.onStop()
     }
 
     override fun emitPositiveMeet(): Observable<String> = positiveMeetSubject.doOnNext {
@@ -55,6 +77,8 @@ abstract class PeopleActivity : BaseDrawerActivity(), PeopleView {
     }
 
     override fun emitProfilesFetchingTrigger(): Observable<Boolean> = profilesFetchingSubject
+
+    override fun emitQuestionsFetchingTrigger(): Observable<Boolean> = questionsFetchingSubject
 
     fun addPersonProfileFragment(personProfileViewState: PersonProfileViewState) {
         recentlyAddedProfileId = personProfileViewState.userId

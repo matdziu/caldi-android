@@ -18,7 +18,7 @@ open class BaseProfileInteractor {
 
     protected val firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
 
-    protected fun fetchQuestions(eventId: String): Observable<Map<String, String>> {
+    fun fetchQuestions(eventId: String): Observable<Map<String, String>> {
         val resultSubject = PublishSubject.create<Map<String, String>>()
         val questionsNodeRef = getEventQuestionsNodeRef(eventId)
         questionsNodeRef.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -40,6 +40,7 @@ open class BaseProfileInteractor {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val eventProfileData = dataSnapshot.getValue(EventProfileData::class.java)
                         ?: EventProfileData()
+                eventProfileData.userId = userId
                 resultSubject.onNext(eventProfileData)
             }
 

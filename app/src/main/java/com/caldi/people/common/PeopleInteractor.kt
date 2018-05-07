@@ -1,13 +1,13 @@
 package com.caldi.people.common
 
 import com.caldi.base.BaseProfileInteractor
+import com.caldi.common.models.EventProfileData
 import com.caldi.constants.ATTENDEES_WITH_PROFILE_NODE
 import com.caldi.constants.EVENTS_NODE
 import com.caldi.constants.MEET_NODE
 import com.caldi.constants.NEGATIVE_MEET_NODE
 import com.caldi.constants.POSITIVE_MEET_NODE
 import com.caldi.constants.USERS_NODE
-import com.caldi.people.common.models.AttendeeProfile
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -91,7 +91,7 @@ class PeopleInteractor : BaseProfileInteractor() {
     }
 
     private fun fetchUnmetAttendeesProfiles(eventId: String, stateSubject: Subject<PartialPeopleViewState>) {
-        val notMetAttendeesList = arrayListOf<AttendeeProfile>()
+        val notMetAttendeesList = arrayListOf<EventProfileData>()
         var notMetAttendeesNumber = 0
 
         Observable.zip(
@@ -112,7 +112,7 @@ class PeopleInteractor : BaseProfileInteractor() {
                     }
                 }
                 .flatMapIterable { it }
-                .flatMap { fetchAttendeeProfile(eventId, it) }
+                .flatMap { fetchEventProfileData(eventId, it) }
                 .subscribe {
                     notMetAttendeesList.add(it)
                     if (notMetAttendeesList.size == notMetAttendeesNumber) {
@@ -121,22 +121,6 @@ class PeopleInteractor : BaseProfileInteractor() {
                         )
                     }
                 }
-    }
-
-    private fun fetchAttendeeProfile(eventId: String, userId: String): Observable<AttendeeProfile> {
-        return Observable.zip(
-                fetchEventProfileData(eventId, userId),
-                fetchQuestions(eventId),
-                BiFunction { eventProfileData, questions ->
-                    with(eventProfileData) {
-                        AttendeeProfile(userId,
-                                eventUserName,
-                                userLinkUrl,
-                                profilePicture,
-                                answers,
-                                questions)
-                    }
-                })
     }
 
     private fun fetchMetAttendeesIdsList(eventId: String, meetType: MeetType): Observable<List<String>> {

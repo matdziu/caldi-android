@@ -16,19 +16,12 @@ import kotlinx.android.synthetic.main.activity_meet_people.progressBar
 
 class MeetPeopleActivity : PeopleActivity() {
 
-    private var fetchProfilesOnStart = true
-
     private var currentProfilesViewStates = listOf<PersonProfileViewState>()
     private var currentProfilesBatchSize = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setContentView(R.layout.activity_meet_people)
         super.onCreate(savedInstanceState)
-    }
-
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        fetchProfilesOnStart = true
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -47,20 +40,6 @@ class MeetPeopleActivity : PeopleActivity() {
     override fun onResume() {
         super.onResume()
         setNavigationSelection(R.id.meet_people_item)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        peopleViewModel.bind(this, eventId)
-        if (fetchProfilesOnStart) {
-            profilesFetchingSubject.onNext(true)
-        }
-    }
-
-    override fun onStop() {
-        fetchProfilesOnStart = false
-        peopleViewModel.unbind()
-        super.onStop()
     }
 
     override fun render(peopleViewState: PeopleViewState) {

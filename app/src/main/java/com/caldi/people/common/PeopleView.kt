@@ -8,6 +8,8 @@ interface PeopleView {
 
     fun emitNegativeMeet(): Observable<String>
 
+    fun emitQuestionsFetchingTrigger(): Observable<Boolean>
+
     fun emitProfilesFetchingTrigger(): Observable<Boolean>
 
     fun render(peopleViewState: PeopleViewState)

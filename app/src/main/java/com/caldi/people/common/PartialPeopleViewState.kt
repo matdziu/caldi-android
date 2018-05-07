@@ -1,10 +1,10 @@
 package com.caldi.people.common
 
-import com.caldi.people.common.models.AttendeeProfile
+import com.caldi.common.models.EventProfileData
 
 sealed class PartialPeopleViewState {
 
-    class SuccessfulAttendeesFetchState(val attendeesProfilesList: List<AttendeeProfile> = listOf()) : PartialPeopleViewState()
+    class SuccessfulAttendeesFetchState(val attendeesProfilesList: List<EventProfileData> = listOf()) : PartialPeopleViewState()
 
     class SuccessfulMetAttendeeSave : PartialPeopleViewState()
 
@@ -13,4 +13,6 @@ sealed class PartialPeopleViewState {
     class ProgressState : PartialPeopleViewState()
 
     class BlankEventProfileState(val dismissToast: Boolean = false) : PartialPeopleViewState()
+
+    class SuccessfulQuestionsFetchState(val questions: Map<String, String>) : PartialPeopleViewState()
 }

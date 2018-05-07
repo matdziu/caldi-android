@@ -102,16 +102,6 @@ class FilterPeopleActivity : PeopleActivity() {
         setNavigationSelection(R.id.meet_people_item)
     }
 
-    override fun onStart() {
-        super.onStart()
-        peopleViewModel.bind(this, eventId)
-    }
-
-    override fun onStop() {
-        peopleViewModel.unbind()
-        super.onStop()
-    }
-
     override fun render(peopleViewState: PeopleViewState) {
 
     }
