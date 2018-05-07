@@ -84,7 +84,7 @@ class MeetPeopleActivity : PeopleActivity() {
     override fun removePersonProfileFragment(userId: String, exitAnimDirection: ExitAnimDirection) {
         currentProfilesBatchSize -= 1
         if (currentProfilesBatchSize == 0) {
-            profilesFetchingSubject.onNext(true)
+            profilesFetchingSubject.onNext(userId)
         }
         super.removePersonProfileFragment(userId, exitAnimDirection)
     }

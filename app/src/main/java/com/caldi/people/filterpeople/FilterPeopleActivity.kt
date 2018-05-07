@@ -75,7 +75,7 @@ class FilterPeopleActivity : PeopleActivity() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (!recyclerView.canScrollVertically(1) && !isBatchLoading) {
                     isBatchLoading = true
-                    profilesFetchingSubject.onNext(true)
+                    profilesFetchingSubject.onNext(recentProfilesBatch.first().userId)
                 }
             }
         })

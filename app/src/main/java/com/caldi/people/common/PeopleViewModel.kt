@@ -19,7 +19,7 @@ class PeopleViewModel(private val peopleInteractor: PeopleInteractor) : ViewMode
     fun bind(peopleView: PeopleView, eventId: String) {
         val fetchProfilesObservable = peopleView.emitProfilesFetchingTrigger()
                 .flatMap {
-                    peopleInteractor.fetchAttendeesProfiles(eventId)
+                    peopleInteractor.fetchAttendeesProfiles(eventId, it)
                             .startWith(PartialPeopleViewState.ProgressState())
                 }
 
@@ -78,7 +78,7 @@ class PeopleViewModel(private val peopleInteractor: PeopleInteractor) : ViewMode
                     it.profilePicture,
                     it.userLinkUrl,
                     convertToAnswerViewStateList(currentEventQuestions, it.answers))
-        }
+        }.reversed()
     }
 
     private fun convertToAnswerViewStateList(questions: Map<String, String>, answers: Map<String, String>)

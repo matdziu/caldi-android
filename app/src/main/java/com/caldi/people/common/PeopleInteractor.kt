@@ -24,8 +24,6 @@ class PeopleInteractor : BaseProfileInteractor() {
 
     private val profilesBatchSize = 5
 
-    private var cachedAttendeesIdsList = listOf<String>()
-
     private val currentUserId: String? = FirebaseAuth.getInstance().currentUser?.uid
 
     fun checkIfEventProfileIsFilled(eventId: String): Observable<PartialPeopleViewState> {
@@ -61,36 +59,40 @@ class PeopleInteractor : BaseProfileInteractor() {
         return stateSubject
     }
 
-    fun fetchAttendeesProfiles(eventId: String): Observable<PartialPeopleViewState> {
+    fun fetchAttendeesProfiles(eventId: String,
+                               fromUserId: String): Observable<PartialPeopleViewState> {
         val stateSubject = PublishSubject.create<PartialPeopleViewState>()
-        fetchAttendeesIdsList(eventId, stateSubject)
+        fetchAttendeesIdsList(fromUserId, eventId, stateSubject)
         return stateSubject
     }
 
-    private fun fetchAttendeesIdsList(eventId: String, stateSubject: Subject<PartialPeopleViewState>) {
-        if (cachedAttendeesIdsList.isEmpty()) {
-            getAttendeesWithProfileNodeRef(eventId)
-                    .addListenerForSingleValueEvent(object : ValueEventListener {
-                        override fun onDataChange(dataSnapshot: DataSnapshot?) {
-                            if (dataSnapshot != null) {
-                                cachedAttendeesIdsList = dataSnapshot.children
-                                        .map { it.value as String }
-                                        .filter { it != currentUserId }
+    private fun fetchAttendeesIdsList(fromUserId: String,
+                                      eventId: String,
+                                      stateSubject: Subject<PartialPeopleViewState>) {
+        getAttendeesWithProfileNodeRef(eventId)
+                .orderByValue()
+                .limitToFirst(profilesBatchSize)
+                .startAt(fromUserId)
+                .addListenerForSingleValueEvent(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot?) {
+                        if (dataSnapshot != null) {
+                            val attendeesIdsList = dataSnapshot.children
+                                    .map { it.value as String }
+                                    .filter { it != currentUserId }
 
-                                fetchUnmetAttendeesProfiles(eventId, stateSubject)
-                            }
+                            fetchUnmetAttendeesProfiles(attendeesIdsList, eventId, stateSubject)
                         }
+                    }
 
-                        override fun onCancelled(databaseError: DatabaseError) {
-                            emitError(stateSubject)
-                        }
-                    })
-        } else {
-            fetchUnmetAttendeesProfiles(eventId, stateSubject)
-        }
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        emitError(stateSubject)
+                    }
+                })
     }
 
-    private fun fetchUnmetAttendeesProfiles(eventId: String, stateSubject: Subject<PartialPeopleViewState>) {
+    private fun fetchUnmetAttendeesProfiles(attendeesIdsList: List<String>,
+                                            eventId: String,
+                                            stateSubject: Subject<PartialPeopleViewState>) {
         val notMetAttendeesList = arrayListOf<EventProfileData>()
         var notMetAttendeesNumber = 0
 
@@ -101,8 +103,7 @@ class PeopleInteractor : BaseProfileInteractor() {
                 { positiveAttendeesList, negativeAttendeesList ->
                     positiveAttendeesList + negativeAttendeesList
                 })
-                .map { metAttendeesIdsList -> cachedAttendeesIdsList - metAttendeesIdsList }
-                .map { it.takeLast(profilesBatchSize) }
+                .map { metAttendeesIdsList -> attendeesIdsList - metAttendeesIdsList }
                 .doOnNext {
                     notMetAttendeesNumber = it.size
                     if (notMetAttendeesNumber == 0) {

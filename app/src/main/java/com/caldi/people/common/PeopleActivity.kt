@@ -25,7 +25,7 @@ abstract class PeopleActivity : BaseDrawerActivity(), PeopleView {
     lateinit var positiveMeetSubject: Subject<String>
     lateinit var negativeMeetSubject: Subject<String>
 
-    protected lateinit var profilesFetchingSubject: Subject<Boolean>
+    protected lateinit var profilesFetchingSubject: Subject<String>
     private lateinit var questionsFetchingSubject: Subject<Boolean>
 
     private var initialFetch = true
@@ -44,7 +44,7 @@ abstract class PeopleActivity : BaseDrawerActivity(), PeopleView {
         initEmitters()
         peopleViewModel.bind(this, eventId)
         if (initialFetch) {
-            profilesFetchingSubject.onNext(true)
+            profilesFetchingSubject.onNext("")
             questionsFetchingSubject.onNext(true)
         }
     }
@@ -70,7 +70,7 @@ abstract class PeopleActivity : BaseDrawerActivity(), PeopleView {
         removePersonProfileFragment(it, ExitAnimDirection.LEFT)
     }
 
-    override fun emitProfilesFetchingTrigger(): Observable<Boolean> = profilesFetchingSubject
+    override fun emitProfilesFetchingTrigger(): Observable<String> = profilesFetchingSubject
 
     override fun emitQuestionsFetchingTrigger(): Observable<Boolean> = questionsFetchingSubject
 

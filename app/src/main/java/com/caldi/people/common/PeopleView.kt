@@ -10,7 +10,7 @@ interface PeopleView {
 
     fun emitQuestionsFetchingTrigger(): Observable<Boolean>
 
-    fun emitProfilesFetchingTrigger(): Observable<Boolean>
+    fun emitProfilesFetchingTrigger(): Observable<String>
 
     fun render(peopleViewState: PeopleViewState)
 }
