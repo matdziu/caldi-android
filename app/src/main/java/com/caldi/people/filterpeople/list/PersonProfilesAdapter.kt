@@ -12,7 +12,7 @@ import com.caldi.people.filterpeople.utils.PersonProfileViewStateDiffCallback
 class PersonProfilesAdapter(private val filterPeopleActivity: FilterPeopleActivity) :
         ListAdapter<PersonProfileViewState, PersonProfileViewHolder>(PersonProfileViewStateDiffCallback()) {
 
-    private val currentProfileViewStateList = arrayListOf<PersonProfileViewState>()
+    private var currentProfileViewStateList = listOf<PersonProfileViewState>()
 
     var filterType: FilterType? = null
         set(value) {
@@ -39,13 +39,16 @@ class PersonProfilesAdapter(private val filterPeopleActivity: FilterPeopleActivi
     }
 
     fun addProfilesBatch(personProfileViewStateList: List<PersonProfileViewState>) {
-        currentProfileViewStateList.addAll(personProfileViewStateList)
-        submitList(currentProfileViewStateList)
+        val newList = currentProfileViewStateList + personProfileViewStateList
+        submitList(newList)
+        currentProfileViewStateList = newList
     }
 
     fun removeProfileFromList(profileId: String) {
-        val indexToRemove = currentProfileViewStateList.indexOfFirst { it.userId == profileId }
-        currentProfileViewStateList.removeAt(indexToRemove)
-        notifyItemRemoved(indexToRemove)
+        val newList = ArrayList(currentProfileViewStateList)
+        val indexToRemove = newList.indexOfFirst { it.userId == profileId }
+        newList.removeAt(indexToRemove)
+        submitList(newList)
+        currentProfileViewStateList = newList
     }
 }
