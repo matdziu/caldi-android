@@ -34,7 +34,7 @@ class PeopleViewModelTest {
                 answers,
                 "url/to/pic",
                 "user/url"))
-        whenever(peopleInteractor.fetchAttendeesProfiles(any())).thenReturn(
+        whenever(peopleInteractor.fetchAttendeesProfiles(any(), any())).thenReturn(
                 Observable.just(PartialPeopleViewState.SuccessfulAttendeesFetchState(attendeesList)))
         whenever(peopleInteractor.checkIfEventProfileIsFilled(any())).thenReturn(
                 Completable.complete().toObservable()

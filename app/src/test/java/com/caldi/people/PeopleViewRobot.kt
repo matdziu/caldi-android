@@ -13,7 +13,7 @@ class PeopleViewRobot(peopleViewModel: PeopleViewModel) : BaseViewRobot<PeopleVi
 
     private val negativeMeetObservable = PublishSubject.create<String>()
 
-    private val profilesFetchingTriggerObservable = PublishSubject.create<Boolean>()
+    private val profilesFetchingTriggerObservable = PublishSubject.create<String>()
 
     private val questionFetchingTriggerObservable = PublishSubject.create<Boolean>()
 
@@ -25,7 +25,7 @@ class PeopleViewRobot(peopleViewModel: PeopleViewModel) : BaseViewRobot<PeopleVi
 
         override fun emitNegativeMeet(): Observable<String> = negativeMeetObservable
 
-        override fun emitProfilesFetchingTrigger(): Observable<Boolean> = profilesFetchingTriggerObservable
+        override fun emitProfilesFetchingTrigger(): Observable<String> = profilesFetchingTriggerObservable
 
         override fun render(peopleViewState: PeopleViewState) {
             renderedStates.add(peopleViewState)
@@ -37,7 +37,7 @@ class PeopleViewRobot(peopleViewModel: PeopleViewModel) : BaseViewRobot<PeopleVi
     }
 
     fun triggerProfilesFetching() {
-        profilesFetchingTriggerObservable.onNext(true)
+        profilesFetchingTriggerObservable.onNext("")
     }
 
     fun positiveAttendeeMeet(userId: String) {
