@@ -1,7 +1,6 @@
 package com.caldi.people.common
 
 import android.arch.lifecycle.ViewModelProviders
-import android.content.Intent
 import android.os.Bundle
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
@@ -38,11 +37,6 @@ abstract class PeopleActivity : BaseDrawerActivity(), PeopleView {
         super.onCreate(savedInstanceState)
 
         peopleViewModel = ViewModelProviders.of(this, peopleViewModelFactory)[PeopleViewModel::class.java]
-    }
-
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        initialFetch = true
     }
 
     override fun onStart() {
