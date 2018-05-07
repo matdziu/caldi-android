@@ -12,7 +12,7 @@ import com.caldi.people.filterpeople.utils.PersonProfileViewStateDiffCallback
 class PersonProfilesAdapter(private val filterPeopleActivity: FilterPeopleActivity) :
         ListAdapter<PersonProfileViewState, PersonProfileViewHolder>(PersonProfileViewStateDiffCallback()) {
 
-    private var currentProfileViewStateList = listOf<PersonProfileViewState>()
+    var currentProfileViewStateList = listOf<PersonProfileViewState>()
 
     var filterType: FilterType? = null
         set(value) {

@@ -22,6 +22,7 @@ import com.caldi.people.filterpeople.spinner.FilterType.QuestionFilterType
 import com.caldi.people.meetpeople.MeetPeopleActivity
 import io.reactivex.Observable
 import kotlinx.android.synthetic.main.activity_filter_people.filterSpinner
+import kotlinx.android.synthetic.main.activity_filter_people.noPeopleToMeetTextView
 import kotlinx.android.synthetic.main.activity_filter_people.peopleRecyclerView
 import kotlinx.android.synthetic.main.activity_filter_people.progressBar
 
@@ -115,6 +116,17 @@ class FilterPeopleActivity : PeopleActivity() {
                 personProfilesAdapter.addProfilesBatch(personProfileViewStateList)
                 isBatchLoading = false
             }
+
+            showNoPeopleToMeetHint(personProfilesAdapter.currentProfileViewStateList, progress, error)
+        }
+    }
+
+    private fun showNoPeopleToMeetHint(currentProfileViewStateList: List<PersonProfileViewState>,
+                                       progress: Boolean, error: Boolean) {
+        if (currentProfileViewStateList.isEmpty() && !progress && !error) {
+            noPeopleToMeetTextView.visibility = View.VISIBLE
+        } else {
+            noPeopleToMeetTextView.visibility = View.GONE
         }
     }
 
