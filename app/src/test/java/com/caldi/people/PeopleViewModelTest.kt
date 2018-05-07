@@ -1,12 +1,11 @@
 package com.caldi.people
 
+import com.caldi.common.models.EventProfileData
 import com.caldi.common.states.PersonProfileViewState
 import com.caldi.people.common.PartialPeopleViewState
 import com.caldi.people.common.PeopleInteractor
 import com.caldi.people.common.PeopleViewModel
 import com.caldi.people.common.PeopleViewState
-import com.caldi.people.common.models.AttendeeProfile
-import com.caldi.people.meetpeople.list.AnswerViewState
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.eq
 import com.nhaarman.mockito_kotlin.mock
@@ -28,31 +27,28 @@ class PeopleViewModelTest {
 
     @Test
     fun testSuccessfulProfilesFetching() {
-        val questions = mapOf("1" to "What is your favourite color?")
-        val answers = mapOf("1" to "Red")
-        val attendeesList = listOf(AttendeeProfile(
+        val answers = mapOf("answerId" to "Sample answer")
+        val attendeesList = listOf(EventProfileData(
                 "123",
                 "Matt",
-                "user/url",
-                "url/to/pic",
                 answers,
-                questions))
+                "url/to/pic",
+                "user/url"))
         whenever(peopleInteractor.fetchAttendeesProfiles(any())).thenReturn(
                 Observable.just(PartialPeopleViewState.SuccessfulAttendeesFetchState(attendeesList)))
         whenever(peopleInteractor.checkIfEventProfileIsFilled(any())).thenReturn(
                 Completable.complete().toObservable()
         )
-        val meetPeopleViewRobot = PeopleViewRobot(peopleViewModel)
+        val peopleViewRobot = PeopleViewRobot(peopleViewModel)
 
-        meetPeopleViewRobot.triggerProfilesFetching()
+        peopleViewRobot.triggerProfilesFetching()
 
-        meetPeopleViewRobot.assertViewStates(
+        peopleViewRobot.assertViewStates(
                 PeopleViewState(),
                 PeopleViewState(progress = true),
                 PeopleViewState(personProfileViewStateList = listOf(PersonProfileViewState(
                         "123", "Matt", "url/to/pic",
-                        "user/url",
-                        listOf(AnswerViewState("What is your favourite color?", "Red")))))
+                        "user/url")))
         )
     }
 
@@ -61,9 +57,9 @@ class PeopleViewModelTest {
         whenever(peopleInteractor.checkIfEventProfileIsFilled(any())).thenReturn(
                 Observable.just(PartialPeopleViewState.BlankEventProfileState())
         )
-        val meetPeopleViewRobot = PeopleViewRobot(peopleViewModel)
+        val peopleViewRobot = PeopleViewRobot(peopleViewModel)
 
-        meetPeopleViewRobot.assertViewStates(
+        peopleViewRobot.assertViewStates(
                 PeopleViewState(eventProfileBlank = true)
         )
     }
@@ -75,11 +71,11 @@ class PeopleViewModelTest {
         )
         whenever(peopleInteractor.saveMetAttendee(any(), any(), eq(PeopleInteractor.MeetType.POSITIVE)))
                 .thenReturn(Observable.just(PartialPeopleViewState.SuccessfulMetAttendeeSave()))
-        val meetPeopleViewRobot = PeopleViewRobot(peopleViewModel)
+        val peopleViewRobot = PeopleViewRobot(peopleViewModel)
 
-        meetPeopleViewRobot.positiveAttendeeMeet("123")
+        peopleViewRobot.positiveAttendeeMeet("123")
 
-        meetPeopleViewRobot.assertViewStates(
+        peopleViewRobot.assertViewStates(
                 PeopleViewState(),
                 PeopleViewState()
         )
@@ -92,13 +88,33 @@ class PeopleViewModelTest {
         )
         whenever(peopleInteractor.saveMetAttendee(any(), any(), eq(PeopleInteractor.MeetType.NEGATIVE)))
                 .thenReturn(Observable.just(PartialPeopleViewState.SuccessfulMetAttendeeSave()))
-        val meetPeopleViewRobot = PeopleViewRobot(peopleViewModel)
+        val peopleViewRobot = PeopleViewRobot(peopleViewModel)
 
-        meetPeopleViewRobot.negativeAttendeeMeet("123")
+        peopleViewRobot.negativeAttendeeMeet("123")
 
-        meetPeopleViewRobot.assertViewStates(
+        peopleViewRobot.assertViewStates(
                 PeopleViewState(),
                 PeopleViewState()
+        )
+    }
+
+    @Test
+    fun testSuccessfulQuestionsFetching() {
+        whenever(peopleInteractor.checkIfEventProfileIsFilled(any())).thenReturn(
+                Completable.complete().toObservable()
+        )
+        val questions = mapOf(
+                "firstQuestionId" to "What's your favourite drink?",
+                "secondQuestionId" to "What's your favourite song?"
+        )
+        whenever(peopleInteractor.fetchQuestions(any())).thenReturn(Observable.just(questions))
+        val peopleViewRobot = PeopleViewRobot(peopleViewModel)
+
+        peopleViewRobot.triggerQuestionsFetching()
+
+        peopleViewRobot.assertViewStates(
+                PeopleViewState(),
+                PeopleViewState(eventQuestions = questions)
         )
     }
 }

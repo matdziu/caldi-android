@@ -23,7 +23,9 @@ class EventProfileViewModelTest {
     @Test
     fun testEventProfileDataFetchingSuccess() {
         val questions = mapOf("1" to "What are you looking for?")
-        val eventProfileData = EventProfileData("Matt the Android Dev",
+        val eventProfileData = EventProfileData(
+                "123",
+                "Matt the Android Dev",
                 mapOf("1" to "Looking for party!"),
                 "url/to/pic",
                 "user/link")
@@ -60,7 +62,9 @@ class EventProfileViewModelTest {
     @Test
     fun testEventProfileUpdateInvalid() {
         val questions = mapOf("1" to "What are you looking for?")
-        val eventProfileData = EventProfileData("Matt the Android Dev",
+        val eventProfileData = EventProfileData(
+                "123",
+                "Matt the Android Dev",
                 mapOf("1" to "Looking for a party!"),
                 "url/to/pic",
                 "user/link")
@@ -69,12 +73,16 @@ class EventProfileViewModelTest {
                         .startWith(PartialEventProfileViewState.SuccessfulFetchState(eventProfileData, questions))
                         as Observable<PartialEventProfileViewState>
         )
-        val eventProfileDataEmptyAnswer = EventProfileData("Matt the Android Dev",
+        val eventProfileDataEmptyAnswer = EventProfileData(
+                "123",
+                "Matt the Android Dev",
                 mapOf("1" to " "),
                 "url/to/pic",
                 "user/link")
 
-        val eventProfileDataEmptyName = EventProfileData(" ",
+        val eventProfileDataEmptyName = EventProfileData(
+                "123",
+                " ",
                 mapOf("1" to "Looking for a party!"),
                 "url/to/pic",
                 "user/link")
@@ -142,7 +150,9 @@ class EventProfileViewModelTest {
     @Test
     fun testEventProfileUpdateValid() {
         val questions = mapOf("1" to "What are you looking for?")
-        val eventProfileData = EventProfileData("Matt the Android Dev",
+        val eventProfileData = EventProfileData(
+                "123",
+                "Matt the Android Dev",
                 mapOf("1" to "Looking for party!"))
         whenever(eventProfileInteractor.updateEventProfile(any(), any())).thenReturn(
                 Observable.just(PartialEventProfileViewState.SuccessfulUpdateState(true))
