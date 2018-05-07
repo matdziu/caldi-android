@@ -44,4 +44,6 @@
     <string name="no_chats_info">You don\'t have any chats yet.</string>
     <string name="no_events_yet">You are not attending any events yet.</string>
     <string name="change_people_view_text">Change Meet People view</string>
+    <string name="attendee_name_filter_text">Attendee name</string>
+    <string name="posted_link_filter_text">Posted link (optional)</string>
 </resources>

@@ -8,19 +8,20 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
+import android.widget.Toast
 import com.caldi.R
-import com.caldi.common.states.PersonProfileViewState
 import com.caldi.people.common.PeopleActivity
 import com.caldi.people.common.PeopleViewState
 import com.caldi.people.filterpeople.list.PersonProfilesAdapter
 import com.caldi.people.filterpeople.spinner.FilterSpinnerAdapter
+import com.caldi.people.filterpeople.spinner.FilterType
 import com.caldi.people.filterpeople.spinner.FilterType.LinkFilterType
 import com.caldi.people.filterpeople.spinner.FilterType.NameFilterType
 import com.caldi.people.filterpeople.spinner.FilterType.QuestionFilterType
 import com.caldi.people.meetpeople.MeetPeopleActivity
-import com.caldi.people.meetpeople.list.AnswerViewState
 import kotlinx.android.synthetic.main.activity_filter_people.filterSpinner
 import kotlinx.android.synthetic.main.activity_filter_people.peopleRecyclerView
+import kotlinx.android.synthetic.main.activity_filter_people.progressBar
 
 class FilterPeopleActivity : PeopleActivity() {
 
@@ -32,25 +33,19 @@ class FilterPeopleActivity : PeopleActivity() {
 
     var viewPersonProfileMode = false
 
+    private var defaultFilterTypeList = listOf<FilterType>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setContentView(R.layout.activity_filter_people)
         super.onCreate(savedInstanceState)
+
+        defaultFilterTypeList = listOf(
+                NameFilterType(getString(R.string.attendee_name_filter_text)),
+                LinkFilterType(getString(R.string.posted_link_filter_text))
+        )
+
         initSpinner()
         initRecyclerView()
-
-        filterSpinnerAdapter.setFilterTypeList(listOf(
-                NameFilterType("Attendee name"),
-                LinkFilterType("Posted link (optional)"),
-                QuestionFilterType("What's your favourite drink"),
-                QuestionFilterType("What's your favourite song")
-        ))
-
-        personProfilesAdapter.submitList(listOf(
-                PersonProfileViewState("abcdefgh", "Matt, the Android Dude", "https://themify.me/demo/themes/pinshop/files/2012/12/man-in-suit2.jpg", "medium.com/@matdziu", listOf(
-                        AnswerViewState("What's your favourite drink", "Beer"),
-                        AnswerViewState("What's your favourite song", "Stairway to heaven")
-                ))
-        ))
     }
 
     private fun initSpinner() {
@@ -103,7 +98,38 @@ class FilterPeopleActivity : PeopleActivity() {
     }
 
     override fun render(peopleViewState: PeopleViewState) {
+        with(peopleViewState) {
+            promptToFillEventProfile(eventProfileBlank, dismissToast)
+            showProgressBar(progress)
+            showError(error, dismissToast)
 
+            filterSpinnerAdapter.setFilterTypeList(defaultFilterTypeList + convertToQuestionFilterTypes(eventQuestions))
+        }
+    }
+
+    private fun promptToFillEventProfile(eventProfileBlank: Boolean, dismissToast: Boolean) {
+        if (eventProfileBlank && !dismissToast) {
+            Toast.makeText(this, getString(R.string.fill_event_profile_first_prompt), Toast.LENGTH_SHORT).show()
+            finish()
+        }
+    }
+
+    private fun showProgressBar(show: Boolean) {
+        if (show) {
+            progressBar.visibility = View.VISIBLE
+        } else {
+            progressBar.visibility = View.GONE
+        }
+    }
+
+    private fun showError(show: Boolean, dismissToast: Boolean = false) {
+        if (show && !dismissToast) {
+            Toast.makeText(this, getString(R.string.error_event_profile_text), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun convertToQuestionFilterTypes(questions: Map<String, String>): List<QuestionFilterType> {
+        return questions.values.map { QuestionFilterType(it) }
     }
 
     fun enableViewPersonProfileMode(enable: Boolean) {

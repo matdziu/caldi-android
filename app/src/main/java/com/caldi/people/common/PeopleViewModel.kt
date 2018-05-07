@@ -51,12 +51,14 @@ class PeopleViewModel(private val peopleInteractor: PeopleInteractor) : ViewMode
     private fun reduce(previousState: PeopleViewState, partialState: PartialPeopleViewState):
             PeopleViewState {
         return when (partialState) {
-            is PartialPeopleViewState.ProgressState -> PeopleViewState(
+            is PartialPeopleViewState.ProgressState -> previousState.copy(
                     progress = true)
             is PartialPeopleViewState.ErrorState -> PeopleViewState(
                     error = true,
                     dismissToast = partialState.dismissToast)
-            is PartialPeopleViewState.SuccessfulAttendeesFetchState -> PeopleViewState(
+            is PartialPeopleViewState.SuccessfulAttendeesFetchState -> previousState.copy(
+                    progress = false,
+                    error = false,
                     personProfileViewStateList = convertToPersonProfileViewStateList(partialState.attendeesProfilesList))
             is PartialPeopleViewState.SuccessfulMetAttendeeSave -> previousState
             is PartialPeopleViewState.BlankEventProfileState -> PeopleViewState(

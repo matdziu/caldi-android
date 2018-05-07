@@ -42,6 +42,18 @@
                 android:layout_height="match_parent"
                 android:layout_below="@id/toolbar" />
 
+            <TextView
+                android:id="@+id/noPeopleToMeetTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:padding="16dp"
+                android:text="@string/no_people_to_meet_text"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimaryText"
+                android:textSize="16dp"
+                android:visibility="gone" />
+
             <ProgressBar
                 android:id="@+id/progressBar"
                 android:layout_width="56dp"
