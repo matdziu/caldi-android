@@ -42,4 +42,10 @@ class PersonProfilesAdapter(private val filterPeopleActivity: FilterPeopleActivi
         currentProfileViewStateList.addAll(personProfileViewStateList)
         submitList(currentProfileViewStateList)
     }
+
+    fun removeProfileFromList(profileId: String) {
+        val indexToRemove = currentProfileViewStateList.indexOfFirst { it.userId == profileId }
+        currentProfileViewStateList.removeAt(indexToRemove)
+        submitList(currentProfileViewStateList)
+    }
 }

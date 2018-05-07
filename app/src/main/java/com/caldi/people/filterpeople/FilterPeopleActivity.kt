@@ -20,6 +20,7 @@ import com.caldi.people.filterpeople.spinner.FilterType.LinkFilterType
 import com.caldi.people.filterpeople.spinner.FilterType.NameFilterType
 import com.caldi.people.filterpeople.spinner.FilterType.QuestionFilterType
 import com.caldi.people.meetpeople.MeetPeopleActivity
+import io.reactivex.Observable
 import kotlinx.android.synthetic.main.activity_filter_people.filterSpinner
 import kotlinx.android.synthetic.main.activity_filter_people.peopleRecyclerView
 import kotlinx.android.synthetic.main.activity_filter_people.progressBar
@@ -146,12 +147,29 @@ class FilterPeopleActivity : PeopleActivity() {
         invalidateOptionsMenu()
     }
 
+    override fun emitPositiveMeet(): Observable<String> {
+        return super.emitPositiveMeet().doOnNext { sideExitViewPersonProfileMode(it) }
+    }
+
+    override fun emitNegativeMeet(): Observable<String> {
+        return super.emitNegativeMeet().doOnNext { sideExitViewPersonProfileMode(it) }
+    }
+
+    private fun sideExitViewPersonProfileMode(profileId: String) {
+        enableViewPersonProfileMode(false)
+        personProfilesAdapter.removeProfileFromList(profileId)
+    }
+
+    private fun upExitViewPersonProfileMode() {
+        enableViewPersonProfileMode(false)
+        removePersonProfileFragment(exitAnimDirection = ExitAnimDirection.UP)
+    }
+
     override fun onBackPressed() {
         if (!viewPersonProfileMode) {
             super.onBackPressed()
         } else {
-            enableViewPersonProfileMode(false)
-            removePersonProfileFragment(exitAnimDirection = ExitAnimDirection.UP)
+            upExitViewPersonProfileMode()
         }
     }
 }
