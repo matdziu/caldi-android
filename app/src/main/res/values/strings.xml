@@ -46,4 +46,5 @@
     <string name="change_people_view_text">Change Meet People view</string>
     <string name="attendee_name_filter_text">Attendee name</string>
     <string name="posted_link_filter_text">Posted link (optional)</string>
+    <string name="organizer_channel_title">Organizer messages</string>
 </resources>

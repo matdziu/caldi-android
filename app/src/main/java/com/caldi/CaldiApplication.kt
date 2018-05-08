@@ -2,7 +2,9 @@ package com.caldi
 
 import android.app.Activity
 import android.app.Application
+import android.os.Build
 import com.caldi.injection.DaggerAppComponent
+import com.caldi.notifications.utils.NotificationChannelsBuilder
 import com.crashlytics.android.Crashlytics
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
@@ -21,6 +23,10 @@ class CaldiApplication : Application(), HasActivityInjector {
 
         if (!BuildConfig.DEBUG) {
             Fabric.with(this, Crashlytics())
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannelsBuilder(this).buildChannels()
         }
 
         DaggerAppComponent.builder()
