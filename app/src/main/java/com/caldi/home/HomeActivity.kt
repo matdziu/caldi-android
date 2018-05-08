@@ -13,6 +13,7 @@ import com.caldi.constants.ADD_EVENT_REQUEST_CODE
 import com.caldi.factories.HomeViewModelFactory
 import com.caldi.home.list.EventsAdapter
 import com.caldi.home.models.Event
+import com.google.android.gms.common.GoogleApiAvailability
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
@@ -40,6 +41,7 @@ class HomeActivity : BaseOverflowActivity(), HomeView {
         AndroidInjection.inject(this)
         setContentView(R.layout.activity_home)
         super.onCreate(savedInstanceState)
+        GoogleApiAvailability.getInstance().makeGooglePlayServicesAvailable(this)
 
         homeViewModel = ViewModelProviders.of(this, homeViewModelFactory)[HomeViewModel::class.java]
 
