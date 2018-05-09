@@ -39,7 +39,6 @@ class MessagingService : FirebaseMessagingService() {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
-                .setFullScreenIntent(pendingIntent, true)
                 .build()
 
         val notificationsManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
