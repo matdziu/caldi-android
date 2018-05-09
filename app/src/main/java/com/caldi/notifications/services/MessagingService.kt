@@ -22,8 +22,8 @@ class MessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-        val title = remoteMessage.notification?.title
-        val body = remoteMessage.notification?.body
+        val title = remoteMessage.data["title"]
+        val body = remoteMessage.data["body"]
         showNotification(title, body)
     }
 

@@ -6,6 +6,6 @@ import com.google.firebase.iid.FirebaseInstanceIdService
 class InstanceIdService : FirebaseInstanceIdService() {
 
     override fun onTokenRefresh() {
-        val deviceToken = FirebaseInstanceId.getInstance().id
+        val deviceToken = FirebaseInstanceId.getInstance().token
     }
 }
