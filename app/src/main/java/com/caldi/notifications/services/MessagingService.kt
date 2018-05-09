@@ -1,5 +1,6 @@
 package com.caldi.notifications.services
 
+import android.app.Notification
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
@@ -36,6 +37,7 @@ class MessagingService : FirebaseMessagingService() {
                 .setColor(ContextCompat.getColor(this, R.color.colorPrimary))
                 .setContentTitle(title)
                 .setContentText(body)
+                .setDefaults(Notification.DEFAULT_ALL)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
