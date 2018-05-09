@@ -22,6 +22,7 @@ class NotificationChannelsBuilder(private val context: Context) {
         organizerChannel.enableLights(true)
         organizerChannel.enableVibration(true)
         organizerChannel.lightColor = Color.GREEN
+        organizerChannel.importance = NotificationManager.IMPORTANCE_HIGH
         organizerChannel.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
 
         notificationsManager.createNotificationChannel(organizerChannel)

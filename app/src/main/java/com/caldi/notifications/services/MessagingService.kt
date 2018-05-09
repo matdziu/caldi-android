@@ -4,7 +4,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
 import com.caldi.R
@@ -14,8 +13,6 @@ import com.caldi.constants.ORGANIZER_NOTIFICATION_REQUEST_CODE
 import com.caldi.splash.SplashActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import io.reactivex.Observable
-import java.util.concurrent.TimeUnit
 
 
 class MessagingService : FirebaseMessagingService() {
@@ -33,18 +30,17 @@ class MessagingService : FirebaseMessagingService() {
                 intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
         val notification = NotificationCompat.Builder(this, ORGANIZER_CHANNEL_ID)
-                .setContentText(body)
-                .setContentTitle(title)
-                .setContentIntent(pendingIntent)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.mipmap.ic_notification)
                 .setColor(ContextCompat.getColor(this, R.color.colorPrimary))
-                .setLargeIcon(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher))
-                .setFullScreenIntent(pendingIntent, true)
+                .setContentTitle(title)
+                .setContentText(body)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true)
+                .setTimeoutAfter(3000)
                 .build()
 
         val notificationsManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationsManager.notify(ORGANIZER_NOTIFICATION_ID, notification)
-        Observable.timer(3000, TimeUnit.MILLISECONDS)
-                .subscribe { notificationsManager.cancel(ORGANIZER_NOTIFICATION_ID) }
     }
 }
