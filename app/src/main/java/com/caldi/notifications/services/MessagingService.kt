@@ -14,8 +14,6 @@ import com.caldi.constants.ORGANIZER_NOTIFICATION_REQUEST_CODE
 import com.caldi.splash.SplashActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import io.reactivex.Observable
-import java.util.concurrent.TimeUnit
 
 
 class MessagingService : FirebaseMessagingService() {
@@ -46,6 +44,5 @@ class MessagingService : FirebaseMessagingService() {
 
         val notificationsManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationsManager.notify(ORGANIZER_NOTIFICATION_ID, notification)
-        Observable.timer(3000, TimeUnit.MILLISECONDS).subscribe { notificationsManager.cancel(ORGANIZER_NOTIFICATION_ID) }
     }
 }
