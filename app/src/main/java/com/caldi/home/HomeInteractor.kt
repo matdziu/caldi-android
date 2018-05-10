@@ -28,11 +28,14 @@ class HomeInteractor {
         return stateSubject
     }
 
-    fun saveNotificationToken() {
+    fun saveNotificationToken(): Observable<PartialHomeViewState> {
+        val resultSubject = PublishSubject.create<PartialHomeViewState>()
         val currentUserId = firebaseAuth.uid
         val notificationTokenNodeRef = FirebaseDatabase.getInstance().getReference(
                 "$USERS_NODE/$currentUserId/$NOTIFICATION_TOKEN_CHILD")
         notificationTokenNodeRef.setValue(FirebaseInstanceId.getInstance().token)
+                .addOnSuccessListener { resultSubject.onNext(PartialHomeViewState.NotificationTokenSaveSuccess()) }
+        return resultSubject
     }
 
     private fun fetchEventIds(stateSubject: Subject<PartialHomeViewState>) {

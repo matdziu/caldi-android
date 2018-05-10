@@ -1,19 +1,27 @@
 package com.caldi.home
 
 import android.arch.lifecycle.ViewModelProviders
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.caldi.R
 import com.caldi.addevent.AddEventActivity
 import com.caldi.base.BaseOverflowActivity
 import com.caldi.constants.ADD_EVENT_REQUEST_CODE
+import com.caldi.constants.NOTIFICATION_TOKEN_ACTION
+import com.caldi.constants.NOTIFICATION_TOKEN_KEY
 import com.caldi.factories.HomeViewModelFactory
 import com.caldi.home.list.EventsAdapter
 import com.caldi.home.models.Event
 import com.google.android.gms.common.GoogleApiAvailability
+import com.google.firebase.iid.FirebaseInstanceId
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
@@ -32,10 +40,22 @@ class HomeActivity : BaseOverflowActivity(), HomeView {
 
     private lateinit var eventsFetchTriggerSubject: Subject<Boolean>
 
+    private lateinit var notificationTokenSubject: Subject<String>
+
     @Inject
     lateinit var homeViewModelFactory: HomeViewModelFactory
 
-    private var forceEventsFetching: Boolean = true
+    private var init: Boolean = true
+
+    private val notificationTokenReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            try {
+                notificationTokenSubject.onNext(intent.getStringExtra(NOTIFICATION_TOKEN_KEY))
+            } catch (e: UninitializedPropertyAccessException) {
+                Log.e("notifications", e.message)
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -51,23 +71,36 @@ class HomeActivity : BaseOverflowActivity(), HomeView {
         addEventButton.setOnClickListener {
             startActivityForResult(Intent(this, AddEventActivity::class.java), ADD_EVENT_REQUEST_CODE)
         }
+
+        LocalBroadcastManager.getInstance(this)
+                .registerReceiver(notificationTokenReceiver, IntentFilter(NOTIFICATION_TOKEN_ACTION))
     }
 
     override fun onStart() {
         super.onStart()
         initEmitters()
         homeViewModel.bind(this)
-        eventsFetchTriggerSubject.onNext(forceEventsFetching)
+
+        if (init) {
+            eventsFetchTriggerSubject.onNext(true)
+            FirebaseInstanceId.getInstance().token?.let { notificationTokenSubject.onNext(it) }
+        }
     }
 
     private fun initEmitters() {
         eventsFetchTriggerSubject = PublishSubject.create()
+        notificationTokenSubject = PublishSubject.create()
     }
 
     override fun onStop() {
-        forceEventsFetching = false
+        init = false
         homeViewModel.unbind()
         super.onStop()
+    }
+
+    override fun onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(notificationTokenReceiver)
+        super.onDestroy()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -79,6 +112,7 @@ class HomeActivity : BaseOverflowActivity(), HomeView {
 
     override fun emitEventsFetchTrigger(): Observable<Boolean> = eventsFetchTriggerSubject
 
+    override fun emitNotificationToken(): Observable<String> = notificationTokenSubject
 
     override fun render(homeViewState: HomeViewState) {
         with(homeViewState) {
