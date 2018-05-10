@@ -11,6 +11,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.messaging.FirebaseMessaging
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
@@ -45,6 +46,7 @@ class HomeInteractor {
                 for (childSnapshot in dataSnapshot.children) {
                     childSnapshot.getValue(String::class.java)?.let {
                         eventIdList.add(it)
+                        FirebaseMessaging.getInstance().subscribeToTopic(it)
                     }
                 }
 
