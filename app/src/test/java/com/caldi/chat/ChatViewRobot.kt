@@ -24,7 +24,7 @@ class ChatViewRobot(chatViewModel: ChatViewModel) : BaseViewRobot<ChatViewState>
     }
 
     init {
-        chatViewModel.bind(chatView, "testChatId")
+        chatViewModel.bind(chatView, "testChatId", "testReceiverId")
     }
 
     fun toggleNewMessagesListening(toggle: Boolean) {

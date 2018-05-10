@@ -25,11 +25,12 @@ class ChatInteractor {
 
     private var currentMessagesList = listOf<Message>()
 
-    fun sendMessage(message: String, chatId: String): Observable<PartialChatViewState> {
+    fun sendMessage(message: String, chatId: String, receiverId: String): Observable<PartialChatViewState> {
         val messageNodeRef = getChatNodeReference(chatId).push()
         val messageObject = Message(
                 message = message,
                 senderId = currentUserId,
+                receiverId = receiverId,
                 messageId = messageNodeRef.key)
 
         messageNodeRef.setValue(messageObject)

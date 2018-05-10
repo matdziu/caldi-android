@@ -15,7 +15,7 @@ class ChatItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         with(itemView) {
             chatItemTextView.text = chatItem.name
             loadProfilePictureUrl(chatItem.imageUrl, itemView)
-            setOnClickListener { ChatActivity.start(context, chatItem.chatId, chatItem.name, chatItem.imageUrl) }
+            setOnClickListener { ChatActivity.start(context, chatItem) }
         }
     }
 

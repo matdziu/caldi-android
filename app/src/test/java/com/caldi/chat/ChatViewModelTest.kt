@@ -40,7 +40,7 @@ class ChatViewModelTest {
     @Test
     fun testSuccessfulMessagesBatchFetching() {
         val updatedMessageList = listOf(Message("2018-03-29", "Test message",
-                "testSenderId", "testMessageId", true))
+                "testSenderId", "testReceiverId", "testMessageId", true))
         whenever(chatInteractor.fetchChatMessagesBatch(any(), any())).thenReturn(
                 Observable.just(PartialChatViewState.MessagesListChanged(updatedMessageList))
         )
@@ -72,8 +72,8 @@ class ChatViewModelTest {
     @Test
     fun testNotEmptyMessageSending() {
         val updatedMessageList = listOf(Message("2018-03-29", "this is test message",
-                "testSenderId", "testMessageId", true))
-        whenever(chatInteractor.sendMessage(eq("this is test message"), any())).thenReturn(
+                "testSenderId", "testReceiverId", "testMessageId", true))
+        whenever(chatInteractor.sendMessage(eq("this is test message"), any(), any())).thenReturn(
                 Observable.just(PartialChatViewState.MessagesListChanged(updatedMessageList))
         )
         whenever(chatInteractor.currentUserId).thenReturn("testSenderId")

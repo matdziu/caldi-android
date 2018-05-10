@@ -10,10 +10,9 @@ import android.view.View
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
 import com.caldi.chat.list.MessagesAdapter
+import com.caldi.chatlist.models.ChatItem
 import com.caldi.common.utils.MessagesAdapterObserver
-import com.caldi.constants.CHAT_ID_KEY
-import com.caldi.constants.CHAT_IMAGE_URL_KEY
-import com.caldi.constants.CHAT_NAME_KEY
+import com.caldi.constants.CHAT_INFO_KEY
 import com.caldi.extensions.getCurrentISODate
 import com.caldi.factories.ChatViewModelFactory
 import com.caldi.injection.modules.GlideApp
@@ -42,7 +41,7 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
     private lateinit var newMessagesListeningToggleSubject: Subject<Boolean>
     private lateinit var batchFetchTriggerSubject: Subject<String>
 
-    private var chatId = ""
+    private lateinit var chatInfo: ChatItem
 
     private var init = true
     private var isBatchLoading = false
@@ -62,13 +61,9 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
     companion object {
 
         fun start(context: Context,
-                  chatId: String,
-                  name: String,
-                  imageUrl: String) {
+                  chatInfo: ChatItem) {
             val intent = Intent(context, ChatActivity::class.java)
-            intent.putExtra(CHAT_ID_KEY, chatId)
-            intent.putExtra(CHAT_NAME_KEY, name)
-            intent.putExtra(CHAT_IMAGE_URL_KEY, imageUrl)
+            intent.putExtra(CHAT_INFO_KEY, chatInfo)
             context.startActivity(intent)
         }
     }
@@ -78,15 +73,12 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
         setContentView(R.layout.activity_chat)
         super.onCreate(savedInstanceState)
 
-        chatId = intent.getStringExtra(CHAT_ID_KEY)
+        chatInfo = intent.getParcelableExtra(CHAT_INFO_KEY)
 
-        val chatName = intent.getStringExtra(CHAT_NAME_KEY)
-        val imageUrl = intent.getStringExtra(CHAT_IMAGE_URL_KEY)
-
-        chatInfoTextView.text = chatName
-        if (imageUrl.isNotEmpty()) {
+        chatInfoTextView.text = chatInfo.name
+        if (chatInfo.imageUrl.isNotEmpty()) {
             GlideApp.with(this)
-                    .load(imageUrl)
+                    .load(chatInfo.imageUrl)
                     .placeholder(R.drawable.profile_picture_shape)
                     .into(chatInfoImageView)
         }
@@ -117,7 +109,7 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
     override fun onStart() {
         super.onStart()
         initEmitters()
-        chatViewModel.bind(this, chatId)
+        chatViewModel.bind(this, chatInfo.chatId, chatInfo.receiverId)
         if (init) {
             newMessagesListeningToggleSubject.onNext(true)
             batchFetchTriggerSubject.onNext(getCurrentISODate())
