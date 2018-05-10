@@ -13,9 +13,10 @@ import com.caldi.chatlist.ChatListActivity
 import com.caldi.eventprofile.EventProfileActivity
 import com.caldi.home.HomeActivity
 import com.caldi.login.LoginActivity
-import com.caldi.people.meetpeople.MeetPeopleActivity
 import com.caldi.organizer.OrganizerActivity
+import com.caldi.people.meetpeople.MeetPeopleActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.iid.FirebaseInstanceId
 
 open class BaseDrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -67,6 +68,7 @@ open class BaseDrawerActivity : AppCompatActivity(), NavigationView.OnNavigation
     }
 
     private fun signOut() {
+        Thread { FirebaseInstanceId.getInstance().deleteInstanceId() }.start()
         FirebaseAuth.getInstance().signOut()
         val intent = Intent(this, LoginActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)

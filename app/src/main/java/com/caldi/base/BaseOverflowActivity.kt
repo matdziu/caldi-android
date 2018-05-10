@@ -9,6 +9,7 @@ import android.view.MenuItem
 import com.caldi.R
 import com.caldi.login.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.iid.FirebaseInstanceId
 
 open class BaseOverflowActivity : AppCompatActivity() {
 
@@ -35,6 +36,7 @@ open class BaseOverflowActivity : AppCompatActivity() {
     }
 
     private fun signOut() {
+        Thread { FirebaseInstanceId.getInstance().deleteInstanceId() }.start()
         FirebaseAuth.getInstance().signOut()
         val intent = Intent(this, LoginActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
