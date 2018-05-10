@@ -10,7 +10,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
@@ -29,12 +28,12 @@ class HomeInteractor {
         return stateSubject
     }
 
-    fun saveNotificationToken(): Observable<PartialHomeViewState> {
+    fun saveNotificationToken(token: String): Observable<PartialHomeViewState> {
         val resultSubject = PublishSubject.create<PartialHomeViewState>()
         val currentUserId = firebaseAuth.uid
         val notificationTokenNodeRef = FirebaseDatabase.getInstance().getReference(
                 "$USERS_NODE/$currentUserId/$NOTIFICATION_TOKEN_CHILD")
-        notificationTokenNodeRef.setValue(FirebaseInstanceId.getInstance().token)
+        notificationTokenNodeRef.setValue(token)
                 .addOnSuccessListener { resultSubject.onNext(PartialHomeViewState.NotificationTokenSaveSuccess()) }
         return resultSubject
     }

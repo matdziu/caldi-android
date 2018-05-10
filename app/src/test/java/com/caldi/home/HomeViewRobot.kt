@@ -7,7 +7,9 @@ import io.reactivex.subjects.Subject
 
 class HomeViewRobot(homeViewModel: HomeViewModel) : BaseViewRobot<HomeViewState>() {
 
-    private val eventsFetchTriggerObservable: Subject<Boolean> = PublishSubject.create()
+    private val eventsFetchTriggerSubject: Subject<Boolean> = PublishSubject.create()
+
+    private val notificationTokenSubject: Subject<String> = PublishSubject.create()
 
     private val homeView = object : HomeView {
 
@@ -15,7 +17,9 @@ class HomeViewRobot(homeViewModel: HomeViewModel) : BaseViewRobot<HomeViewState>
             renderedStates.add(homeViewState)
         }
 
-        override fun emitEventsFetchTrigger(): Observable<Boolean> = eventsFetchTriggerObservable
+        override fun emitEventsFetchTrigger(): Observable<Boolean> = eventsFetchTriggerSubject
+
+        override fun emitNotificationToken(): Observable<String> = notificationTokenSubject
     }
 
     init {
@@ -23,6 +27,10 @@ class HomeViewRobot(homeViewModel: HomeViewModel) : BaseViewRobot<HomeViewState>
     }
 
     fun emitEventsFetchTrigger() {
-        eventsFetchTriggerObservable.onNext(true)
+        eventsFetchTriggerSubject.onNext(true)
+    }
+
+    fun emitNotificationToken(token: String) {
+        notificationTokenSubject.onNext(token)
     }
 }

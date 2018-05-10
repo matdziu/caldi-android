@@ -12,7 +12,7 @@ class HomeViewModel(private val homeInteractor: HomeInteractor) : ViewModel() {
 
     fun bind(homeView: HomeView) {
         val notificationTokenObservable = homeView.emitNotificationToken()
-                .flatMap { homeInteractor.saveNotificationToken() }
+                .flatMap { homeInteractor.saveNotificationToken(it) }
 
         val eventsFetchTriggerObservable = homeView.emitEventsFetchTrigger()
                 .flatMap { homeInteractor.fetchUserEvents().startWith(PartialHomeViewState.InProgressState()) }

@@ -1,6 +1,7 @@
 package com.caldi.home
 
 import com.caldi.home.models.Event
+import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
 import io.reactivex.Observable
@@ -35,5 +36,16 @@ class HomeViewModelTest {
         homeViewRobot.assertViewStates(HomeViewState(),
                 HomeViewState(inProgress = true),
                 HomeViewState(error = true))
+    }
+
+    @Test
+    fun testNotificationTokenSave() {
+        whenever(homeInteractor.saveNotificationToken(any())).thenReturn(
+                Observable.just(PartialHomeViewState.NotificationTokenSaveSuccess()))
+        val homeViewRobot = HomeViewRobot(homeViewModel)
+
+        homeViewRobot.emitNotificationToken("testToken")
+
+        homeViewRobot.assertViewStates(HomeViewState(), HomeViewState())
     }
 }
