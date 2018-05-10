@@ -10,7 +10,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.messaging.FirebaseMessaging
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
 import io.reactivex.subjects.PublishSubject
@@ -83,7 +82,6 @@ class AddEventInteractor {
 
     private fun saveUserIdToEvent(userId: String?, eventId: String): Observable<Boolean> {
         val successSubject = PublishSubject.create<Boolean>()
-        subscribeUserToOrganizerMessages(eventId)
         eventsNodeRef
                 .child(eventId)
                 .child(ATTENDEES_NODE)
@@ -91,10 +89,6 @@ class AddEventInteractor {
                 .setValue(userId)
                 .addOnCompleteListener { successSubject.onNext(true) }
         return successSubject
-    }
-
-    private fun subscribeUserToOrganizerMessages(eventId: String) {
-        FirebaseMessaging.getInstance().subscribeToTopic(eventId)
     }
 
     private fun emitError(stateSubject: Subject<PartialAddEventViewState>) {
