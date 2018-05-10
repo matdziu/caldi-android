@@ -1,6 +1,7 @@
 package com.caldi.home
 
 import com.caldi.constants.EVENTS_NODE
+import com.caldi.constants.NOTIFICATION_TOKEN_CHILD
 import com.caldi.constants.USERS_NODE
 import com.caldi.constants.USER_EVENTS_NODE
 import com.caldi.home.models.Event
@@ -9,6 +10,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.iid.FirebaseInstanceId
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
@@ -24,6 +26,13 @@ class HomeInteractor {
         val stateSubject: Subject<PartialHomeViewState> = PublishSubject.create()
         fetchEventIds(stateSubject)
         return stateSubject
+    }
+
+    fun saveNotificationToken() {
+        val currentUserId = firebaseAuth.uid
+        val notificationTokenNodeRef = FirebaseDatabase.getInstance().getReference(
+                "$USERS_NODE/$currentUserId/$NOTIFICATION_TOKEN_CHILD")
+        notificationTokenNodeRef.setValue(FirebaseInstanceId.getInstance().token)
     }
 
     private fun fetchEventIds(stateSubject: Subject<PartialHomeViewState>) {
