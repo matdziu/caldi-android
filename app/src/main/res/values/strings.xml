@@ -47,6 +47,9 @@
     <string name="attendee_name_filter_text">Attendee name</string>
     <string name="posted_link_filter_text">Posted link (optional)</string>
     <string name="organizer_channel_title">Organizer messages</string>
-    <string name="organizer_message_notification_title">Organizer messages</string>
+    <string name="organizer_message_notification_title">Organizer message</string>
     <string name="organizer_message_notification_body">%1$s sent a new message</string>
+    <string name="new_connection_notification_title">New connection</string>
+    <string name="new_connection_notification_body">%1$s is now a new connection</string>
+    <string name="new_connection_channel_title">New connections</string>
 </resources>

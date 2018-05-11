@@ -8,6 +8,10 @@ import android.content.Intent
 import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
 import com.caldi.R
+import com.caldi.constants.NEW_CONNECTION_CHANNEL_ID
+import com.caldi.constants.NEW_CONNECTION_NOTIFICATION_ID
+import com.caldi.constants.NEW_CONNECTION_NOTIFICATION_REQUEST_CODE
+import com.caldi.constants.NEW_CONNECTION_NOTIFICATION_TYPE
 import com.caldi.constants.NOTIFICATION_BODY_LOC_ARGS
 import com.caldi.constants.NOTIFICATION_TITLE_LOC_ARGS
 import com.caldi.constants.NOTIFICATION_TYPE_KEY
@@ -31,6 +35,7 @@ class MessagingService : FirebaseMessagingService() {
 
         when (notificationType) {
             ORGANIZER_NOTIFICATION_TYPE -> handleOrganizerNotification(titleLocArgs, bodyLocArgs)
+            NEW_CONNECTION_NOTIFICATION_TYPE -> handleNewConnectionNotification(titleLocArgs, bodyLocArgs)
         }
     }
 
@@ -42,7 +47,26 @@ class MessagingService : FirebaseMessagingService() {
         val title = getString(R.string.organizer_message_notification_title, *titleLocArgs)
         val body = getString(R.string.organizer_message_notification_body, *bodyLocArgs)
 
-        val notification = NotificationCompat.Builder(this, ORGANIZER_CHANNEL_ID)
+        showDefaultNotification(pendingIntent, title, body, ORGANIZER_CHANNEL_ID, ORGANIZER_NOTIFICATION_ID)
+    }
+
+    private fun handleNewConnectionNotification(titleLocArgs: Array<String>, bodyLocArgs: Array<String>) {
+        val intent = Intent(this, SplashActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(this, NEW_CONNECTION_NOTIFICATION_REQUEST_CODE,
+                intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        val title = getString(R.string.new_connection_notification_title, *titleLocArgs)
+        val body = getString(R.string.new_connection_notification_body, *bodyLocArgs)
+
+        showDefaultNotification(pendingIntent, title, body, NEW_CONNECTION_CHANNEL_ID, NEW_CONNECTION_NOTIFICATION_ID)
+    }
+
+    private fun showDefaultNotification(pendingIntent: PendingIntent,
+                                        title: String,
+                                        body: String,
+                                        channelId: String,
+                                        notificationId: Int) {
+        val notification = NotificationCompat.Builder(this, channelId)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(title)
                 .setContentText(body)
@@ -54,7 +78,7 @@ class MessagingService : FirebaseMessagingService() {
                 .build()
 
         val notificationsManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationsManager.notify(ORGANIZER_NOTIFICATION_ID, notification)
+        notificationsManager.notify(notificationId, notification)
     }
 
     private fun jsonStringToArray(jsonString: String?): Array<String> {
