@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.support.annotation.RequiresApi
 import android.support.annotation.StringRes
 import com.caldi.R
+import com.caldi.constants.CHAT_MESSAGE_CHANNEL_ID
 import com.caldi.constants.NEW_CONNECTION_CHANNEL_ID
 import com.caldi.constants.ORGANIZER_CHANNEL_ID
 
@@ -18,6 +19,7 @@ class NotificationChannelsBuilder(private val context: Context) {
     fun buildChannels() {
         buildDefaultChannel(ORGANIZER_CHANNEL_ID, R.string.organizer_channel_title)
         buildDefaultChannel(NEW_CONNECTION_CHANNEL_ID, R.string.new_connection_channel_title)
+        buildDefaultChannel(CHAT_MESSAGE_CHANNEL_ID, R.string.chat_message_channel_title)
     }
 
     @RequiresApi(26)

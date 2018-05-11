@@ -12,19 +12,22 @@ class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
     private val compositeDisposable = CompositeDisposable()
     private val stateSubject = BehaviorSubject.createDefault(ChatViewState(progress = true))
 
-    fun bind(chatView: ChatView, chatId: String, receiverId: String) {
+    fun bind(chatView: ChatView,
+             chatId: String,
+             receiverId: String,
+             eventId: String) {
         val newMessagesListeningToggleObservable = chatView.emitNewMessagesListeningToggle()
                 .flatMap {
-                    if (it) chatInteractor.listenForNewMessages(chatId)
-                    else chatInteractor.stopListeningForNewMessages(chatId)
+                    if (it) chatInteractor.listenForNewMessages(eventId, chatId)
+                    else chatInteractor.stopListeningForNewMessages(eventId, chatId)
                 }
 
         val batchFetchTriggerObservable = chatView.emitBachFetchTrigger()
-                .flatMap { chatInteractor.fetchChatMessagesBatch(chatId, it) }
+                .flatMap { chatInteractor.fetchChatMessagesBatch(eventId, chatId, it) }
 
         val sentMessageObservable = chatView.emitSentMessage()
                 .filter { it.isNotBlank() }
-                .flatMap { chatInteractor.sendMessage(it.trim(), chatId, receiverId) }
+                .flatMap { chatInteractor.sendMessage(it.trim(), eventId, chatId, receiverId) }
 
         val mergedObservable = Observable.merge(arrayListOf(
                 newMessagesListeningToggleObservable,

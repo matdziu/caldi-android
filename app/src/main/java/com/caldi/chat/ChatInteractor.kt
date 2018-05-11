@@ -25,8 +25,8 @@ class ChatInteractor {
 
     private var currentMessagesList = listOf<Message>()
 
-    fun sendMessage(message: String, chatId: String, receiverId: String): Observable<PartialChatViewState> {
-        val messageNodeRef = getChatNodeReference(chatId).push()
+    fun sendMessage(message: String, eventId: String, chatId: String, receiverId: String): Observable<PartialChatViewState> {
+        val messageNodeRef = getChatNodeReference(eventId, chatId).push()
         val messageObject = Message(
                 message = message,
                 senderId = currentUserId,
@@ -40,9 +40,9 @@ class ChatInteractor {
         return Observable.just(PartialChatViewState.MessagesListChanged(currentMessagesList))
     }
 
-    fun fetchChatMessagesBatch(chatId: String, fromTimestamp: String): Observable<PartialChatViewState> {
+    fun fetchChatMessagesBatch(eventId: String, chatId: String, fromTimestamp: String): Observable<PartialChatViewState> {
         val stateSubject = PublishSubject.create<PartialChatViewState>()
-        getChatNodeReference(chatId)
+        getChatNodeReference(eventId, chatId)
                 .orderByChild(TIMESTAMP_CHILD)
                 .endAt(fromTimestamp)
                 .limitToLast(batchSize)
@@ -63,7 +63,7 @@ class ChatInteractor {
         return stateSubject
     }
 
-    fun listenForNewMessages(chatId: String): Observable<PartialChatViewState> {
+    fun listenForNewMessages(eventId: String, chatId: String): Observable<PartialChatViewState> {
         val stateSubject = PublishSubject.create<PartialChatViewState>()
 
         newMessageAddedListener = object : NewMessageAddedListener<Message>(Message::class.java) {
@@ -73,18 +73,18 @@ class ChatInteractor {
             }
         }
 
-        getChatNodeReference(chatId).addChildEventListener(newMessageAddedListener)
+        getChatNodeReference(eventId, chatId).addChildEventListener(newMessageAddedListener)
 
         return stateSubject
     }
 
-    fun stopListeningForNewMessages(chatId: String): Observable<PartialChatViewState> {
-        newMessageAddedListener?.let { getChatNodeReference(chatId).removeEventListener(it) }
+    fun stopListeningForNewMessages(eventId: String, chatId: String): Observable<PartialChatViewState> {
+        newMessageAddedListener?.let { getChatNodeReference(eventId, chatId).removeEventListener(it) }
         return Observable.just(PartialChatViewState.NewMessagesListenerRemoved())
     }
 
-    private fun getChatNodeReference(chatId: String): DatabaseReference {
-        return firebaseDatabase.getReference("$CHATS_NODE/$chatId")
+    private fun getChatNodeReference(eventId: String, chatId: String): DatabaseReference {
+        return firebaseDatabase.getReference("$CHATS_NODE/$eventId/$chatId")
     }
 
     private fun emitError(stateSubject: Subject<PartialChatViewState>) {

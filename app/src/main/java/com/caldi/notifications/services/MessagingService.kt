@@ -8,6 +8,10 @@ import android.content.Intent
 import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
 import com.caldi.R
+import com.caldi.constants.CHAT_MESSAGE_CHANNEL_ID
+import com.caldi.constants.CHAT_MESSAGE_NOTIFICATION_ID
+import com.caldi.constants.CHAT_MESSAGE_NOTIFICATION_REQUEST_CODE
+import com.caldi.constants.CHAT_MESSAGE_NOTIFICATION_TYPE
 import com.caldi.constants.NEW_CONNECTION_CHANNEL_ID
 import com.caldi.constants.NEW_CONNECTION_NOTIFICATION_ID
 import com.caldi.constants.NEW_CONNECTION_NOTIFICATION_REQUEST_CODE
@@ -34,12 +38,24 @@ class MessagingService : FirebaseMessagingService() {
         val notificationType = remoteMessage.data[NOTIFICATION_TYPE_KEY]
 
         when (notificationType) {
-            ORGANIZER_NOTIFICATION_TYPE -> handleOrganizerNotification(titleLocArgs, bodyLocArgs)
+            ORGANIZER_NOTIFICATION_TYPE -> handleOrganizerMessageNotification(titleLocArgs, bodyLocArgs)
             NEW_CONNECTION_NOTIFICATION_TYPE -> handleNewConnectionNotification(titleLocArgs, bodyLocArgs)
+            CHAT_MESSAGE_NOTIFICATION_TYPE -> handleChatMessageNotification(titleLocArgs, bodyLocArgs)
         }
     }
 
-    private fun handleOrganizerNotification(titleLocArgs: Array<String>, bodyLocArgs: Array<String>) {
+    private fun handleChatMessageNotification(titleLocArgs: Array<String>, bodyLocArgs: Array<String>) {
+        val intent = Intent(this, SplashActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(this, CHAT_MESSAGE_NOTIFICATION_REQUEST_CODE,
+                intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        val title = getString(R.string.chat_message_notification_title, *titleLocArgs)
+        val body = getString(R.string.chat_message_notification_body, *bodyLocArgs)
+
+        showDefaultNotification(pendingIntent, title, body, CHAT_MESSAGE_CHANNEL_ID, CHAT_MESSAGE_NOTIFICATION_ID)
+    }
+
+    private fun handleOrganizerMessageNotification(titleLocArgs: Array<String>, bodyLocArgs: Array<String>) {
         val intent = Intent(this, SplashActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, ORGANIZER_NOTIFICATION_REQUEST_CODE,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT)

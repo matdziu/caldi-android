@@ -109,7 +109,7 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
     override fun onStart() {
         super.onStart()
         initEmitters()
-        chatViewModel.bind(this, chatInfo.chatId, chatInfo.receiverId)
+        chatViewModel.bind(this, chatInfo.chatId, chatInfo.receiverId, eventId)
         if (init) {
             newMessagesListeningToggleSubject.onNext(true)
             batchFetchTriggerSubject.onNext(getCurrentISODate())
