@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
+import com.caldi.CaldiApplication
 import com.caldi.R
 import com.caldi.constants.CHAT_MESSAGE_CHANNEL_ID
 import com.caldi.constants.CHAT_MESSAGE_NOTIFICATION_ID
@@ -23,6 +24,7 @@ import com.caldi.constants.ORGANIZER_CHANNEL_ID
 import com.caldi.constants.ORGANIZER_NOTIFICATION_ID
 import com.caldi.constants.ORGANIZER_NOTIFICATION_REQUEST_CODE
 import com.caldi.constants.ORGANIZER_NOTIFICATION_TYPE
+import com.caldi.organizer.OrganizerActivity
 import com.caldi.splash.SplashActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -31,8 +33,13 @@ import org.json.JSONArray
 
 class MessagingService : FirebaseMessagingService() {
 
+    private lateinit var caldiApplication: CaldiApplication
+
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
+
+        caldiApplication = application as CaldiApplication
+
         val titleLocArgs = jsonStringToArray(remoteMessage.data[NOTIFICATION_TITLE_LOC_ARGS])
         val bodyLocArgs = jsonStringToArray(remoteMessage.data[NOTIFICATION_BODY_LOC_ARGS])
         val notificationType = remoteMessage.data[NOTIFICATION_TYPE_KEY]
@@ -56,14 +63,16 @@ class MessagingService : FirebaseMessagingService() {
     }
 
     private fun handleOrganizerMessageNotification(titleLocArgs: Array<String>, bodyLocArgs: Array<String>) {
-        val intent = Intent(this, SplashActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(this, ORGANIZER_NOTIFICATION_REQUEST_CODE,
-                intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        if (caldiApplication.visibleActivity !is OrganizerActivity) {
+            val intent = Intent(this, SplashActivity::class.java)
+            val pendingIntent = PendingIntent.getActivity(this, ORGANIZER_NOTIFICATION_REQUEST_CODE,
+                    intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val title = getString(R.string.organizer_message_notification_title, *titleLocArgs)
-        val body = getString(R.string.organizer_message_notification_body, *bodyLocArgs)
+            val title = getString(R.string.organizer_message_notification_title, *titleLocArgs)
+            val body = getString(R.string.organizer_message_notification_body, *bodyLocArgs)
 
-        showDefaultNotification(pendingIntent, title, body, ORGANIZER_CHANNEL_ID, ORGANIZER_NOTIFICATION_ID)
+            showDefaultNotification(pendingIntent, title, body, ORGANIZER_CHANNEL_ID, ORGANIZER_NOTIFICATION_ID)
+        }
     }
 
     private fun handleNewConnectionNotification(titleLocArgs: Array<String>, bodyLocArgs: Array<String>) {
