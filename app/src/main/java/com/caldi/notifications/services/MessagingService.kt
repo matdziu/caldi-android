@@ -62,7 +62,7 @@ class MessagingService : FirebaseMessagingService() {
         val pendingIntent = PendingIntent.getActivity(this, CHAT_MESSAGE_NOTIFICATION_REQUEST_CODE,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val title = getString(R.string.chat_message_notification_title, *titleLocArgs)
+        val title = getString(R.string.chat_message_notification_title)
         val body = getString(R.string.chat_message_notification_body, *bodyLocArgs)
 
         showDefaultNotification(pendingIntent, title, body, CHAT_MESSAGE_CHANNEL_ID, CHAT_MESSAGE_NOTIFICATION_ID)
@@ -78,7 +78,7 @@ class MessagingService : FirebaseMessagingService() {
                 val pendingIntent = PendingIntent.getActivity(this, ORGANIZER_NOTIFICATION_REQUEST_CODE,
                         intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-                val title = getString(R.string.organizer_message_notification_title, *titleLocArgs)
+                val title = getString(R.string.organizer_message_notification_title)
                 val body = getString(R.string.organizer_message_notification_body, *bodyLocArgs)
 
                 showDefaultNotification(pendingIntent, title, body, ORGANIZER_CHANNEL_ID, eventId.hashCode())
@@ -93,7 +93,7 @@ class MessagingService : FirebaseMessagingService() {
         val pendingIntent = PendingIntent.getActivity(this, NEW_CONNECTION_NOTIFICATION_REQUEST_CODE,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val title = getString(R.string.new_connection_notification_title, *titleLocArgs)
+        val title = getString(R.string.new_connection_notification_title)
         val body = getString(R.string.new_connection_notification_body, *bodyLocArgs)
 
         showDefaultNotification(pendingIntent, title, body, NEW_CONNECTION_CHANNEL_ID, NEW_CONNECTION_NOTIFICATION_ID)
