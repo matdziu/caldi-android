@@ -18,6 +18,7 @@ import com.caldi.constants.NEW_CONNECTION_NOTIFICATION_ID
 import com.caldi.constants.NEW_CONNECTION_NOTIFICATION_REQUEST_CODE
 import com.caldi.constants.NEW_CONNECTION_NOTIFICATION_TYPE
 import com.caldi.constants.NOTIFICATION_BODY_LOC_ARGS
+import com.caldi.constants.NOTIFICATION_EXTRAS_KEY
 import com.caldi.constants.NOTIFICATION_TITLE_LOC_ARGS
 import com.caldi.constants.NOTIFICATION_TYPE_KEY
 import com.caldi.constants.ORGANIZER_CHANNEL_ID
@@ -25,6 +26,7 @@ import com.caldi.constants.ORGANIZER_NOTIFICATION_ID
 import com.caldi.constants.ORGANIZER_NOTIFICATION_REQUEST_CODE
 import com.caldi.constants.ORGANIZER_NOTIFICATION_TYPE
 import com.caldi.extensions.jsonToArrayOfStrings
+import com.caldi.extensions.jsonToMapOfStrings
 import com.caldi.organizer.OrganizerActivity
 import com.caldi.splash.SplashActivity
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -42,16 +44,19 @@ class MessagingService : FirebaseMessagingService() {
 
         val titleLocArgs = remoteMessage.data[NOTIFICATION_TITLE_LOC_ARGS].jsonToArrayOfStrings()
         val bodyLocArgs = remoteMessage.data[NOTIFICATION_BODY_LOC_ARGS].jsonToArrayOfStrings()
+        val extras = remoteMessage.data[NOTIFICATION_EXTRAS_KEY].jsonToMapOfStrings()
         val notificationType = remoteMessage.data[NOTIFICATION_TYPE_KEY]
 
         when (notificationType) {
-            ORGANIZER_NOTIFICATION_TYPE -> handleOrganizerMessageNotification(titleLocArgs, bodyLocArgs)
-            NEW_CONNECTION_NOTIFICATION_TYPE -> handleNewConnectionNotification(titleLocArgs, bodyLocArgs)
-            CHAT_MESSAGE_NOTIFICATION_TYPE -> handleChatMessageNotification(titleLocArgs, bodyLocArgs)
+            ORGANIZER_NOTIFICATION_TYPE -> handleOrganizerMessageNotification(titleLocArgs, bodyLocArgs, extras)
+            NEW_CONNECTION_NOTIFICATION_TYPE -> handleNewConnectionNotification(titleLocArgs, bodyLocArgs, extras)
+            CHAT_MESSAGE_NOTIFICATION_TYPE -> handleChatMessageNotification(titleLocArgs, bodyLocArgs, extras)
         }
     }
 
-    private fun handleChatMessageNotification(titleLocArgs: Array<String>, bodyLocArgs: Array<String>) {
+    private fun handleChatMessageNotification(titleLocArgs: Array<String>,
+                                              bodyLocArgs: Array<String>,
+                                              extras: Map<String, String>) {
         val intent = Intent(this, SplashActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, CHAT_MESSAGE_NOTIFICATION_REQUEST_CODE,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -62,7 +67,9 @@ class MessagingService : FirebaseMessagingService() {
         showDefaultNotification(pendingIntent, title, body, CHAT_MESSAGE_CHANNEL_ID, CHAT_MESSAGE_NOTIFICATION_ID)
     }
 
-    private fun handleOrganizerMessageNotification(titleLocArgs: Array<String>, bodyLocArgs: Array<String>) {
+    private fun handleOrganizerMessageNotification(titleLocArgs: Array<String>,
+                                                   bodyLocArgs: Array<String>,
+                                                   extras: Map<String, String>) {
         if (caldiApplication.visibleActivity !is OrganizerActivity) {
             val intent = Intent(this, SplashActivity::class.java)
             val pendingIntent = PendingIntent.getActivity(this, ORGANIZER_NOTIFICATION_REQUEST_CODE,
@@ -75,7 +82,9 @@ class MessagingService : FirebaseMessagingService() {
         }
     }
 
-    private fun handleNewConnectionNotification(titleLocArgs: Array<String>, bodyLocArgs: Array<String>) {
+    private fun handleNewConnectionNotification(titleLocArgs: Array<String>,
+                                                bodyLocArgs: Array<String>,
+                                                extras: Map<String, String>) {
         val intent = Intent(this, SplashActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, NEW_CONNECTION_NOTIFICATION_REQUEST_CODE,
                 intent, PendingIntent.FLAG_UPDATE_CURRENT)
