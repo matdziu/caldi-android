@@ -9,10 +9,12 @@ import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
 import com.caldi.CaldiApplication
 import com.caldi.R
+import com.caldi.base.BaseDrawerActivity
 import com.caldi.constants.CHAT_MESSAGE_CHANNEL_ID
 import com.caldi.constants.CHAT_MESSAGE_NOTIFICATION_ID
 import com.caldi.constants.CHAT_MESSAGE_NOTIFICATION_REQUEST_CODE
 import com.caldi.constants.CHAT_MESSAGE_NOTIFICATION_TYPE
+import com.caldi.constants.EXTRAS_EVENT_ID
 import com.caldi.constants.NEW_CONNECTION_CHANNEL_ID
 import com.caldi.constants.NEW_CONNECTION_NOTIFICATION_ID
 import com.caldi.constants.NEW_CONNECTION_NOTIFICATION_REQUEST_CODE
@@ -70,7 +72,8 @@ class MessagingService : FirebaseMessagingService() {
     private fun handleOrganizerMessageNotification(titleLocArgs: Array<String>,
                                                    bodyLocArgs: Array<String>,
                                                    extras: Map<String, String>) {
-        if (caldiApplication.visibleActivity !is OrganizerActivity) {
+        if (caldiApplication.visibleActivity !is OrganizerActivity ||
+                caldiApplication.visibleActivity is OrganizerActivity && extras[EXTRAS_EVENT_ID] != BaseDrawerActivity.eventId) {
             val intent = Intent(this, SplashActivity::class.java)
             val pendingIntent = PendingIntent.getActivity(this, ORGANIZER_NOTIFICATION_REQUEST_CODE,
                     intent, PendingIntent.FLAG_UPDATE_CURRENT)
