@@ -24,7 +24,6 @@ import com.caldi.constants.NOTIFICATION_EXTRAS_KEY
 import com.caldi.constants.NOTIFICATION_TITLE_LOC_ARGS
 import com.caldi.constants.NOTIFICATION_TYPE_KEY
 import com.caldi.constants.ORGANIZER_CHANNEL_ID
-import com.caldi.constants.ORGANIZER_NOTIFICATION_ID
 import com.caldi.constants.ORGANIZER_NOTIFICATION_REQUEST_CODE
 import com.caldi.constants.ORGANIZER_NOTIFICATION_TYPE
 import com.caldi.extensions.jsonToArrayOfStrings
@@ -72,16 +71,18 @@ class MessagingService : FirebaseMessagingService() {
     private fun handleOrganizerMessageNotification(titleLocArgs: Array<String>,
                                                    bodyLocArgs: Array<String>,
                                                    extras: Map<String, String>) {
-        if (caldiApplication.visibleActivity !is OrganizerActivity ||
-                caldiApplication.visibleActivity is OrganizerActivity && extras[EXTRAS_EVENT_ID] != BaseDrawerActivity.eventId) {
-            val intent = Intent(this, SplashActivity::class.java)
-            val pendingIntent = PendingIntent.getActivity(this, ORGANIZER_NOTIFICATION_REQUEST_CODE,
-                    intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        extras[EXTRAS_EVENT_ID]?.let { eventId ->
+            if (caldiApplication.visibleActivity !is OrganizerActivity ||
+                    caldiApplication.visibleActivity is OrganizerActivity && eventId != BaseDrawerActivity.eventId) {
+                val intent = Intent(this, SplashActivity::class.java)
+                val pendingIntent = PendingIntent.getActivity(this, ORGANIZER_NOTIFICATION_REQUEST_CODE,
+                        intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-            val title = getString(R.string.organizer_message_notification_title, *titleLocArgs)
-            val body = getString(R.string.organizer_message_notification_body, *bodyLocArgs)
+                val title = getString(R.string.organizer_message_notification_title, *titleLocArgs)
+                val body = getString(R.string.organizer_message_notification_body, *bodyLocArgs)
 
-            showDefaultNotification(pendingIntent, title, body, ORGANIZER_CHANNEL_ID, ORGANIZER_NOTIFICATION_ID)
+                showDefaultNotification(pendingIntent, title, body, ORGANIZER_CHANNEL_ID, eventId.hashCode())
+            }
         }
     }
 

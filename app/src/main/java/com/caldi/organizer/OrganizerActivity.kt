@@ -13,7 +13,6 @@ import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
 import com.caldi.common.utils.MessagesAdapterObserver
 import com.caldi.constants.EVENT_ID_KEY
-import com.caldi.constants.ORGANIZER_NOTIFICATION_ID
 import com.caldi.extensions.getCurrentISODate
 import com.caldi.factories.OrganizerViewModelFactory
 import com.caldi.injection.modules.GlideApp
@@ -97,7 +96,7 @@ class OrganizerActivity : BaseDrawerActivity(), OrganizerView {
     override fun onStart() {
         super.onStart()
         val notificationsManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationsManager.cancel(ORGANIZER_NOTIFICATION_ID)
+        notificationsManager.cancel(eventId.hashCode())
         initEmitters()
         organizerViewModel.bind(this, eventId)
         if (init) {
