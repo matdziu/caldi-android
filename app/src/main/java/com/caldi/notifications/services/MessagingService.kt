@@ -24,11 +24,11 @@ import com.caldi.constants.ORGANIZER_CHANNEL_ID
 import com.caldi.constants.ORGANIZER_NOTIFICATION_ID
 import com.caldi.constants.ORGANIZER_NOTIFICATION_REQUEST_CODE
 import com.caldi.constants.ORGANIZER_NOTIFICATION_TYPE
+import com.caldi.extensions.jsonToArrayOfStrings
 import com.caldi.organizer.OrganizerActivity
 import com.caldi.splash.SplashActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import org.json.JSONArray
 
 
 class MessagingService : FirebaseMessagingService() {
@@ -40,8 +40,8 @@ class MessagingService : FirebaseMessagingService() {
 
         caldiApplication = application as CaldiApplication
 
-        val titleLocArgs = jsonStringToArray(remoteMessage.data[NOTIFICATION_TITLE_LOC_ARGS])
-        val bodyLocArgs = jsonStringToArray(remoteMessage.data[NOTIFICATION_BODY_LOC_ARGS])
+        val titleLocArgs = remoteMessage.data[NOTIFICATION_TITLE_LOC_ARGS].jsonToArrayOfStrings()
+        val bodyLocArgs = remoteMessage.data[NOTIFICATION_BODY_LOC_ARGS].jsonToArrayOfStrings()
         val notificationType = remoteMessage.data[NOTIFICATION_TYPE_KEY]
 
         when (notificationType) {
@@ -104,14 +104,5 @@ class MessagingService : FirebaseMessagingService() {
 
         val notificationsManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationsManager.notify(notificationId, notification)
-    }
-
-    private fun jsonStringToArray(jsonString: String?): Array<String> {
-        val stringArray = arrayListOf<String>()
-        val jsonArray = JSONArray(jsonString)
-        for (index in 0 until jsonArray.length()) {
-            stringArray.add(jsonArray.getString(index))
-        }
-        return stringArray.toTypedArray()
     }
 }
