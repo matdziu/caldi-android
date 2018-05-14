@@ -9,7 +9,9 @@ import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
 import com.caldi.CaldiApplication
 import com.caldi.R
+import com.caldi.base.BaseDrawerActivity
 import com.caldi.chat.ChatActivity
+import com.caldi.chatlist.ChatListActivity
 import com.caldi.constants.CHAT_MESSAGE_CHANNEL_ID
 import com.caldi.constants.CHAT_MESSAGE_NOTIFICATION_REQUEST_CODE
 import com.caldi.constants.CHAT_MESSAGE_NOTIFICATION_TYPE
@@ -29,7 +31,6 @@ import com.caldi.constants.ORGANIZER_NOTIFICATION_TYPE
 import com.caldi.extensions.jsonToArrayOfStrings
 import com.caldi.extensions.jsonToMapOfStrings
 import com.caldi.organizer.OrganizerActivity
-import com.caldi.splash.SplashActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
@@ -58,10 +59,13 @@ class MessagingService : FirebaseMessagingService() {
     private fun handleChatMessageNotification(titleLocArgs: Array<String>,
                                               bodyLocArgs: Array<String>,
                                               extras: Map<String, String>) {
-        extras[EXTRAS_CHAT_ID]?.let { chatId ->
+        val chatId = extras[EXTRAS_CHAT_ID]
+        val eventId = extras[EXTRAS_EVENT_ID]
+        if (chatId != null && eventId != null) {
             val visibleActivity = caldiApplication.visibleActivity
             if (visibleActivity !is ChatActivity || chatId != visibleActivity.chatInfo.chatId) {
-                val intent = Intent(this, SplashActivity::class.java)
+                val intent = Intent(this, ChatListActivity::class.java)
+                BaseDrawerActivity.eventId = eventId
                 val pendingIntent = PendingIntent.getActivity(this, CHAT_MESSAGE_NOTIFICATION_REQUEST_CODE,
                         intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
@@ -93,8 +97,11 @@ class MessagingService : FirebaseMessagingService() {
     private fun handleNewConnectionNotification(titleLocArgs: Array<String>,
                                                 bodyLocArgs: Array<String>,
                                                 extras: Map<String, String>) {
-        extras[EXTRAS_CHAT_ID]?.let { chatId ->
-            val intent = Intent(this, SplashActivity::class.java)
+        val chatId = extras[EXTRAS_CHAT_ID]
+        val eventId = extras[EXTRAS_EVENT_ID]
+        if (chatId != null && eventId != null) {
+            val intent = Intent(this, ChatListActivity::class.java)
+            BaseDrawerActivity.eventId = eventId
             val pendingIntent = PendingIntent.getActivity(this, NEW_CONNECTION_NOTIFICATION_REQUEST_CODE,
                     intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
