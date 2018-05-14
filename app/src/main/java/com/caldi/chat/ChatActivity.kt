@@ -1,5 +1,6 @@
 package com.caldi.chat
 
+import android.app.NotificationManager
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
@@ -41,7 +42,7 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
     private lateinit var newMessagesListeningToggleSubject: Subject<Boolean>
     private lateinit var batchFetchTriggerSubject: Subject<String>
 
-    private lateinit var chatInfo: ChatItem
+    var chatInfo: ChatItem = ChatItem()
 
     private var init = true
     private var isBatchLoading = false
@@ -108,6 +109,8 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
 
     override fun onStart() {
         super.onStart()
+        val notificationsManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationsManager.cancel(chatInfo.chatId.hashCode())
         initEmitters()
         chatViewModel.bind(this, chatInfo.chatId, chatInfo.receiverId, eventId)
         if (init) {

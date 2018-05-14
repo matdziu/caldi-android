@@ -9,11 +9,11 @@ import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
 import com.caldi.CaldiApplication
 import com.caldi.R
-import com.caldi.base.BaseDrawerActivity
+import com.caldi.chat.ChatActivity
 import com.caldi.constants.CHAT_MESSAGE_CHANNEL_ID
-import com.caldi.constants.CHAT_MESSAGE_NOTIFICATION_ID
 import com.caldi.constants.CHAT_MESSAGE_NOTIFICATION_REQUEST_CODE
 import com.caldi.constants.CHAT_MESSAGE_NOTIFICATION_TYPE
+import com.caldi.constants.EXTRAS_CHAT_ID
 import com.caldi.constants.EXTRAS_EVENT_ID
 import com.caldi.constants.NEW_CONNECTION_CHANNEL_ID
 import com.caldi.constants.NEW_CONNECTION_NOTIFICATION_ID
@@ -28,7 +28,6 @@ import com.caldi.constants.ORGANIZER_NOTIFICATION_REQUEST_CODE
 import com.caldi.constants.ORGANIZER_NOTIFICATION_TYPE
 import com.caldi.extensions.jsonToArrayOfStrings
 import com.caldi.extensions.jsonToMapOfStrings
-import com.caldi.organizer.OrganizerActivity
 import com.caldi.splash.SplashActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -58,31 +57,33 @@ class MessagingService : FirebaseMessagingService() {
     private fun handleChatMessageNotification(titleLocArgs: Array<String>,
                                               bodyLocArgs: Array<String>,
                                               extras: Map<String, String>) {
-        val intent = Intent(this, SplashActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(this, CHAT_MESSAGE_NOTIFICATION_REQUEST_CODE,
-                intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        extras[EXTRAS_CHAT_ID]?.let { chatId ->
+            val visibleActivity = caldiApplication.visibleActivity
+            if (visibleActivity !is ChatActivity || chatId != visibleActivity.chatInfo.chatId) {
+                val intent = Intent(this, SplashActivity::class.java)
+                val pendingIntent = PendingIntent.getActivity(this, CHAT_MESSAGE_NOTIFICATION_REQUEST_CODE,
+                        intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val title = getString(R.string.chat_message_notification_title)
-        val body = getString(R.string.chat_message_notification_body, *bodyLocArgs)
+                val title = getString(R.string.chat_message_notification_title)
+                val body = getString(R.string.chat_message_notification_body, *bodyLocArgs)
 
-        showDefaultNotification(pendingIntent, title, body, CHAT_MESSAGE_CHANNEL_ID, CHAT_MESSAGE_NOTIFICATION_ID)
+                showDefaultNotification(pendingIntent, title, body, CHAT_MESSAGE_CHANNEL_ID, chatId.hashCode())
+            }
+        }
     }
 
     private fun handleOrganizerMessageNotification(titleLocArgs: Array<String>,
                                                    bodyLocArgs: Array<String>,
                                                    extras: Map<String, String>) {
         extras[EXTRAS_EVENT_ID]?.let { eventId ->
-            if (caldiApplication.visibleActivity !is OrganizerActivity ||
-                    caldiApplication.visibleActivity is OrganizerActivity && eventId != BaseDrawerActivity.eventId) {
-                val intent = Intent(this, SplashActivity::class.java)
-                val pendingIntent = PendingIntent.getActivity(this, ORGANIZER_NOTIFICATION_REQUEST_CODE,
-                        intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            val intent = Intent(this, SplashActivity::class.java)
+            val pendingIntent = PendingIntent.getActivity(this, ORGANIZER_NOTIFICATION_REQUEST_CODE,
+                    intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-                val title = getString(R.string.organizer_message_notification_title)
-                val body = getString(R.string.organizer_message_notification_body, *bodyLocArgs)
+            val title = getString(R.string.organizer_message_notification_title)
+            val body = getString(R.string.organizer_message_notification_body, *bodyLocArgs)
 
-                showDefaultNotification(pendingIntent, title, body, ORGANIZER_CHANNEL_ID, eventId.hashCode())
-            }
+            showDefaultNotification(pendingIntent, title, body, ORGANIZER_CHANNEL_ID, eventId.hashCode())
         }
     }
 

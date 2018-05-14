@@ -18,8 +18,8 @@ const val NEW_CONNECTION_CHANNEL_ID = "new_connection"
 const val NEW_CONNECTION_NOTIFICATION_TYPE = "new_connection"
 
 const val CHAT_MESSAGE_NOTIFICATION_REQUEST_CODE = 14
-const val CHAT_MESSAGE_NOTIFICATION_ID = 15
 const val CHAT_MESSAGE_CHANNEL_ID = "chat_message"
 const val CHAT_MESSAGE_NOTIFICATION_TYPE = "chat_message"
 
 const val EXTRAS_EVENT_ID = "eventId"
+const val EXTRAS_CHAT_ID = "chatId"
