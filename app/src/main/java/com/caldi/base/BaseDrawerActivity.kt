@@ -54,7 +54,10 @@ open class BaseDrawerActivity : BaseActivity(), NavigationView.OnNavigationItemS
         return if (!item.isChecked) {
             when (item.itemId) {
                 R.id.sign_out_item -> signOut()
-                R.id.events_item -> startActivity(Intent(this, HomeActivity::class.java))
+                R.id.events_item -> {
+                    startActivity(Intent(this, HomeActivity::class.java))
+                    finish()
+                }
                 R.id.event_profile_item -> startActivity(Intent(this, EventProfileActivity::class.java))
                 R.id.meet_people_item -> startActivity(Intent(this, MeetPeopleActivity::class.java))
                 R.id.chat_item -> startActivity(Intent(this, ChatListActivity::class.java))

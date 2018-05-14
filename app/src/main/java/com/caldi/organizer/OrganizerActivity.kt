@@ -63,6 +63,11 @@ class OrganizerActivity : BaseDrawerActivity(), OrganizerView {
         }
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        init = true
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         setContentView(R.layout.activity_organizer)

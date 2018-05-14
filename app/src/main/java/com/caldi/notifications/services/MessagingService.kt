@@ -65,6 +65,7 @@ class MessagingService : FirebaseMessagingService() {
             val visibleActivity = caldiApplication.visibleActivity
             if (visibleActivity !is ChatActivity || chatId != visibleActivity.chatInfo.chatId) {
                 val intent = Intent(this, ChatListActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 BaseDrawerActivity.eventId = eventId
                 val pendingIntent = PendingIntent.getActivity(this, CHAT_MESSAGE_NOTIFICATION_REQUEST_CODE,
                         intent, PendingIntent.FLAG_UPDATE_CURRENT)
@@ -84,6 +85,7 @@ class MessagingService : FirebaseMessagingService() {
         extras[EXTRAS_EVENT_ID]?.let { eventId ->
             val intent = Intent(this, OrganizerActivity::class.java)
             intent.putExtra(EVENT_ID_KEY, eventId)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             val pendingIntent = PendingIntent.getActivity(this, ORGANIZER_NOTIFICATION_REQUEST_CODE,
                     intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
@@ -101,6 +103,7 @@ class MessagingService : FirebaseMessagingService() {
         val eventId = extras[EXTRAS_EVENT_ID]
         if (chatId != null && eventId != null) {
             val intent = Intent(this, ChatListActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             BaseDrawerActivity.eventId = eventId
             val pendingIntent = PendingIntent.getActivity(this, NEW_CONNECTION_NOTIFICATION_REQUEST_CODE,
                     intent, PendingIntent.FLAG_UPDATE_CURRENT)
