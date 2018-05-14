@@ -5,9 +5,9 @@ import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
+import android.widget.Toast
 import com.caldi.R
 import com.caldi.chatlist.ChatListActivity
 import com.caldi.eventprofile.EventProfileActivity
@@ -18,7 +18,7 @@ import com.caldi.people.meetpeople.MeetPeopleActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.iid.FirebaseInstanceId
 
-open class BaseDrawerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+open class BaseDrawerActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private val drawerLayout: DrawerLayout by lazy {
         findViewById<DrawerLayout>(R.id.drawerLayout)
@@ -68,11 +68,15 @@ open class BaseDrawerActivity : AppCompatActivity(), NavigationView.OnNavigation
     }
 
     private fun signOut() {
-        Thread { FirebaseInstanceId.getInstance().deleteInstanceId() }.start()
-        FirebaseAuth.getInstance().signOut()
-        val intent = Intent(this, LoginActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-        startActivity(intent)
+        if (online) {
+            Thread { FirebaseInstanceId.getInstance().deleteInstanceId() }.start()
+            FirebaseAuth.getInstance().signOut()
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            startActivity(intent)
+        } else {
+            Toast.makeText(this, getString(R.string.logout_connection_prompt), Toast.LENGTH_SHORT).show()
+        }
     }
 
     fun setNavigationSelection(menuItemId: Int) {

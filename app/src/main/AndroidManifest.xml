@@ -72,6 +72,10 @@
             android:screenOrientation="portrait" />
 
         <activity
+            android:name=".base.BaseActivity"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name="com.caldi.people.common.PeopleActivity"
             android:screenOrientation="portrait" />
 
