@@ -15,6 +15,7 @@ import com.caldi.chatlist.models.ChatItem
 import com.caldi.common.utils.MessagesAdapterObserver
 import com.caldi.constants.CHAT_INFO_KEY
 import com.caldi.constants.CHAT_MESSAGE_NOTIFICATION_REQUEST_CODE
+import com.caldi.constants.EVENT_ID_KEY
 import com.caldi.constants.NEW_CONNECTION_NOTIFICATION_REQUEST_CODE
 import com.caldi.extensions.getCurrentISODate
 import com.caldi.factories.ChatViewModelFactory
@@ -64,9 +65,11 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
     companion object {
 
         fun start(context: Context,
-                  chatInfo: ChatItem) {
+                  chatInfo: ChatItem,
+                  eventId: String) {
             val intent = Intent(context, ChatActivity::class.java)
             intent.putExtra(CHAT_INFO_KEY, chatInfo)
+            intent.putExtra(EVENT_ID_KEY, eventId)
             context.startActivity(intent)
         }
     }

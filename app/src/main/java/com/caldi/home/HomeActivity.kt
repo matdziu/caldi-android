@@ -15,6 +15,7 @@ import com.caldi.R
 import com.caldi.addevent.AddEventActivity
 import com.caldi.base.BaseOverflowActivity
 import com.caldi.constants.ADD_EVENT_REQUEST_CODE
+import com.caldi.constants.EVENT_ID_KEY
 import com.caldi.constants.NOTIFICATION_TOKEN_ACTION
 import com.caldi.constants.NOTIFICATION_TOKEN_KEY
 import com.caldi.factories.HomeViewModelFactory
@@ -46,6 +47,15 @@ class HomeActivity : BaseOverflowActivity(), HomeView {
     lateinit var homeViewModelFactory: HomeViewModelFactory
 
     private var init: Boolean = true
+
+    companion object {
+
+        fun start(context: Context, eventId: String) {
+            val intent = Intent(context, HomeActivity::class.java)
+            intent.putExtra(EVENT_ID_KEY, eventId)
+            context.startActivity(intent)
+        }
+    }
 
     private val notificationTokenReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {

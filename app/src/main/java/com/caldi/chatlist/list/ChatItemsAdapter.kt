@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import com.caldi.R
 import com.caldi.chatlist.models.ChatItem
 
-class ChatItemsAdapter : RecyclerView.Adapter<ChatItemViewHolder>() {
+class ChatItemsAdapter(private val eventId: String) : RecyclerView.Adapter<ChatItemViewHolder>() {
 
     private val chatItemList = arrayListOf<ChatItem>()
 
@@ -16,7 +16,7 @@ class ChatItemsAdapter : RecyclerView.Adapter<ChatItemViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: ChatItemViewHolder, position: Int) {
-        holder.bind(chatItemList[position])
+        holder.bind(chatItemList[position], eventId)
     }
 
     override fun getItemCount(): Int = chatItemList.size

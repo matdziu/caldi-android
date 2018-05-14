@@ -1,6 +1,7 @@
 package com.caldi.chatlist
 
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -10,6 +11,7 @@ import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
 import com.caldi.chatlist.list.ChatItemsAdapter
 import com.caldi.chatlist.models.ChatItem
+import com.caldi.constants.EVENT_ID_KEY
 import com.caldi.factories.ChatListViewModelFactory
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
@@ -29,14 +31,25 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
 
     private lateinit var userChatListFetchTriggerSubject: Subject<String>
 
-    private val chatItemsAdapter = ChatItemsAdapter()
+    private lateinit var chatItemsAdapter: ChatItemsAdapter
 
     private var fetchChatListOnStart = true
+
+    companion object {
+
+        fun start(context: Context, eventId: String) {
+            val intent = Intent(context, ChatListActivity::class.java)
+            intent.putExtra(EVENT_ID_KEY, eventId)
+            context.startActivity(intent)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         setContentView(R.layout.activity_chat_list)
         super.onCreate(savedInstanceState)
+
+        chatItemsAdapter = ChatItemsAdapter(eventId)
 
         chatListViewModel = ViewModelProviders.of(this, chatListViewModelFactory)[ChatListViewModel::class.java]
 

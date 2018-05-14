@@ -9,7 +9,6 @@ import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
 import com.caldi.CaldiApplication
 import com.caldi.R
-import com.caldi.base.BaseDrawerActivity
 import com.caldi.chat.ChatActivity
 import com.caldi.chatlist.ChatListActivity
 import com.caldi.constants.CHAT_MESSAGE_CHANNEL_ID
@@ -66,7 +65,7 @@ class MessagingService : FirebaseMessagingService() {
             if (visibleActivity !is ChatActivity || chatId != visibleActivity.chatInfo.chatId) {
                 val intent = Intent(this, ChatListActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                BaseDrawerActivity.eventId = eventId
+                intent.putExtra(EVENT_ID_KEY, eventId)
                 val pendingIntent = PendingIntent.getActivity(this, CHAT_MESSAGE_NOTIFICATION_REQUEST_CODE,
                         intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
@@ -104,7 +103,7 @@ class MessagingService : FirebaseMessagingService() {
         if (chatId != null && eventId != null) {
             val intent = Intent(this, ChatListActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            BaseDrawerActivity.eventId = eventId
+            intent.putExtra(EVENT_ID_KEY, eventId)
             val pendingIntent = PendingIntent.getActivity(this, NEW_CONNECTION_NOTIFICATION_REQUEST_CODE,
                     intent, PendingIntent.FLAG_UPDATE_CURRENT)
 

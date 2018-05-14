@@ -11,11 +11,11 @@ import kotlinx.android.synthetic.main.item_chat.view.chatItemTextView
 
 class ChatItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    fun bind(chatItem: ChatItem) {
+    fun bind(chatItem: ChatItem, eventId: String) {
         with(itemView) {
             chatItemTextView.text = chatItem.name
             loadProfilePictureUrl(chatItem.imageUrl, itemView)
-            setOnClickListener { ChatActivity.start(context, chatItem) }
+            setOnClickListener { ChatActivity.start(context, chatItem, eventId) }
         }
     }
 

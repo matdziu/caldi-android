@@ -1,5 +1,6 @@
 package com.caldi.people.filterpeople
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -11,6 +12,7 @@ import android.widget.AdapterView
 import android.widget.Toast
 import com.caldi.R
 import com.caldi.common.states.PersonProfileViewState
+import com.caldi.constants.EVENT_ID_KEY
 import com.caldi.people.common.PeopleActivity
 import com.caldi.people.common.PeopleViewState
 import com.caldi.people.filterpeople.list.PersonProfilesAdapter
@@ -39,6 +41,15 @@ class FilterPeopleActivity : PeopleActivity() {
     var viewPersonProfileMode = false
 
     private var defaultFilterTypeList = listOf<FilterType>()
+
+    companion object {
+
+        fun start(context: Context, eventId: String) {
+            val intent = Intent(context, FilterPeopleActivity::class.java)
+            intent.putExtra(EVENT_ID_KEY, eventId)
+            context.startActivity(intent)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setContentView(R.layout.activity_filter_people)
@@ -93,7 +104,7 @@ class FilterPeopleActivity : PeopleActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.change_people_view_item -> startActivity(Intent(this, MeetPeopleActivity::class.java))
+            R.id.change_people_view_item -> MeetPeopleActivity.start(this, eventId)
         }
         finish()
         return false

@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.widget.Toast
 import com.caldi.R
 import com.caldi.chatlist.ChatListActivity
+import com.caldi.constants.EVENT_ID_KEY
 import com.caldi.eventprofile.EventProfileActivity
 import com.caldi.home.HomeActivity
 import com.caldi.login.LoginActivity
@@ -32,12 +33,12 @@ open class BaseDrawerActivity : BaseActivity(), NavigationView.OnNavigationItemS
 
     private lateinit var toggle: ActionBarDrawerToggle
 
-    companion object {
-        var eventId = ""
-    }
+    var eventId = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        eventId = intent.getStringExtra(EVENT_ID_KEY)
 
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
@@ -55,12 +56,12 @@ open class BaseDrawerActivity : BaseActivity(), NavigationView.OnNavigationItemS
             when (item.itemId) {
                 R.id.sign_out_item -> signOut()
                 R.id.events_item -> {
-                    startActivity(Intent(this, HomeActivity::class.java))
+                    HomeActivity.start(this, eventId)
                     finish()
                 }
-                R.id.event_profile_item -> startActivity(Intent(this, EventProfileActivity::class.java))
-                R.id.meet_people_item -> startActivity(Intent(this, MeetPeopleActivity::class.java))
-                R.id.chat_item -> startActivity(Intent(this, ChatListActivity::class.java))
+                R.id.event_profile_item -> EventProfileActivity.start(this, eventId)
+                R.id.meet_people_item -> MeetPeopleActivity.start(this, eventId)
+                R.id.chat_item -> ChatListActivity.start(this, eventId)
                 R.id.organizer_item -> OrganizerActivity.start(this, eventId)
             }
             drawerLayout.closeDrawers()

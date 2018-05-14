@@ -1,5 +1,6 @@
 package com.caldi.people.meetpeople
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
@@ -8,6 +9,7 @@ import android.view.View
 import android.widget.Toast
 import com.caldi.R
 import com.caldi.common.states.PersonProfileViewState
+import com.caldi.constants.EVENT_ID_KEY
 import com.caldi.people.common.PeopleActivity
 import com.caldi.people.common.PeopleViewState
 import com.caldi.people.filterpeople.FilterPeopleActivity
@@ -18,6 +20,15 @@ class MeetPeopleActivity : PeopleActivity() {
 
     private var currentProfilesViewStates = listOf<PersonProfileViewState>()
     private var currentProfilesBatchSize = 0
+
+    companion object {
+
+        fun start(context: Context, eventId: String) {
+            val intent = Intent(context, MeetPeopleActivity::class.java)
+            intent.putExtra(EVENT_ID_KEY, eventId)
+            context.startActivity(intent)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setContentView(R.layout.activity_meet_people)
@@ -31,7 +42,7 @@ class MeetPeopleActivity : PeopleActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.change_people_view_item -> startActivity(Intent(this, FilterPeopleActivity::class.java))
+            R.id.change_people_view_item -> FilterPeopleActivity.start(this, eventId)
         }
         finish()
         return false
