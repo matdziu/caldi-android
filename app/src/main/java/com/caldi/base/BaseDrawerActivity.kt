@@ -56,7 +56,9 @@ open class BaseDrawerActivity : BaseActivity(), NavigationView.OnNavigationItemS
             when (item.itemId) {
                 R.id.sign_out_item -> signOut()
                 R.id.events_item -> {
-                    HomeActivity.start(this, eventId)
+                    val intent = Intent(this, HomeActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    startActivity(intent)
                     finish()
                 }
                 R.id.event_profile_item -> EventProfileActivity.start(this, eventId)
