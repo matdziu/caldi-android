@@ -13,6 +13,7 @@ import com.caldi.chat.ChatActivity
 import com.caldi.constants.CHAT_MESSAGE_CHANNEL_ID
 import com.caldi.constants.CHAT_MESSAGE_NOTIFICATION_REQUEST_CODE
 import com.caldi.constants.CHAT_MESSAGE_NOTIFICATION_TYPE
+import com.caldi.constants.EVENT_ID_KEY
 import com.caldi.constants.EXTRAS_CHAT_ID
 import com.caldi.constants.EXTRAS_EVENT_ID
 import com.caldi.constants.NEW_CONNECTION_CHANNEL_ID
@@ -27,6 +28,7 @@ import com.caldi.constants.ORGANIZER_NOTIFICATION_REQUEST_CODE
 import com.caldi.constants.ORGANIZER_NOTIFICATION_TYPE
 import com.caldi.extensions.jsonToArrayOfStrings
 import com.caldi.extensions.jsonToMapOfStrings
+import com.caldi.organizer.OrganizerActivity
 import com.caldi.splash.SplashActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -76,7 +78,8 @@ class MessagingService : FirebaseMessagingService() {
                                                    bodyLocArgs: Array<String>,
                                                    extras: Map<String, String>) {
         extras[EXTRAS_EVENT_ID]?.let { eventId ->
-            val intent = Intent(this, SplashActivity::class.java)
+            val intent = Intent(this, OrganizerActivity::class.java)
+            intent.putExtra(EVENT_ID_KEY, eventId)
             val pendingIntent = PendingIntent.getActivity(this, ORGANIZER_NOTIFICATION_REQUEST_CODE,
                     intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
