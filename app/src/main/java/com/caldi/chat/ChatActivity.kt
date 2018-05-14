@@ -14,6 +14,8 @@ import com.caldi.chat.list.MessagesAdapter
 import com.caldi.chatlist.models.ChatItem
 import com.caldi.common.utils.MessagesAdapterObserver
 import com.caldi.constants.CHAT_INFO_KEY
+import com.caldi.constants.CHAT_MESSAGE_NOTIFICATION_REQUEST_CODE
+import com.caldi.constants.NEW_CONNECTION_NOTIFICATION_REQUEST_CODE
 import com.caldi.extensions.getCurrentISODate
 import com.caldi.factories.ChatViewModelFactory
 import com.caldi.injection.modules.GlideApp
@@ -110,7 +112,8 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
     override fun onStart() {
         super.onStart()
         val notificationsManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationsManager.cancel(chatInfo.chatId.hashCode())
+        notificationsManager.cancel(CHAT_MESSAGE_NOTIFICATION_REQUEST_CODE + chatInfo.chatId.hashCode())
+        notificationsManager.cancel(NEW_CONNECTION_NOTIFICATION_REQUEST_CODE + chatInfo.chatId.hashCode())
         initEmitters()
         chatViewModel.bind(this, chatInfo.chatId, chatInfo.receiverId, eventId)
         if (init) {

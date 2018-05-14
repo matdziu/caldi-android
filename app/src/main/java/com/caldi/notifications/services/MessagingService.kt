@@ -16,7 +16,6 @@ import com.caldi.constants.CHAT_MESSAGE_NOTIFICATION_TYPE
 import com.caldi.constants.EXTRAS_CHAT_ID
 import com.caldi.constants.EXTRAS_EVENT_ID
 import com.caldi.constants.NEW_CONNECTION_CHANNEL_ID
-import com.caldi.constants.NEW_CONNECTION_NOTIFICATION_ID
 import com.caldi.constants.NEW_CONNECTION_NOTIFICATION_REQUEST_CODE
 import com.caldi.constants.NEW_CONNECTION_NOTIFICATION_TYPE
 import com.caldi.constants.NOTIFICATION_BODY_LOC_ARGS
@@ -67,7 +66,8 @@ class MessagingService : FirebaseMessagingService() {
                 val title = getString(R.string.chat_message_notification_title)
                 val body = getString(R.string.chat_message_notification_body, *bodyLocArgs)
 
-                showDefaultNotification(pendingIntent, title, body, CHAT_MESSAGE_CHANNEL_ID, chatId.hashCode())
+                showDefaultNotification(pendingIntent, title, body, CHAT_MESSAGE_CHANNEL_ID,
+                        CHAT_MESSAGE_NOTIFICATION_REQUEST_CODE + chatId.hashCode())
             }
         }
     }
@@ -90,14 +90,17 @@ class MessagingService : FirebaseMessagingService() {
     private fun handleNewConnectionNotification(titleLocArgs: Array<String>,
                                                 bodyLocArgs: Array<String>,
                                                 extras: Map<String, String>) {
-        val intent = Intent(this, SplashActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(this, NEW_CONNECTION_NOTIFICATION_REQUEST_CODE,
-                intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        extras[EXTRAS_CHAT_ID]?.let { chatId ->
+            val intent = Intent(this, SplashActivity::class.java)
+            val pendingIntent = PendingIntent.getActivity(this, NEW_CONNECTION_NOTIFICATION_REQUEST_CODE,
+                    intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        val title = getString(R.string.new_connection_notification_title)
-        val body = getString(R.string.new_connection_notification_body, *bodyLocArgs)
+            val title = getString(R.string.new_connection_notification_title)
+            val body = getString(R.string.new_connection_notification_body, *bodyLocArgs)
 
-        showDefaultNotification(pendingIntent, title, body, NEW_CONNECTION_CHANNEL_ID, NEW_CONNECTION_NOTIFICATION_ID)
+            showDefaultNotification(pendingIntent, title, body, NEW_CONNECTION_CHANNEL_ID,
+                    NEW_CONNECTION_NOTIFICATION_REQUEST_CODE + chatId.hashCode())
+        }
     }
 
     private fun showDefaultNotification(pendingIntent: PendingIntent,

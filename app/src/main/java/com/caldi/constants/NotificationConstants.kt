@@ -13,7 +13,6 @@ const val ORGANIZER_CHANNEL_ID = "organizer"
 const val ORGANIZER_NOTIFICATION_TYPE = "organizer"
 
 const val NEW_CONNECTION_NOTIFICATION_REQUEST_CODE = 12
-const val NEW_CONNECTION_NOTIFICATION_ID = 13
 const val NEW_CONNECTION_CHANNEL_ID = "new_connection"
 const val NEW_CONNECTION_NOTIFICATION_TYPE = "new_connection"
 
