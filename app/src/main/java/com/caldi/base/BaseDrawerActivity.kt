@@ -16,6 +16,7 @@ import com.caldi.home.HomeActivity
 import com.caldi.login.LoginActivity
 import com.caldi.organizer.OrganizerActivity
 import com.caldi.people.meetpeople.MeetPeopleActivity
+import com.caldi.settings.EventSettingsActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.iid.FirebaseInstanceId
 
@@ -65,6 +66,7 @@ open class BaseDrawerActivity : BaseActivity(), NavigationView.OnNavigationItemS
                 R.id.meet_people_item -> MeetPeopleActivity.start(this, eventId)
                 R.id.chat_item -> ChatListActivity.start(this, eventId)
                 R.id.organizer_item -> OrganizerActivity.start(this, eventId)
+                R.id.event_settings_item -> EventSettingsActivity.start(this, eventId)
             }
             drawerLayout.closeDrawers()
             true

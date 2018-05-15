@@ -120,6 +120,11 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".settings.EventSettingsActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
         <service android:name=".notifications.services.MessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
