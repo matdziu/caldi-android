@@ -51,6 +51,7 @@ class HomeActivity : BaseOverflowActivity(), HomeView {
         override fun onReceive(context: Context, intent: Intent) {
             try {
                 notificationTokenSubject.onNext(intent.getStringExtra(NOTIFICATION_TOKEN_KEY))
+                enableAllNotifications()
             } catch (e: UninitializedPropertyAccessException) {
                 Log.e("notifications", e.message)
             }
@@ -83,7 +84,10 @@ class HomeActivity : BaseOverflowActivity(), HomeView {
 
         if (init) {
             eventsFetchTriggerSubject.onNext(true)
-            FirebaseInstanceId.getInstance().token?.let { notificationTokenSubject.onNext(it) }
+            FirebaseInstanceId.getInstance().token?.let {
+                notificationTokenSubject.onNext(it)
+                enableAllNotifications()
+            }
         }
     }
 

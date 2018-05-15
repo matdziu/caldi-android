@@ -7,18 +7,14 @@ import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
-import android.widget.Toast
 import com.caldi.R
 import com.caldi.chatlist.ChatListActivity
 import com.caldi.constants.EVENT_ID_KEY
 import com.caldi.eventprofile.EventProfileActivity
 import com.caldi.home.HomeActivity
-import com.caldi.login.LoginActivity
 import com.caldi.organizer.OrganizerActivity
 import com.caldi.people.meetpeople.MeetPeopleActivity
 import com.caldi.settings.EventSettingsActivity
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.iid.FirebaseInstanceId
 
 open class BaseDrawerActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -72,18 +68,6 @@ open class BaseDrawerActivity : BaseActivity(), NavigationView.OnNavigationItemS
             true
         } else {
             false
-        }
-    }
-
-    private fun signOut() {
-        if (online) {
-            Thread { FirebaseInstanceId.getInstance().deleteInstanceId() }.start()
-            FirebaseAuth.getInstance().signOut()
-            val intent = Intent(this, LoginActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            startActivity(intent)
-        } else {
-            Toast.makeText(this, getString(R.string.logout_connection_prompt), Toast.LENGTH_SHORT).show()
         }
     }
 

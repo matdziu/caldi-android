@@ -12,6 +12,7 @@ import com.caldi.CaldiApplication
 import com.caldi.R
 import com.caldi.chat.ChatActivity
 import com.caldi.chatlist.ChatListActivity
+import com.caldi.constants.BLOCK_ALL_NOTIFICATIONS_KEY
 import com.caldi.constants.CHAT_MESSAGE_CHANNEL_ID
 import com.caldi.constants.CHAT_MESSAGE_NOTIFICATION_REQUEST_CODE
 import com.caldi.constants.CHAT_MESSAGE_NOTIFICATION_TYPE
@@ -48,17 +49,19 @@ class MessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
-        caldiApplication = application as CaldiApplication
+        if (!readAppSetting(BLOCK_ALL_NOTIFICATIONS_KEY)) {
+            caldiApplication = application as CaldiApplication
 
-        val titleLocArgs = remoteMessage.data[NOTIFICATION_TITLE_LOC_ARGS].jsonToArrayOfStrings()
-        val bodyLocArgs = remoteMessage.data[NOTIFICATION_BODY_LOC_ARGS].jsonToArrayOfStrings()
-        val extras = remoteMessage.data[NOTIFICATION_EXTRAS_KEY].jsonToMapOfStrings()
-        val notificationType = remoteMessage.data[NOTIFICATION_TYPE_KEY]
+            val titleLocArgs = remoteMessage.data[NOTIFICATION_TITLE_LOC_ARGS].jsonToArrayOfStrings()
+            val bodyLocArgs = remoteMessage.data[NOTIFICATION_BODY_LOC_ARGS].jsonToArrayOfStrings()
+            val extras = remoteMessage.data[NOTIFICATION_EXTRAS_KEY].jsonToMapOfStrings()
+            val notificationType = remoteMessage.data[NOTIFICATION_TYPE_KEY]
 
-        when (notificationType) {
-            ORGANIZER_NOTIFICATION_TYPE -> handleOrganizerMessageNotification(titleLocArgs, bodyLocArgs, extras)
-            NEW_CONNECTION_NOTIFICATION_TYPE -> handleNewConnectionNotification(titleLocArgs, bodyLocArgs, extras)
-            CHAT_MESSAGE_NOTIFICATION_TYPE -> handleChatMessageNotification(titleLocArgs, bodyLocArgs, extras)
+            when (notificationType) {
+                ORGANIZER_NOTIFICATION_TYPE -> handleOrganizerMessageNotification(titleLocArgs, bodyLocArgs, extras)
+                NEW_CONNECTION_NOTIFICATION_TYPE -> handleNewConnectionNotification(titleLocArgs, bodyLocArgs, extras)
+                CHAT_MESSAGE_NOTIFICATION_TYPE -> handleChatMessageNotification(titleLocArgs, bodyLocArgs, extras)
+            }
         }
     }
 
