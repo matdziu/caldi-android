@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.preference.PreferenceManager
 import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
 import com.caldi.CaldiApplication
@@ -17,6 +18,9 @@ import com.caldi.constants.CHAT_MESSAGE_NOTIFICATION_TYPE
 import com.caldi.constants.EVENT_ID_KEY
 import com.caldi.constants.EXTRAS_CHAT_ID
 import com.caldi.constants.EXTRAS_EVENT_ID
+import com.caldi.constants.GENERAL_CHAT_MESSAGES_KEY
+import com.caldi.constants.GENERAL_NEW_CONNECTIONS_KEY
+import com.caldi.constants.GENERAL_ORGANIZER_MESSAGES_KEY
 import com.caldi.constants.NEW_CONNECTION_CHANNEL_ID
 import com.caldi.constants.NEW_CONNECTION_NOTIFICATION_REQUEST_CODE
 import com.caldi.constants.NEW_CONNECTION_NOTIFICATION_TYPE
@@ -60,7 +64,7 @@ class MessagingService : FirebaseMessagingService() {
                                               extras: Map<String, String>) {
         val chatId = extras[EXTRAS_CHAT_ID]
         val eventId = extras[EXTRAS_EVENT_ID]
-        if (chatId != null && eventId != null) {
+        if (chatId != null && eventId != null && readGeneralSetting(GENERAL_CHAT_MESSAGES_KEY)) {
             val visibleActivity = caldiApplication.visibleActivity
             if (visibleActivity !is ChatActivity || chatId != visibleActivity.chatInfo.chatId) {
                 val intent = Intent(this, ChatListActivity::class.java)
@@ -81,7 +85,8 @@ class MessagingService : FirebaseMessagingService() {
     private fun handleOrganizerMessageNotification(titleLocArgs: Array<String>,
                                                    bodyLocArgs: Array<String>,
                                                    extras: Map<String, String>) {
-        extras[EXTRAS_EVENT_ID]?.let { eventId ->
+        val eventId = extras[EXTRAS_EVENT_ID]
+        if (eventId != null && readGeneralSetting(GENERAL_ORGANIZER_MESSAGES_KEY)) {
             val intent = Intent(this, OrganizerActivity::class.java)
             intent.putExtra(EVENT_ID_KEY, eventId)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -100,7 +105,7 @@ class MessagingService : FirebaseMessagingService() {
                                                 extras: Map<String, String>) {
         val chatId = extras[EXTRAS_CHAT_ID]
         val eventId = extras[EXTRAS_EVENT_ID]
-        if (chatId != null && eventId != null) {
+        if (chatId != null && eventId != null && readGeneralSetting(GENERAL_NEW_CONNECTIONS_KEY)) {
             val intent = Intent(this, ChatListActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             intent.putExtra(EVENT_ID_KEY, eventId)
@@ -133,5 +138,10 @@ class MessagingService : FirebaseMessagingService() {
 
         val notificationsManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationsManager.notify(notificationId, notification)
+    }
+
+    private fun readGeneralSetting(generalSettingKey: String): Boolean {
+        val sharedPref = PreferenceManager.getDefaultSharedPreferences(this)
+        return sharedPref.getBoolean(generalSettingKey, true)
     }
 }
