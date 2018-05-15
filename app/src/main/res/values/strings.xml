@@ -56,4 +56,6 @@
     <string name="chat_message_notification_body">%1$s sent a new message</string>
     <string name="chat_message_channel_title">Chat messages</string>
     <string name="logout_connection_prompt">Turn on your internet to logout</string>
+    <string name="general_settings_item_text">General settings</string>
+    <string name="notifications_preference_category">Notifications</string>
 </resources>
