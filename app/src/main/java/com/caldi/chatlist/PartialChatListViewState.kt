@@ -8,5 +8,5 @@ sealed class PartialChatListViewState {
 
     class ProgressState : PartialChatListViewState()
 
-    class ErrorState(val dimissToast: Boolean = false) : PartialChatListViewState()
+    class ErrorState(val dismissToast: Boolean = false) : PartialChatListViewState()
 }

@@ -10,7 +10,7 @@ class ChatListViewRobot(chatListViewModel: ChatListViewModel) : BaseViewRobot<Ch
 
     private val chatListView = object : ChatListView {
 
-        override fun emitChatListFetchTrigger(): Observable<String> = userChatListFetchTriggerSubject
+        override fun emitReadChatsFetchTrigger(): Observable<String> = userChatListFetchTriggerSubject
 
         override fun render(chatListViewState: ChatListViewState) {
             renderedStates.add(chatListViewState)

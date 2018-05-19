@@ -4,7 +4,9 @@ import io.reactivex.Observable
 
 interface ChatListView {
 
-    fun emitChatListFetchTrigger(): Observable<String>
+    fun emitReadChatsFetchTrigger(): Observable<String>
+
+    fun emitUnreadChatsFetchTrigger(): Observable<Boolean>
 
     fun render(chatListViewState: ChatListViewState)
 }

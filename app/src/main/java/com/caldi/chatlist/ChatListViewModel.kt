@@ -12,14 +12,22 @@ class ChatListViewModel(private val chatListInteractor: ChatListInteractor) : Vi
     private val stateSubject = BehaviorSubject.createDefault(ChatListViewState())
 
     fun bind(chatListView: ChatListView, eventId: String) {
-        val userChatListFetchObservable = chatListView.emitChatListFetchTrigger()
+        val unreadChatsFetchObservable = chatListView.emitUnreadChatsFetchTrigger()
                 .flatMap {
-                    chatListInteractor
-                            .fetchUserChatList(eventId, it)
+                    chatListInteractor.fetchUnreadChatsList(eventId)
                             .startWith(PartialChatListViewState.ProgressState())
                 }
 
-        val mergedObservable = Observable.merge(listOf(userChatListFetchObservable))
+        val readChatsFetchObservable = chatListView.emitReadChatsFetchTrigger()
+                .flatMap {
+                    chatListInteractor
+                            .fetchReadChatsList(eventId, it)
+                            .startWith(PartialChatListViewState.ProgressState())
+                }
+
+        val mergedObservable = Observable.merge(listOf(
+                unreadChatsFetchObservable,
+                readChatsFetchObservable))
                 .scan(stateSubject.value, this::reduce)
                 .subscribeWith(stateSubject)
 
@@ -32,7 +40,7 @@ class ChatListViewModel(private val chatListInteractor: ChatListInteractor) : Vi
             : ChatListViewState {
         return when (partialState) {
             is PartialChatListViewState.ProgressState -> ChatListViewState(progress = true)
-            is PartialChatListViewState.ErrorState -> ChatListViewState(error = true, dismissToast = partialState.dimissToast)
+            is PartialChatListViewState.ErrorState -> ChatListViewState(error = true, dismissToast = partialState.dismissToast)
             is PartialChatListViewState.SuccessfulChatListFetch -> ChatListViewState(chatItemList = partialState.chatList)
         }
     }

@@ -30,7 +30,9 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
 
     private lateinit var chatListViewModel: ChatListViewModel
 
-    private lateinit var chatItemsTriggerSubject: Subject<String>
+    private lateinit var readChatsTriggerSubject: Subject<String>
+
+    private lateinit var unreadChatsTriggerSubject: Subject<Boolean>
 
     private lateinit var chatItemsAdapter: ChatItemsAdapter
 
@@ -68,8 +70,9 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (!recyclerView.canScrollVertically(1) && !isBatchLoading) {
                     isBatchLoading = true
-                    chatItemsTriggerSubject.onNext(
-                            if (recentChatItemsBatch.isNotEmpty()) recentChatItemsBatch.last().chatId else ""
+                    readChatsTriggerSubject.onNext(
+                            if (recentChatItemsBatch.isNotEmpty() &&
+                                    !recentChatItemsBatch.last().unread) recentChatItemsBatch.last().chatId else ""
                     )
                 }
             }
@@ -91,12 +94,13 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
         initEmitters()
         chatListViewModel.bind(this, eventId)
         if (initialFetch) {
-            chatItemsTriggerSubject.onNext("")
+            unreadChatsTriggerSubject.onNext(true)
         }
     }
 
     private fun initEmitters() {
-        chatItemsTriggerSubject = PublishSubject.create()
+        readChatsTriggerSubject = PublishSubject.create()
+        unreadChatsTriggerSubject = PublishSubject.create()
     }
 
     override fun onStop() {
@@ -105,7 +109,9 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
         super.onStop()
     }
 
-    override fun emitChatListFetchTrigger(): Observable<String> = chatItemsTriggerSubject
+    override fun emitReadChatsFetchTrigger(): Observable<String> = readChatsTriggerSubject
+
+    override fun emitUnreadChatsFetchTrigger(): Observable<Boolean> = unreadChatsTriggerSubject
 
     override fun render(chatListViewState: ChatListViewState) {
         with(chatListViewState) {
