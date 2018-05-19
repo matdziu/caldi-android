@@ -69,7 +69,7 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
                 if (!recyclerView.canScrollVertically(1) && !isBatchLoading) {
                     isBatchLoading = true
                     chatItemsTriggerSubject.onNext(
-                            if (recentChatItemsBatch.isNotEmpty()) recentChatItemsBatch.first().chatId else ""
+                            if (recentChatItemsBatch.isNotEmpty()) recentChatItemsBatch.last().chatId else ""
                     )
                 }
             }

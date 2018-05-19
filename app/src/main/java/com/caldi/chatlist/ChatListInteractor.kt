@@ -17,13 +17,20 @@ class ChatListInteractor {
     private val firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
     private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
+    private val chatItemsBatchSize = 5
+
     fun fetchUserChatList(eventId: String, fromChatId: String): Observable<PartialChatListViewState> {
         val stateSubject = PublishSubject.create<PartialChatListViewState>()
         firebaseDatabase.getReference("$USERS_NODE/$currentUserId/$USER_CHATS_NODE/$eventId")
+                .orderByKey()
+                .startAt(fromChatId)
+                .limitToFirst(chatItemsBatchSize)
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         stateSubject.onNext(PartialChatListViewState.SuccessfulChatListFetch(
-                                dataSnapshot.children.map { it.getValue(ChatItem::class.java) as ChatItem }))
+                                dataSnapshot.children
+                                        .map { it.getValue(ChatItem::class.java) as ChatItem }
+                                        .filter { it.chatId != fromChatId }))
                     }
 
                     override fun onCancelled(databaseError: DatabaseError) {
