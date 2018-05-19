@@ -139,6 +139,7 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
     override fun onStop() {
         chatViewModel.unbind()
         messagesAdapter.unregisterAdapterDataObserver(messagesAdapterObserver)
+        markAsReadSubject.onNext(true)
         super.onStop()
     }
 
