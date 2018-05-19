@@ -18,7 +18,7 @@ class ChatListViewRobot(chatListViewModel: ChatListViewModel) : BaseViewRobot<Ch
     }
 
     init {
-        chatListViewModel.bind(chatListView)
+        chatListViewModel.bind(chatListView, "testEventId")
     }
 
     fun triggerChatListFetching(eventId: String) {

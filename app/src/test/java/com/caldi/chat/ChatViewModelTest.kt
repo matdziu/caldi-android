@@ -23,7 +23,7 @@ class ChatViewModelTest {
     @Test
     fun testNewMessagesListenerSetting() {
         val updatedMessageList = listOf<Message>()
-        whenever(chatInteractor.listenForNewMessages(any())).thenReturn(
+        whenever(chatInteractor.listenForNewMessages(any(), any())).thenReturn(
                 Observable.just(PartialChatViewState.MessagesListChanged(updatedMessageList))
         )
 
@@ -41,7 +41,7 @@ class ChatViewModelTest {
     fun testSuccessfulMessagesBatchFetching() {
         val updatedMessageList = listOf(Message("2018-03-29", "Test message",
                 "testSenderId", "testReceiverId", "testMessageId", true))
-        whenever(chatInteractor.fetchChatMessagesBatch(any(), any())).thenReturn(
+        whenever(chatInteractor.fetchChatMessagesBatch(any(), any(), any())).thenReturn(
                 Observable.just(PartialChatViewState.MessagesListChanged(updatedMessageList))
         )
         whenever(chatInteractor.currentUserId).thenReturn("testSenderId")
@@ -73,7 +73,7 @@ class ChatViewModelTest {
     fun testNotEmptyMessageSending() {
         val updatedMessageList = listOf(Message("2018-03-29", "this is test message",
                 "testSenderId", "testReceiverId", "testMessageId", true))
-        whenever(chatInteractor.sendMessage(eq("this is test message"), any(), any())).thenReturn(
+        whenever(chatInteractor.sendMessage(eq("this is test message"), any(), any(), any())).thenReturn(
                 Observable.just(PartialChatViewState.MessagesListChanged(updatedMessageList))
         )
         whenever(chatInteractor.currentUserId).thenReturn("testSenderId")
@@ -91,7 +91,7 @@ class ChatViewModelTest {
 
     @Test
     fun testRemovalOfNewMessagesListener() {
-        whenever(chatInteractor.stopListeningForNewMessages(any())).thenReturn(
+        whenever(chatInteractor.stopListeningForNewMessages(any(), any())).thenReturn(
                 Observable.just(PartialChatViewState.NewMessagesListenerRemoved())
         )
 
