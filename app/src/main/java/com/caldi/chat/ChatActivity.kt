@@ -44,6 +44,7 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
 
     private lateinit var newMessagesListeningToggleSubject: Subject<Boolean>
     private lateinit var batchFetchTriggerSubject: Subject<String>
+    private lateinit var markAsReadSubject: Subject<Boolean>
 
     var chatInfo: ChatItem = ChatItem()
 
@@ -121,6 +122,7 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
         chatViewModel.bind(this, chatInfo.chatId, chatInfo.receiverId, eventId)
         if (init) {
             newMessagesListeningToggleSubject.onNext(true)
+            markAsReadSubject.onNext(true)
             batchFetchTriggerSubject.onNext(getCurrentISODate())
             init = false
         }
@@ -131,6 +133,7 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
     private fun initEmitters() {
         newMessagesListeningToggleSubject = PublishSubject.create()
         batchFetchTriggerSubject = PublishSubject.create()
+        markAsReadSubject = PublishSubject.create()
     }
 
     override fun onStop() {
@@ -147,6 +150,8 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
     override fun emitNewMessagesListeningToggle(): Observable<Boolean> = newMessagesListeningToggleSubject
 
     override fun emitBachFetchTrigger(): Observable<String> = batchFetchTriggerSubject
+
+    override fun emitMarkAsRead(): Observable<Boolean> = markAsReadSubject
 
     override fun emitSentMessage(): Observable<String> {
         return RxView.clicks(sendMessageButton)

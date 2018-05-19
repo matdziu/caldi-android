@@ -10,5 +10,7 @@ interface ChatView {
 
     fun emitSentMessage(): Observable<String>
 
+    fun emitMarkAsRead(): Observable<Boolean>
+
     fun render(chatViewState: ChatViewState)
 }

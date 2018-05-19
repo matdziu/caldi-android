@@ -9,4 +9,6 @@ sealed class PartialChatViewState {
     class ErrorState(val dismissToast: Boolean = false) : PartialChatViewState()
 
     class NewMessagesListenerRemoved : PartialChatViewState()
+
+    class MessagesSetAsRead : PartialChatViewState()
 }

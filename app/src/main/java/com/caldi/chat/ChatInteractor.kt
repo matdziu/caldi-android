@@ -4,6 +4,9 @@ import com.caldi.chat.models.Message
 import com.caldi.common.utils.NewMessageAddedListener
 import com.caldi.constants.CHATS_NODE
 import com.caldi.constants.TIMESTAMP_CHILD
+import com.caldi.constants.UNREAD_CHILD
+import com.caldi.constants.USERS_NODE
+import com.caldi.constants.USER_CHATS_NODE
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -83,8 +86,22 @@ class ChatInteractor {
         return Observable.just(PartialChatViewState.NewMessagesListenerRemoved())
     }
 
+    fun setMessagesAsRead(eventId: String, chatId: String): Observable<PartialChatViewState> {
+        val stateSubject = PublishSubject.create<PartialChatViewState>()
+
+        getUserChatNodeReference(eventId, chatId)
+                .updateChildren(mapOf(UNREAD_CHILD to false))
+                .addOnSuccessListener { stateSubject.onNext(PartialChatViewState.MessagesSetAsRead()) }
+
+        return stateSubject
+    }
+
     private fun getChatNodeReference(eventId: String, chatId: String): DatabaseReference {
         return firebaseDatabase.getReference("$CHATS_NODE/$eventId/$chatId")
+    }
+
+    private fun getUserChatNodeReference(eventId: String, chatId: String): DatabaseReference {
+        return firebaseDatabase.getReference("$USERS_NODE/$currentUserId/$USER_CHATS_NODE/$eventId/$chatId")
     }
 
     private fun emitError(stateSubject: Subject<PartialChatViewState>) {

@@ -22,6 +22,9 @@ class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
                     else chatInteractor.stopListeningForNewMessages(eventId, chatId)
                 }
 
+        val markAsReadObservable = chatView.emitMarkAsRead()
+                .flatMap { chatInteractor.setMessagesAsRead(eventId, chatId) }
+
         val batchFetchTriggerObservable = chatView.emitBachFetchTrigger()
                 .flatMap { chatInteractor.fetchChatMessagesBatch(eventId, chatId, it) }
 
@@ -32,6 +35,7 @@ class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
         val mergedObservable = Observable.merge(arrayListOf(
                 newMessagesListeningToggleObservable,
                 batchFetchTriggerObservable,
+                markAsReadObservable,
                 sentMessageObservable))
                 .scan(stateSubject.value, this::reduce)
                 .subscribeWith(stateSubject)
@@ -51,6 +55,7 @@ class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
                     error = true,
                     dismissToast = partialState.dismissToast
             )
+            is PartialChatViewState.MessagesSetAsRead -> previousState
         }
     }
 
