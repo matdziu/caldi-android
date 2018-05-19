@@ -30,17 +30,17 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
 
     private lateinit var chatListViewModel: ChatListViewModel
 
-    private lateinit var readChatsTriggerSubject: Subject<String>
+    private lateinit var readChatsTriggerSubject: Subject<Boolean>
 
     private lateinit var unreadChatsTriggerSubject: Subject<Boolean>
+
+    private lateinit var chatItemChangeListenerToggleSubject: Subject<Boolean>
 
     private lateinit var chatItemsAdapter: ChatItemsAdapter
 
     private var initialFetch = true
 
     private var isBatchLoading = false
-
-    private var recentChatItemsBatch = listOf<ChatItem>()
 
     companion object {
 
@@ -70,10 +70,7 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (!recyclerView.canScrollVertically(1) && !isBatchLoading) {
                     isBatchLoading = true
-                    readChatsTriggerSubject.onNext(
-                            if (recentChatItemsBatch.isNotEmpty() &&
-                                    !recentChatItemsBatch.last().unread) recentChatItemsBatch.last().chatId else ""
-                    )
+                    readChatsTriggerSubject.onNext(true)
                 }
             }
         })
@@ -95,12 +92,14 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
         chatListViewModel.bind(this, eventId)
         if (initialFetch) {
             unreadChatsTriggerSubject.onNext(true)
+            chatItemChangeListenerToggleSubject.onNext(true)
         }
     }
 
     private fun initEmitters() {
         readChatsTriggerSubject = PublishSubject.create()
         unreadChatsTriggerSubject = PublishSubject.create()
+        chatItemChangeListenerToggleSubject = PublishSubject.create()
     }
 
     override fun onStop() {
@@ -109,16 +108,23 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
         super.onStop()
     }
 
-    override fun emitReadChatsFetchTrigger(): Observable<String> = readChatsTriggerSubject
+    override fun onDestroy() {
+        chatItemChangeListenerToggleSubject.onNext(false)
+        super.onDestroy()
+    }
+
+    override fun emitReadChatsFetchTrigger(): Observable<Boolean> = readChatsTriggerSubject
 
     override fun emitUnreadChatsFetchTrigger(): Observable<Boolean> = unreadChatsTriggerSubject
+
+    override fun emitChatItemChangeListenerToggle(): Observable<Boolean> = chatItemChangeListenerToggleSubject
 
     override fun render(chatListViewState: ChatListViewState) {
         with(chatListViewState) {
             showProgress(progress)
             showError(error, dismissToast)
-            addChatItemBatch(chatItemList)
-            showNoChatsHint(chatItemsAdapter.currentChatItemList, progress, error)
+            updateChatItemList(chatItemList)
+            showNoChatsHint(chatItemList, progress, error)
         }
     }
 
@@ -136,11 +142,10 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
         }
     }
 
-    private fun addChatItemBatch(chatItemList: List<ChatItem>) {
+    private fun updateChatItemList(chatItemList: List<ChatItem>) {
         noPeopleToChatTextView.visibility = View.GONE
-        if (chatItemList.isNotEmpty() && recentChatItemsBatch != chatItemList) {
-            recentChatItemsBatch = chatItemList
-            chatItemsAdapter.addChatItemsBatch(chatItemList)
+        if (chatItemList.isNotEmpty()) {
+            chatItemsAdapter.submitList(chatItemList)
             isBatchLoading = false
         }
     }

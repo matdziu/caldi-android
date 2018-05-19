@@ -1,6 +1,7 @@
 package com.caldi.chatlist
 
 import com.caldi.chatlist.models.ChatItem
+import com.caldi.chatlist.utils.ChatItemChangedListener
 import com.caldi.constants.UNREAD_CHILD
 import com.caldi.constants.USERS_NODE
 import com.caldi.constants.USER_CHATS_NODE
@@ -19,6 +20,8 @@ class ChatListInteractor {
     private val firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
     private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
+    private var chatItemChangedListener: ChatItemChangedListener? = null
+
     private val chatItemsBatchSize = 5
 
     fun fetchUnreadChatsList(eventId: String): Observable<PartialChatListViewState> {
@@ -30,7 +33,7 @@ class ChatListInteractor {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         val unreadChatItems = dataSnapshot.children.map { it.getValue(ChatItem::class.java) as ChatItem }
                         if (unreadChatItems.isNotEmpty()) {
-                            stateSubject.onNext(PartialChatListViewState.SuccessfulChatListFetch(unreadChatItems))
+                            stateSubject.onNext(PartialChatListViewState.SuccessfulChatListBatchFetch(unreadChatItems))
                         } else {
                             fetchReadChatsList(eventId, "", stateSubject)
                         }
@@ -53,7 +56,7 @@ class ChatListInteractor {
                 .limitToFirst(chatItemsBatchSize)
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        stateSubject.onNext(PartialChatListViewState.SuccessfulChatListFetch(
+                        stateSubject.onNext(PartialChatListViewState.SuccessfulChatListBatchFetch(
                                 dataSnapshot.children
                                         .map { it.getValue(ChatItem::class.java) as ChatItem }
                                         .filter { it.chatId != fromChatId && !it.unread }))
@@ -64,6 +67,22 @@ class ChatListInteractor {
                     }
                 })
         return stateSubject
+    }
+
+    fun listenForChatItemChange(eventId: String): Observable<PartialChatListViewState> {
+        val stateSubject = PublishSubject.create<PartialChatListViewState>()
+        chatItemChangedListener = ChatItemChangedListener {
+            stateSubject.onNext(
+                    PartialChatListViewState.ChatItemChanged(it)
+            )
+        }
+        getUserChatsNodeReference(eventId).addChildEventListener(chatItemChangedListener)
+        return stateSubject
+    }
+
+    fun stopListeningForChatItemChange(eventId: String): Observable<PartialChatListViewState> {
+        chatItemChangedListener?.let { getUserChatsNodeReference(eventId).removeEventListener(it) }
+        return Observable.just(PartialChatListViewState.ChatItemListenerRemoved())
     }
 
     private fun getUserChatsNodeReference(eventId: String): DatabaseReference {

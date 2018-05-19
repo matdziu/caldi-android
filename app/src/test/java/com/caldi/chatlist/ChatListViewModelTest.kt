@@ -21,7 +21,7 @@ class ChatListViewModelTest {
     @Test
     fun testChatListFetchingSuccess() {
         whenever(chatListInteractor.fetchUnreadChatsList(any(), any())).thenReturn(Observable.just(
-                PartialChatListViewState.SuccessfulChatListFetch(listOf(ChatItem("1", "Matt", "url/to/pic")))
+                PartialChatListViewState.SuccessfulChatListBatchFetch(listOf(ChatItem("1", "Matt", "url/to/pic")))
         ))
 
         val chatListViewRobot = ChatListViewRobot(chatListViewModel)
