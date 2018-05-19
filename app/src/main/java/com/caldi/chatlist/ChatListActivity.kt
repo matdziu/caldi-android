@@ -76,11 +76,6 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
         })
     }
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        initialFetch = true
-    }
-
     override fun onResume() {
         super.onResume()
         setNavigationSelection(R.id.chat_item)

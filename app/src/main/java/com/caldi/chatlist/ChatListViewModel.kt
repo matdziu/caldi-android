@@ -65,7 +65,7 @@ class ChatListViewModel(private val chatListInteractor: ChatListInteractor) : Vi
 
     private fun addBatchToChatItemList(chatItemBatch: List<ChatItem>): List<ChatItem> {
         val newList = currentChatItemList + chatItemBatch
-        currentChatItemList = newList
+        currentChatItemList = newList.distinctBy { it.chatId }
         return currentChatItemList
     }
 
