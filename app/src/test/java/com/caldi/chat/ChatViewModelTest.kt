@@ -90,6 +90,20 @@ class ChatViewModelTest {
     }
 
     @Test
+    fun testMarkingMessagesAsRead() {
+        whenever(chatInteractor.setMessagesAsRead(any(), any())).thenReturn(Observable.just(PartialChatViewState.MessagesSetAsRead()))
+
+        val chatViewRobot = ChatViewRobot(chatViewModel)
+
+        chatViewRobot.markMessagesAsRead()
+
+        chatViewRobot.assertViewStates(
+                ChatViewState(progress = true),
+                ChatViewState(progress = true)
+        )
+    }
+
+    @Test
     fun testRemovalOfNewMessagesListener() {
         whenever(chatInteractor.stopListeningForNewMessages(any(), any())).thenReturn(
                 Observable.just(PartialChatViewState.NewMessagesListenerRemoved())
