@@ -11,11 +11,11 @@ class ChatListViewModel(private val chatListInteractor: ChatListInteractor) : Vi
     private val compositeDisposable = CompositeDisposable()
     private val stateSubject = BehaviorSubject.createDefault(ChatListViewState())
 
-    fun bind(chatListView: ChatListView) {
-        val userChatListFetchObservable = chatListView.emitUserChatListFetchTrigger()
+    fun bind(chatListView: ChatListView, eventId: String) {
+        val userChatListFetchObservable = chatListView.emitChatListFetchTrigger()
                 .flatMap {
                     chatListInteractor
-                            .fetchUserChatList(it)
+                            .fetchUserChatList(eventId, it)
                             .startWith(PartialChatListViewState.ProgressState())
                 }
 

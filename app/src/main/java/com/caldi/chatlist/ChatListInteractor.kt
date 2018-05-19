@@ -17,7 +17,7 @@ class ChatListInteractor {
     private val firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
     private val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
-    fun fetchUserChatList(eventId: String): Observable<PartialChatListViewState> {
+    fun fetchUserChatList(eventId: String, fromChatId: String): Observable<PartialChatListViewState> {
         val stateSubject = PublishSubject.create<PartialChatListViewState>()
         firebaseDatabase.getReference("$USERS_NODE/$currentUserId/$USER_CHATS_NODE/$eventId")
                 .addListenerForSingleValueEvent(object : ValueEventListener {

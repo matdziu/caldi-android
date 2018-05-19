@@ -1,14 +1,16 @@
 package com.caldi.chatlist.list
 
-import android.support.v7.widget.RecyclerView
+import android.support.v7.recyclerview.extensions.ListAdapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.caldi.R
 import com.caldi.chatlist.models.ChatItem
+import com.caldi.chatlist.utils.ChatItemDiffCallback
 
-class ChatItemsAdapter(private val eventId: String) : RecyclerView.Adapter<ChatItemViewHolder>() {
+class ChatItemsAdapter(private val eventId: String)
+    : ListAdapter<ChatItem, ChatItemViewHolder>(ChatItemDiffCallback()) {
 
-    private val chatItemList = arrayListOf<ChatItem>()
+    var currentChatItemList = listOf<ChatItem>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatItemViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_chat, parent, false)
@@ -16,16 +18,12 @@ class ChatItemsAdapter(private val eventId: String) : RecyclerView.Adapter<ChatI
     }
 
     override fun onBindViewHolder(holder: ChatItemViewHolder, position: Int) {
-        holder.bind(chatItemList[position], eventId)
+        holder.bind(currentChatItemList[position], eventId)
     }
 
-    override fun getItemCount(): Int = chatItemList.size
-
-    fun setChatItemList(chatItemList: List<ChatItem>) {
-        if (chatItemList.isNotEmpty() && this.chatItemList != chatItemList) {
-            this.chatItemList.clear()
-            this.chatItemList.addAll(chatItemList)
-            notifyDataSetChanged()
-        }
+    fun addChatItemsBatch(chatItemList: List<ChatItem>) {
+        val newList = currentChatItemList + chatItemList
+        submitList(newList)
+        currentChatItemList = newList
     }
 }

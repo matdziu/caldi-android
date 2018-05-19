@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.Toast
 import com.caldi.R
@@ -29,11 +30,15 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
 
     private lateinit var chatListViewModel: ChatListViewModel
 
-    private lateinit var userChatListFetchTriggerSubject: Subject<String>
+    private lateinit var chatItemsTriggerSubject: Subject<String>
 
     private lateinit var chatItemsAdapter: ChatItemsAdapter
 
-    private var fetchChatListOnStart = true
+    private var initialFetch = true
+
+    private var isBatchLoading = false
+
+    private var recentChatItemsBatch = listOf<ChatItem>()
 
     companion object {
 
@@ -53,13 +58,27 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
 
         chatListViewModel = ViewModelProviders.of(this, chatListViewModelFactory)[ChatListViewModel::class.java]
 
+        initRecyclerView()
+    }
+
+    private fun initRecyclerView() {
         chatItemsRecyclerView.adapter = chatItemsAdapter
         chatItemsRecyclerView.layoutManager = LinearLayoutManager(this)
+        chatItemsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (!recyclerView.canScrollVertically(1) && !isBatchLoading) {
+                    isBatchLoading = true
+                    chatItemsTriggerSubject.onNext(
+                            if (recentChatItemsBatch.isNotEmpty()) recentChatItemsBatch.first().chatId else ""
+                    )
+                }
+            }
+        })
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        fetchChatListOnStart = true
+        initialFetch = true
     }
 
     override fun onResume() {
@@ -70,37 +89,38 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
     override fun onStart() {
         super.onStart()
         initEmitters()
-        chatListViewModel.bind(this)
-        if (fetchChatListOnStart) userChatListFetchTriggerSubject.onNext(eventId)
+        chatListViewModel.bind(this, eventId)
+        if (initialFetch) {
+            chatItemsTriggerSubject.onNext("")
+        }
     }
 
     private fun initEmitters() {
-        userChatListFetchTriggerSubject = PublishSubject.create()
+        chatItemsTriggerSubject = PublishSubject.create()
     }
 
     override fun onStop() {
-        fetchChatListOnStart = false
+        initialFetch = false
         chatListViewModel.unbind()
         super.onStop()
     }
 
-    override fun emitUserChatListFetchTrigger(): Observable<String> = userChatListFetchTriggerSubject
+    override fun emitChatListFetchTrigger(): Observable<String> = chatItemsTriggerSubject
 
     override fun render(chatListViewState: ChatListViewState) {
         with(chatListViewState) {
             showProgress(progress)
             showError(error, dismissToast)
-            setChatItemList(progress, error, chatItemList)
+            addChatItemBatch(chatItemList)
+            showNoChatsHint(chatItemsAdapter.currentChatItemList, progress, error)
         }
     }
 
     private fun showProgress(progress: Boolean) {
         if (progress) {
             progressBar.visibility = View.VISIBLE
-            chatItemsRecyclerView.visibility = View.GONE
         } else {
             progressBar.visibility = View.GONE
-            chatItemsRecyclerView.visibility = View.VISIBLE
         }
     }
 
@@ -110,12 +130,21 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
         }
     }
 
-    private fun setChatItemList(progress: Boolean, error: Boolean, chatItemList: List<ChatItem>) {
+    private fun addChatItemBatch(chatItemList: List<ChatItem>) {
         noPeopleToChatTextView.visibility = View.GONE
-        if (!progress && !error && chatItemList.isNotEmpty()) {
-            chatItemsAdapter.setChatItemList(chatItemList)
-        } else if (!progress && !error && chatItemList.isEmpty()) {
+        if (chatItemList.isNotEmpty() && recentChatItemsBatch != chatItemList) {
+            recentChatItemsBatch = chatItemList
+            chatItemsAdapter.addChatItemsBatch(chatItemList)
+            isBatchLoading = false
+        }
+    }
+
+    private fun showNoChatsHint(currentChatItemList: List<ChatItem>,
+                                progress: Boolean, error: Boolean) {
+        if (currentChatItemList.isEmpty() && !progress && !error) {
             noPeopleToChatTextView.visibility = View.VISIBLE
+        } else {
+            noPeopleToChatTextView.visibility = View.GONE
         }
     }
 }
