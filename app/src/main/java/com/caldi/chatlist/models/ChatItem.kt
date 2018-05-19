@@ -9,4 +9,5 @@ import kotlinx.android.parcel.Parcelize
 data class ChatItem(val chatId: String = "",
                     val name: String = "",
                     val imageUrl: String = "",
-                    val receiverId: String = "") : Parcelable
+                    val receiverId: String = "",
+                    val unread: Boolean = false) : Parcelable

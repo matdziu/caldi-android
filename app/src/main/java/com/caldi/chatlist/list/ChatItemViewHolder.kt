@@ -8,6 +8,7 @@ import com.caldi.chatlist.models.ChatItem
 import com.caldi.injection.modules.GlideApp
 import kotlinx.android.synthetic.main.item_chat.view.chatItemImageView
 import kotlinx.android.synthetic.main.item_chat.view.chatItemTextView
+import kotlinx.android.synthetic.main.item_chat.view.unreadIndicatorImage
 
 class ChatItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -15,7 +16,16 @@ class ChatItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         with(itemView) {
             chatItemTextView.text = chatItem.name
             loadProfilePictureUrl(chatItem.imageUrl, itemView)
+            showUnreadIndicatorImage(chatItem.unread)
             setOnClickListener { ChatActivity.start(context, chatItem, eventId) }
+        }
+    }
+
+    private fun showUnreadIndicatorImage(unread: Boolean) {
+        if (unread) {
+            itemView.unreadIndicatorImage.visibility = View.VISIBLE
+        } else {
+            itemView.unreadIndicatorImage.visibility = View.GONE
         }
     }
 
