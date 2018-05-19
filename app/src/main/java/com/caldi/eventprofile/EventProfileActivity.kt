@@ -176,7 +176,7 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
 
             if (updateSuccess && !dismissToast) {
                 Toast.makeText(this@EventProfileActivity, getString(R.string.profile_updated), Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this@EventProfileActivity, MeetPeopleActivity::class.java))
+                MeetPeopleActivity.start(this@EventProfileActivity, eventId)
             }
             eventUserNameEditText.clearFocus()
         }
