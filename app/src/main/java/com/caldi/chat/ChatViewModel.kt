@@ -3,8 +3,12 @@ package com.caldi.chat
 import android.arch.lifecycle.ViewModel
 import com.caldi.chat.list.MessageViewState
 import com.caldi.chat.models.Message
+import com.caldi.common.models.EventProfileData
+import com.caldi.common.states.PersonProfileViewState
+import com.caldi.people.meetpeople.list.AnswerViewState
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.functions.BiFunction
 import io.reactivex.subjects.BehaviorSubject
 
 class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
@@ -22,6 +26,21 @@ class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
                     else chatInteractor.stopListeningForNewMessages(eventId, chatId)
                 }
 
+        val receiverProfileFetchObservable =
+                chatView.emitReceiverProfileFetchTrigger()
+                        .flatMap {
+                            ((Observable.zip(
+                                    chatInteractor.fetchEventProfileData(eventId, receiverId),
+                                    chatInteractor.fetchQuestions(eventId),
+                                    BiFunction<EventProfileData, Map<String, String>, PersonProfileViewState>
+                                    { eventProfileData, questions ->
+                                        convertToPersonProfileViewState(eventProfileData, questions)
+                                    })
+                                    .map { PartialChatViewState.ReceiverProfileFetchedState(it) })
+                                    as Observable<PartialChatViewState>)
+                                    .startWith(PartialChatViewState.ProgressState())
+                        }
+
         val markAsReadObservable = chatView.emitMarkAsRead()
                 .flatMap { chatInteractor.setMessagesAsRead(eventId, chatId) }
 
@@ -34,6 +53,7 @@ class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
 
         val mergedObservable = Observable.merge(arrayListOf(
                 newMessagesListeningToggleObservable,
+                receiverProfileFetchObservable,
                 batchFetchTriggerObservable,
                 markAsReadObservable,
                 sentMessageObservable))
@@ -46,7 +66,7 @@ class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
     private fun reduce(previousState: ChatViewState, partialState: PartialChatViewState)
             : ChatViewState {
         return when (partialState) {
-            is PartialChatViewState.MessagesListChanged -> ChatViewState(
+            is PartialChatViewState.MessagesListChanged -> previousState.copy(
                     messagesList = partialState.updatedMessagesList.map { convertToMessageViewState(it) }
             )
             is PartialChatViewState.NewMessagesListenerRemoved -> previousState
@@ -56,6 +76,12 @@ class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
                     dismissToast = partialState.dismissToast
             )
             is PartialChatViewState.MessagesSetAsRead -> previousState
+            is PartialChatViewState.ProgressState -> previousState.copy(
+                    progress = true)
+            is PartialChatViewState.ReceiverProfileFetchedState -> previousState.copy(
+                    progress = false,
+                    receiverProfile = partialState.personProfileViewState
+            )
         }
     }
 
@@ -64,6 +90,28 @@ class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
             MessageViewState(message, messageId, timestamp,
                     senderId == chatInteractor.currentUserId, isSent)
         }
+    }
+
+    private fun convertToPersonProfileViewState(eventProfileData: EventProfileData,
+                                                questions: Map<String, String>)
+            : PersonProfileViewState {
+        return with(eventProfileData) {
+            PersonProfileViewState(
+                    userId,
+                    eventUserName,
+                    profilePicture,
+                    userLinkUrl,
+                    convertToAnswerViewStateList(questions, answers))
+        }
+    }
+
+    private fun convertToAnswerViewStateList(questions: Map<String, String>, answers: Map<String, String>)
+            : List<AnswerViewState> {
+        val answerViewStateList = arrayListOf<AnswerViewState>()
+        for ((questionId, question) in questions) {
+            answerViewStateList.add(AnswerViewState(question, answers[questionId] ?: ""))
+        }
+        return answerViewStateList
     }
 
     fun unbind() {

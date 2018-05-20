@@ -1,5 +1,6 @@
 package com.caldi.chat
 
+import com.caldi.base.BaseProfileInteractor
 import com.caldi.chat.models.Message
 import com.caldi.common.utils.NewMessageAddedListener
 import com.caldi.constants.CHATS_NODE
@@ -11,15 +12,13 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 
-class ChatInteractor {
+class ChatInteractor : BaseProfileInteractor() {
 
-    private val firebaseDatabase: FirebaseDatabase = FirebaseDatabase.getInstance()
     val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
     private var newMessageAddedListener: NewMessageAddedListener<Message>? = null

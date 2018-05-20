@@ -12,6 +12,7 @@ import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
 import com.caldi.chat.list.MessagesAdapter
 import com.caldi.chatlist.models.ChatItem
+import com.caldi.common.personprofile.PersonProfileFragment
 import com.caldi.common.utils.MessagesAdapterObserver
 import com.caldi.constants.CHAT_INFO_KEY
 import com.caldi.constants.CHAT_MESSAGE_NOTIFICATION_REQUEST_CODE
@@ -45,11 +46,14 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
     private lateinit var newMessagesListeningToggleSubject: Subject<Boolean>
     private lateinit var batchFetchTriggerSubject: Subject<String>
     private lateinit var markAsReadSubject: Subject<Boolean>
+    private lateinit var receiverProfileFetchSubject: Subject<Boolean>
 
     var chatInfo: ChatItem = ChatItem()
 
     private var init = true
     private var isBatchLoading = false
+
+    private var viewPersonProfileMode = false
 
     private val messagesAdapter = MessagesAdapter()
 
@@ -121,6 +125,7 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
         initEmitters()
         chatViewModel.bind(this, chatInfo.chatId, chatInfo.receiverId, eventId)
         if (init) {
+            receiverProfileFetchSubject.onNext(true)
             newMessagesListeningToggleSubject.onNext(true)
             markAsReadSubject.onNext(true)
             batchFetchTriggerSubject.onNext(getCurrentISODate())
@@ -133,6 +138,7 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
     private fun initEmitters() {
         newMessagesListeningToggleSubject = PublishSubject.create()
         batchFetchTriggerSubject = PublishSubject.create()
+        receiverProfileFetchSubject = PublishSubject.create()
         markAsReadSubject = PublishSubject.create()
     }
 
@@ -154,6 +160,8 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
 
     override fun emitMarkAsRead(): Observable<Boolean> = markAsReadSubject
 
+    override fun emitReceiverProfileFetchTrigger(): Observable<Boolean> = receiverProfileFetchSubject
+
     override fun emitSentMessage(): Observable<String> {
         return RxView.clicks(sendMessageButton)
                 .map { messageInputEditText.text.toString() }
@@ -164,6 +172,16 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
         with(chatViewState) {
             showProgressBar(progress)
             messagesAdapter.submitList(messagesList)
+            chatInfoView.setOnClickListener {
+                enableViewPersonProfileMode(true)
+                val fragmentTransaction = supportFragmentManager.beginTransaction()
+                fragmentTransaction
+                        .setCustomAnimations(R.anim.up_enter, 0)
+                        .add(R.id.fragmentsContainer,
+                                PersonProfileFragment.newInstance(receiverProfile, false),
+                                chatInfo.receiverId)
+                fragmentTransaction.commit()
+            }
         }
     }
 
@@ -178,6 +196,27 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
             sendPanelView.visibility = View.VISIBLE
             messagesRecyclerView.visibility = View.VISIBLE
             chatInfoView.visibility = View.VISIBLE
+        }
+    }
+
+    private fun enableViewPersonProfileMode(enable: Boolean) {
+        showBackToolbarArrow(enable, { onBackPressed() })
+        viewPersonProfileMode = enable
+    }
+
+    private fun upExitViewPersonProfileMode() {
+        enableViewPersonProfileMode(false)
+        val fragmentTransaction = supportFragmentManager.beginTransaction()
+        fragmentTransaction.setCustomAnimations(0, R.anim.up_exit)
+        fragmentTransaction.remove(supportFragmentManager.findFragmentByTag(chatInfo.receiverId))
+        fragmentTransaction.commit()
+    }
+
+    override fun onBackPressed() {
+        if (!viewPersonProfileMode) {
+            super.onBackPressed()
+        } else {
+            upExitViewPersonProfileMode()
         }
     }
 }

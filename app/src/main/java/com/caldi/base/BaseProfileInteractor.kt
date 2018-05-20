@@ -33,7 +33,7 @@ open class BaseProfileInteractor {
         return resultSubject
     }
 
-    protected fun fetchEventProfileData(eventId: String, userId: String): Observable<EventProfileData> {
+    fun fetchEventProfileData(eventId: String, userId: String): Observable<EventProfileData> {
         val resultSubject = PublishSubject.create<EventProfileData>()
         val eventProfileNodeRef = getEventProfileNodeRef(eventId, userId)
         eventProfileNodeRef.addListenerForSingleValueEvent(object : ValueEventListener {

@@ -1,6 +1,7 @@
 package com.caldi.chat
 
 import com.caldi.chat.models.Message
+import com.caldi.common.states.PersonProfileViewState
 
 sealed class PartialChatViewState {
 
@@ -11,4 +12,8 @@ sealed class PartialChatViewState {
     class NewMessagesListenerRemoved : PartialChatViewState()
 
     class MessagesSetAsRead : PartialChatViewState()
+
+    class ProgressState : PartialChatViewState()
+
+    class ReceiverProfileFetchedState(val personProfileViewState: PersonProfileViewState) : PartialChatViewState()
 }
