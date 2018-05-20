@@ -49,11 +49,15 @@ class LoginViewModel(private val loginInteractor: LoginInteractor) : ViewModel()
     private fun reduce(previousState: LoginViewState, partialState: PartialLoginViewState)
             : LoginViewState {
         return when (partialState) {
-            is PartialLoginViewState.LocalValidation -> LoginViewState(emailValid = partialState.emailValid,
+            is PartialLoginViewState.LocalValidation -> LoginViewState(
+                    emailValid = partialState.emailValid,
                     passwordValid = partialState.passwordValid)
             is PartialLoginViewState.InProgressState -> LoginViewState(true)
-            is PartialLoginViewState.ErrorState -> LoginViewState(error = true, dismissToast = partialState.dismissToast)
-            is PartialLoginViewState.LoginSuccess -> LoginViewState(loginSuccess = true)
+            is PartialLoginViewState.ErrorState -> LoginViewState(
+                    error = true,
+                    dismissToast = partialState.dismissToast)
+            is PartialLoginViewState.LoginSuccess -> LoginViewState(
+                    loginSuccess = true)
         }
     }
 

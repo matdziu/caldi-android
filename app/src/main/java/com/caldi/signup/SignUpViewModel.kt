@@ -42,7 +42,8 @@ class SignUpViewModel(private val signUpInteractor: SignUpInteractor) : ViewMode
             is PartialSignUpViewState.ErrorState -> SignUpViewState(
                     error = true,
                     dismissToast = partialState.dismissToast)
-            is PartialSignUpViewState.SignUpSuccess -> SignUpViewState(signUpSuccess = true)
+            is PartialSignUpViewState.SignUpSuccess -> SignUpViewState(
+                    signUpSuccess = true)
         }
     }
 
