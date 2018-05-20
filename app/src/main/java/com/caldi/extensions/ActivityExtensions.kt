@@ -9,8 +9,6 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
-import java.text.SimpleDateFormat
-import java.util.*
 
 
 fun Activity.hideSoftKeyboard() {
@@ -19,13 +17,6 @@ fun Activity.hideSoftKeyboard() {
         val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
-}
-
-fun Activity.getCurrentISODate(): String {
-    val timeZone = TimeZone.getTimeZone("UTC")
-    val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'", Locale.US)
-    dateFormat.timeZone = timeZone
-    return dateFormat.format(Date())
 }
 
 fun Activity.checkIfOnline(): Subject<Boolean> {

@@ -10,4 +10,5 @@ data class ChatItem(val chatId: String = "",
                     val name: String = "",
                     val imageUrl: String = "",
                     val receiverId: String = "",
+                    val lastMessageTimestamp: String = "",
                     val unread: Boolean = false) : Parcelable

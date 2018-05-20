@@ -2,6 +2,7 @@ package com.caldi.chatlist
 
 import android.arch.lifecycle.ViewModel
 import com.caldi.chatlist.models.ChatItem
+import com.caldi.extensions.getCurrentISODate
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -14,18 +15,15 @@ class ChatListViewModel(private val chatListInteractor: ChatListInteractor) : Vi
     private var currentChatItemList = listOf<ChatItem>()
 
     fun bind(chatListView: ChatListView, eventId: String) {
-        val unreadChatsFetchObservable = chatListView.emitUnreadChatsFetchTrigger()
+        val chatsFetchObservable = chatListView.emitChatsFetchTrigger()
                 .flatMap {
-                    chatListInteractor.fetchUnreadChatsList(eventId)
-                            .startWith(PartialChatListViewState.ProgressState())
-                }
-
-        val readChatsFetchObservable = chatListView.emitReadChatsFetchTrigger()
-                .flatMap {
-                    val fromChatId = if (currentChatItemList.isNotEmpty() &&
-                            !currentChatItemList.last().unread) currentChatItemList.last().chatId else ""
+                    val fromTimestamp = if (currentChatItemList.isNotEmpty()) {
+                        currentChatItemList.last().lastMessageTimestamp
+                    } else {
+                        getCurrentISODate()
+                    }
                     chatListInteractor
-                            .fetchReadChatsList(eventId, fromChatId)
+                            .fetchChatList(eventId, fromTimestamp)
                             .startWith(PartialChatListViewState.ProgressState())
                 }
 
@@ -36,8 +34,7 @@ class ChatListViewModel(private val chatListInteractor: ChatListInteractor) : Vi
                 }
 
         val mergedObservable = Observable.merge(listOf(
-                unreadChatsFetchObservable,
-                readChatsFetchObservable,
+                chatsFetchObservable,
                 chatItemChangeListenerObservable))
                 .scan(stateSubject.value, this::reduce)
                 .subscribeWith(stateSubject)
@@ -65,16 +62,14 @@ class ChatListViewModel(private val chatListInteractor: ChatListInteractor) : Vi
 
     private fun addBatchToChatItemList(chatItemBatch: List<ChatItem>): List<ChatItem> {
         val newList = currentChatItemList + chatItemBatch
-        currentChatItemList = newList.distinctBy { it.chatId }
+        currentChatItemList = newList
         return currentChatItemList
     }
 
     private fun updateChatItemOnList(chatItem: ChatItem): List<ChatItem> {
         val newList = ArrayList(currentChatItemList)
-        val indexToRemove = newList.indexOfFirst { it.chatId == chatItem.chatId }
-        newList.removeAt(indexToRemove)
         newList.add(0, chatItem)
-        currentChatItemList = newList
+        currentChatItemList = newList.distinctBy { it.chatId }.sortedByDescending { it.lastMessageTimestamp }
         return currentChatItemList
     }
 

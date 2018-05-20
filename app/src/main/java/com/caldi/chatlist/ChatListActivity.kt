@@ -30,9 +30,7 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
 
     private lateinit var chatListViewModel: ChatListViewModel
 
-    private lateinit var readChatsTriggerSubject: Subject<Boolean>
-
-    private lateinit var unreadChatsTriggerSubject: Subject<Boolean>
+    private lateinit var chatsTriggerSubject: Subject<Boolean>
 
     private lateinit var chatItemChangeListenerToggleSubject: Subject<Boolean>
 
@@ -70,7 +68,7 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 if (!recyclerView.canScrollVertically(1) && !isBatchLoading) {
                     isBatchLoading = true
-                    readChatsTriggerSubject.onNext(true)
+                    chatsTriggerSubject.onNext(true)
                 }
             }
         })
@@ -86,14 +84,13 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
         initEmitters()
         chatListViewModel.bind(this, eventId)
         if (initialFetch) {
-            unreadChatsTriggerSubject.onNext(true)
+            chatsTriggerSubject.onNext(true)
             chatItemChangeListenerToggleSubject.onNext(true)
         }
     }
 
     private fun initEmitters() {
-        readChatsTriggerSubject = PublishSubject.create()
-        unreadChatsTriggerSubject = PublishSubject.create()
+        chatsTriggerSubject = PublishSubject.create()
         chatItemChangeListenerToggleSubject = PublishSubject.create()
     }
 
@@ -108,9 +105,7 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
         super.onDestroy()
     }
 
-    override fun emitReadChatsFetchTrigger(): Observable<Boolean> = readChatsTriggerSubject
-
-    override fun emitUnreadChatsFetchTrigger(): Observable<Boolean> = unreadChatsTriggerSubject
+    override fun emitChatsFetchTrigger(): Observable<Boolean> = chatsTriggerSubject
 
     override fun emitChatItemChangeListenerToggle(): Observable<Boolean> = chatItemChangeListenerToggleSubject
 

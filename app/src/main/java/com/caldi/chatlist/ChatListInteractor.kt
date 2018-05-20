@@ -2,7 +2,7 @@ package com.caldi.chatlist
 
 import com.caldi.chatlist.models.ChatItem
 import com.caldi.chatlist.utils.ChatItemChangedListener
-import com.caldi.constants.UNREAD_CHILD
+import com.caldi.constants.LAST_MESSAGE_TIMESTAMP_CHILD
 import com.caldi.constants.USERS_NODE
 import com.caldi.constants.USER_CHATS_NODE
 import com.google.firebase.auth.FirebaseAuth
@@ -24,42 +24,20 @@ class ChatListInteractor {
 
     private val chatItemsBatchSize = 5
 
-    fun fetchUnreadChatsList(eventId: String): Observable<PartialChatListViewState> {
+    fun fetchChatList(eventId: String,
+                      fromTimestamp: String): Observable<PartialChatListViewState> {
         val stateSubject = PublishSubject.create<PartialChatListViewState>()
         getUserChatsNodeReference(eventId)
-                .orderByChild(UNREAD_CHILD)
-                .equalTo(true)
-                .addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        val unreadChatItems = dataSnapshot.children.map { it.getValue(ChatItem::class.java) as ChatItem }
-                        if (unreadChatItems.isNotEmpty()) {
-                            stateSubject.onNext(PartialChatListViewState.SuccessfulChatListBatchFetch(unreadChatItems))
-                        } else {
-                            fetchReadChatsList(eventId, "", stateSubject)
-                        }
-                    }
-
-                    override fun onCancelled(databaseError: DatabaseError) {
-                        emitError(stateSubject)
-                    }
-                })
-        return stateSubject
-    }
-
-    fun fetchReadChatsList(eventId: String,
-                           fromChatId: String,
-                           stateSubject: Subject<PartialChatListViewState> = PublishSubject.create())
-            : Observable<PartialChatListViewState> {
-        getUserChatsNodeReference(eventId)
-                .orderByKey()
-                .startAt(fromChatId)
-                .limitToFirst(chatItemsBatchSize)
+                .orderByChild(LAST_MESSAGE_TIMESTAMP_CHILD)
+                .endAt(fromTimestamp)
+                .limitToLast(chatItemsBatchSize)
                 .addListenerForSingleValueEvent(object : ValueEventListener {
                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                         stateSubject.onNext(PartialChatListViewState.SuccessfulChatListBatchFetch(
                                 dataSnapshot.children
                                         .map { it.getValue(ChatItem::class.java) as ChatItem }
-                                        .filter { it.chatId != fromChatId && !it.unread }))
+                                        .filter { it.lastMessageTimestamp != fromTimestamp }
+                                        .reversed()))
                     }
 
                     override fun onCancelled(databaseError: DatabaseError) {

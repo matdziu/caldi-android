@@ -16,7 +16,7 @@ class ChatListViewRobot(chatListViewModel: ChatListViewModel) : BaseViewRobot<Ch
 
         override fun emitUnreadChatsFetchTrigger(): Observable<Boolean> = unreadChatsFetchTriggerSubject
 
-        override fun emitReadChatsFetchTrigger(): Observable<Boolean> = readChatsFetchTriggerSubject
+        override fun emitChatsFetchTrigger(): Observable<Boolean> = readChatsFetchTriggerSubject
 
         override fun render(chatListViewState: ChatListViewState) {
             renderedStates.add(chatListViewState)

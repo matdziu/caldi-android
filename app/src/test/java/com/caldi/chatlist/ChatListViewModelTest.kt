@@ -20,7 +20,7 @@ class ChatListViewModelTest {
 
     @Test
     fun testReadChatsFetchingSuccess() {
-        whenever(chatListInteractor.fetchReadChatsList(any(), any(), any())).thenReturn(Observable.just(
+        whenever(chatListInteractor.fetchChatList(any(), any(), any())).thenReturn(Observable.just(
                 PartialChatListViewState.SuccessfulChatListBatchFetch(listOf(ChatItem("1", "Matt", "url/to/pic")))
         ))
 
@@ -37,7 +37,7 @@ class ChatListViewModelTest {
 
     @Test
     fun testReadChatsFetchingError() {
-        whenever(chatListInteractor.fetchReadChatsList(any(), any(), any())).thenReturn(
+        whenever(chatListInteractor.fetchChatList(any(), any(), any())).thenReturn(
                 Observable.just(PartialChatListViewState.ErrorState(true))
                         .startWith(PartialChatListViewState.ErrorState())
                         as Observable<PartialChatListViewState>
