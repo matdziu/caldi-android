@@ -1,4 +1,4 @@
-package com.caldi.people.common.personprofile
+package com.caldi.common.personprofile
 
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -16,6 +16,7 @@ import com.bumptech.glide.request.target.Target
 import com.caldi.R
 import com.caldi.common.states.PersonProfileViewState
 import com.caldi.constants.PERSON_PROFILE_VIEW_STATE_KEY
+import com.caldi.constants.SWIPEABLE_KEY
 import com.caldi.injection.modules.GlideApp
 import com.caldi.people.common.PeopleActivity
 import com.caldi.people.meetpeople.list.AnswersAdapter
@@ -26,6 +27,7 @@ import kotlinx.android.synthetic.main.fragment_person_profile.divider
 import kotlinx.android.synthetic.main.fragment_person_profile.eventUserNameTextView
 import kotlinx.android.synthetic.main.fragment_person_profile.loadingPhotoTextView
 import kotlinx.android.synthetic.main.fragment_person_profile.profilePictureImageView
+import kotlinx.android.synthetic.main.fragment_person_profile.swipeableViewGroup
 import kotlinx.android.synthetic.main.fragment_person_profile.userLinkUrlTextView
 
 class PersonProfileFragment : Fragment() {
@@ -35,10 +37,12 @@ class PersonProfileFragment : Fragment() {
 
     companion object {
 
-        fun newInstance(personProfileViewState: PersonProfileViewState): PersonProfileFragment {
+        fun newInstance(personProfileViewState: PersonProfileViewState,
+                        swipeable: Boolean = true): PersonProfileFragment {
             val personProfileFragment = PersonProfileFragment()
             val bundle = Bundle()
             bundle.putParcelable(PERSON_PROFILE_VIEW_STATE_KEY, personProfileViewState)
+            bundle.putBoolean(SWIPEABLE_KEY, swipeable)
             personProfileFragment.arguments = bundle
             return personProfileFragment
         }
@@ -48,21 +52,16 @@ class PersonProfileFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_person_profile, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        hostingActivity = activity as PeopleActivity
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         answersRecyclerView.layoutManager = LinearLayoutManager(context)
         answersRecyclerView.adapter = answersAdapter
         ViewCompat.setNestedScrollingEnabled(answersRecyclerView, false)
 
-        dismissProfileButton.setOnClickListener { emitTagForDismiss(tag) }
-        acceptProfileButton.setOnClickListener { emitTagForAccept(tag) }
-
-        // this is save thanks to newInstance method
-        render(arguments!!.getParcelable(PERSON_PROFILE_VIEW_STATE_KEY))
+        arguments?.let {
+            val swipeable = it.getBoolean(SWIPEABLE_KEY)
+            val personProfileViewState = it.getParcelable(PERSON_PROFILE_VIEW_STATE_KEY) as PersonProfileViewState
+            render(personProfileViewState, swipeable)
+        }
     }
 
     private fun emitTagForDismiss(tag: String?) {
@@ -73,13 +72,23 @@ class PersonProfileFragment : Fragment() {
         tag?.let { hostingActivity.positiveMeetSubject.onNext(it) }
     }
 
-    private fun render(personProfileViewState: PersonProfileViewState) {
+    private fun render(personProfileViewState: PersonProfileViewState, swipeable: Boolean) {
         with(personProfileViewState) {
             eventUserNameTextView.text = eventUserName
             setUserLinkUrl(userLinkUrl)
+
             if (profilePictureUrl.isNotBlank()) {
                 loadProfilePicture(profilePictureUrl)
             }
+            if (swipeable) {
+                hostingActivity = activity as PeopleActivity
+                dismissProfileButton.setOnClickListener { emitTagForDismiss(tag) }
+                acceptProfileButton.setOnClickListener { emitTagForAccept(tag) }
+                swipeableViewGroup.visibility = View.VISIBLE
+            } else {
+                swipeableViewGroup.visibility = View.GONE
+            }
+
             answersAdapter.setAnswerList(answerViewStateList)
         }
     }

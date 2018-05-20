@@ -6,7 +6,7 @@ import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
 import com.caldi.common.states.PersonProfileViewState
 import com.caldi.factories.PeopleViewModelFactory
-import com.caldi.people.common.personprofile.PersonProfileFragment
+import com.caldi.common.personprofile.PersonProfileFragment
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
