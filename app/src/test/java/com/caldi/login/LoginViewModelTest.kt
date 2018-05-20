@@ -1,5 +1,6 @@
 package com.caldi.login
 
+import com.caldi.R
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
@@ -47,12 +48,17 @@ class LoginViewModelTest {
     @Test
     fun testWithErrorFromInteractor() {
         val loginViewRobot = LoginViewRobot(loginViewModel)
-        whenever(loginInteractor.login(any(), any())).thenReturn(Observable.just(PartialLoginViewState.ErrorState()))
+        whenever(loginInteractor.login(any(), any())).thenReturn(Observable.just(
+                PartialLoginViewState.ErrorState(null)))
 
         loginViewRobot.clickLoginButton("test@test.com", "qwerty")
 
-        loginViewRobot.assertViewStates(LoginViewState(),
-                LoginViewState(inProgress = true),
-                LoginViewState(error = true))
+        loginViewRobot.assertViewStates(
+                LoginViewState(),
+                LoginViewState(
+                        inProgress = true),
+                LoginViewState(
+                        errorMessageId = R.string.generic_error,
+                        error = true))
     }
 }

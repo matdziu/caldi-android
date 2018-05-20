@@ -1,5 +1,6 @@
 package com.caldi.signup
 
+import com.caldi.R
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.whenever
@@ -38,12 +39,17 @@ class SignUpViewModelTest {
     @Test
     fun testWithErrorFromInteractor() {
         val signUpViewRobot = SignUpViewRobot(signUpViewModel)
-        whenever(signUpInteractor.createAccount(any(), any())).thenReturn(Observable.just(PartialSignUpViewState.ErrorState()))
+        whenever(signUpInteractor.createAccount(any(), any())).thenReturn(
+                Observable.just(PartialSignUpViewState.ErrorState(null)))
 
         signUpViewRobot.clickCreateAccountButton("test@test.com", "qwerty")
 
-        signUpViewRobot.assertViewStates(SignUpViewState(),
-                SignUpViewState(inProgress = true),
-                SignUpViewState(error = true))
+        signUpViewRobot.assertViewStates(
+                SignUpViewState(),
+                SignUpViewState(
+                        inProgress = true),
+                SignUpViewState(
+                        errorMessageId = R.string.generic_error,
+                        error = true))
     }
 }
