@@ -153,7 +153,7 @@ class LoginActivity : AppCompatActivity(), LoginView {
         passwordEditText.showError(!loginViewState.passwordValid)
 
         if (loginViewState.error && !loginViewState.dismissToast) {
-            Toast.makeText(this, getString(R.string.login_error_text), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(loginViewState.errorMessageId), Toast.LENGTH_SHORT).show()
         }
 
         if (loginViewState.loginSuccess) {

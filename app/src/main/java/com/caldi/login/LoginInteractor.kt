@@ -23,8 +23,7 @@ class LoginInteractor {
                     if (task.isSuccessful) {
                         stateSubject.onNext(PartialLoginViewState.LoginSuccess())
                     } else {
-                        stateSubject.onNext(PartialLoginViewState.ErrorState())
-                        stateSubject.onNext(PartialLoginViewState.ErrorState(true))
+                        emitErrorState(task.exception, stateSubject)
                     }
                 })
         return stateSubject.observeOn(AndroidSchedulers.mainThread())
@@ -55,10 +54,15 @@ class LoginInteractor {
                     if (task.isSuccessful) {
                         stateSubject.onNext(PartialLoginViewState.LoginSuccess())
                     } else {
-                        stateSubject.onNext(PartialLoginViewState.ErrorState())
-                        stateSubject.onNext(PartialLoginViewState.ErrorState(true))
+                        emitErrorState(task.exception, stateSubject)
                     }
                 }
         return stateSubject.observeOn(AndroidSchedulers.mainThread())
+    }
+
+    private fun emitErrorState(exception: Exception?, stateSubject: Subject<PartialLoginViewState>) {
+        val errorState = PartialLoginViewState.ErrorState(exception)
+        stateSubject.onNext(errorState)
+        stateSubject.onNext(errorState.copy(dismissToast = true))
     }
 }
