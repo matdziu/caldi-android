@@ -13,7 +13,5 @@ sealed class PartialChatViewState {
 
     class MessagesSetAsRead : PartialChatViewState()
 
-    class ProgressState : PartialChatViewState()
-
     class ReceiverProfileFetchedState(val personProfileViewState: PersonProfileViewState) : PartialChatViewState()
 }

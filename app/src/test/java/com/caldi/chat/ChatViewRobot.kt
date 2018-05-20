@@ -10,8 +10,11 @@ class ChatViewRobot(chatViewModel: ChatViewModel) : BaseViewRobot<ChatViewState>
     private val batchFetchTriggerSubject = PublishSubject.create<String>()
     private val newMessagesListeningToggleSubject = PublishSubject.create<Boolean>()
     private val markAsReadSubject = PublishSubject.create<Boolean>()
+    private val receiverProfileFetchTrigger = PublishSubject.create<Boolean>()
 
     private val chatView = object : ChatView {
+
+        override fun emitReceiverProfileFetchTrigger(): Observable<Boolean> = receiverProfileFetchTrigger
 
         override fun emitMarkAsRead(): Observable<Boolean> = markAsReadSubject
 
@@ -44,5 +47,9 @@ class ChatViewRobot(chatViewModel: ChatViewModel) : BaseViewRobot<ChatViewState>
 
     fun markMessagesAsRead() {
         markAsReadSubject.onNext(true)
+    }
+
+    fun fetchReceiverProfile() {
+        receiverProfileFetchTrigger.onNext(true)
     }
 }

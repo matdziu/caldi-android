@@ -36,9 +36,7 @@ class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
                                     { eventProfileData, questions ->
                                         convertToPersonProfileViewState(eventProfileData, questions)
                                     })
-                                    .map { PartialChatViewState.ReceiverProfileFetchedState(it) })
-                                    as Observable<PartialChatViewState>)
-                                    .startWith(PartialChatViewState.ProgressState())
+                                    .map { PartialChatViewState.ReceiverProfileFetchedState(it) }))
                         }
 
         val markAsReadObservable = chatView.emitMarkAsRead()
@@ -67,6 +65,7 @@ class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
             : ChatViewState {
         return when (partialState) {
             is PartialChatViewState.MessagesListChanged -> previousState.copy(
+                    progress = false,
                     messagesList = partialState.updatedMessagesList.map { convertToMessageViewState(it) }
             )
             is PartialChatViewState.NewMessagesListenerRemoved -> previousState
@@ -76,8 +75,6 @@ class ChatViewModel(private val chatInteractor: ChatInteractor) : ViewModel() {
                     dismissToast = partialState.dismissToast
             )
             is PartialChatViewState.MessagesSetAsRead -> previousState
-            is PartialChatViewState.ProgressState -> previousState.copy(
-                    progress = true)
             is PartialChatViewState.ReceiverProfileFetchedState -> previousState.copy(
                     progress = false,
                     receiverProfile = partialState.personProfileViewState

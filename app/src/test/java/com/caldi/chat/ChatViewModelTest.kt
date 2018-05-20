@@ -2,6 +2,9 @@ package com.caldi.chat
 
 import com.caldi.chat.list.MessageViewState
 import com.caldi.chat.models.Message
+import com.caldi.common.models.EventProfileData
+import com.caldi.common.states.PersonProfileViewState
+import com.caldi.people.meetpeople.list.AnswerViewState
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.eq
 import com.nhaarman.mockito_kotlin.mock
@@ -116,6 +119,61 @@ class ChatViewModelTest {
         chatViewRobot.assertViewStates(
                 ChatViewState(progress = true),
                 ChatViewState(progress = true)
+        )
+    }
+
+    @Test
+    fun testReceiverProfileFetching() {
+        val firstQuestion = "What is your favourite color?"
+        val secondQuestion = "What is your favourite drink?"
+
+        val firstAnswer = "Red"
+        val secondAnswer = "Whisky sour"
+
+        val userId = "11111"
+        val eventUserName = "TestUsername"
+        val profilePicture = "url/to/pic"
+        val userLinkUrl = ""
+        val answers = mapOf(
+                "1a" to firstAnswer,
+                "1b" to secondAnswer
+        )
+
+        val eventProfileData = EventProfileData(
+                userId,
+                eventUserName,
+                answers,
+                profilePicture,
+                userLinkUrl
+        )
+
+        val questions = mapOf(
+                "1a" to firstQuestion,
+                "1b" to secondQuestion
+        )
+
+        whenever(chatInteractor.fetchEventProfileData(any(), any())).thenReturn(Observable.just(eventProfileData))
+        whenever(chatInteractor.fetchQuestions(any())).thenReturn(Observable.just(questions))
+
+        val chatViewRobot = ChatViewRobot(chatViewModel)
+
+        chatViewRobot.fetchReceiverProfile()
+
+        chatViewRobot.assertViewStates(
+                ChatViewState(
+                        progress = true),
+                ChatViewState(
+                        progress = false,
+                        receiverProfile = PersonProfileViewState(
+                                userId,
+                                eventUserName,
+                                profilePicture,
+                                userLinkUrl,
+                                listOf(
+                                        AnswerViewState(firstQuestion, firstAnswer),
+                                        AnswerViewState(secondQuestion, secondAnswer)
+                                )
+                        ))
         )
     }
 }
