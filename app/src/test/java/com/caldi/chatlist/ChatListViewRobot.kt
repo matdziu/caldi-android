@@ -6,17 +6,14 @@ import io.reactivex.subjects.PublishSubject
 
 class ChatListViewRobot(chatListViewModel: ChatListViewModel) : BaseViewRobot<ChatListViewState>() {
 
-    private val unreadChatsFetchTriggerSubject = PublishSubject.create<Boolean>()
-    private val readChatsFetchTriggerSubject = PublishSubject.create<Boolean>()
+    private val chatsFetchTrigger = PublishSubject.create<Boolean>()
     private val chatItemChangeListenerToggle = PublishSubject.create<Boolean>()
 
     private val chatListView = object : ChatListView {
 
         override fun emitChatItemChangeListenerToggle(): Observable<Boolean> = chatItemChangeListenerToggle
 
-        override fun emitUnreadChatsFetchTrigger(): Observable<Boolean> = unreadChatsFetchTriggerSubject
-
-        override fun emitChatsFetchTrigger(): Observable<Boolean> = readChatsFetchTriggerSubject
+        override fun emitChatsFetchTrigger(): Observable<Boolean> = chatsFetchTrigger
 
         override fun render(chatListViewState: ChatListViewState) {
             renderedStates.add(chatListViewState)
@@ -27,12 +24,8 @@ class ChatListViewRobot(chatListViewModel: ChatListViewModel) : BaseViewRobot<Ch
         chatListViewModel.bind(chatListView, "testEventId")
     }
 
-    fun triggerReadChatsFetching() {
-        readChatsFetchTriggerSubject.onNext(true)
-    }
-
-    fun triggerUnreadChatsFetching() {
-        unreadChatsFetchTriggerSubject.onNext(true)
+    fun triggerChatsFetching() {
+        chatsFetchTrigger.onNext(true)
     }
 
     fun toggleChatItemChangeListener(toggle: Boolean) {

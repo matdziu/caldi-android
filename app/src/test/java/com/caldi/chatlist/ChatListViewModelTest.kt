@@ -19,14 +19,14 @@ class ChatListViewModelTest {
     }
 
     @Test
-    fun testReadChatsFetchingSuccess() {
-        whenever(chatListInteractor.fetchChatList(any(), any(), any())).thenReturn(Observable.just(
+    fun testChatsFetchingSuccess() {
+        whenever(chatListInteractor.fetchChatList(any(), any())).thenReturn(Observable.just(
                 PartialChatListViewState.SuccessfulChatListBatchFetch(listOf(ChatItem("1", "Matt", "url/to/pic")))
         ))
 
         val chatListViewRobot = ChatListViewRobot(chatListViewModel)
 
-        chatListViewRobot.triggerReadChatsFetching()
+        chatListViewRobot.triggerChatsFetching()
 
         chatListViewRobot.assertViewStates(
                 ChatListViewState(),
@@ -36,8 +36,8 @@ class ChatListViewModelTest {
     }
 
     @Test
-    fun testReadChatsFetchingError() {
-        whenever(chatListInteractor.fetchChatList(any(), any(), any())).thenReturn(
+    fun testChatsFetchingError() {
+        whenever(chatListInteractor.fetchChatList(any(), any())).thenReturn(
                 Observable.just(PartialChatListViewState.ErrorState(true))
                         .startWith(PartialChatListViewState.ErrorState())
                         as Observable<PartialChatListViewState>
@@ -45,44 +45,7 @@ class ChatListViewModelTest {
 
         val chatListViewRobot = ChatListViewRobot(chatListViewModel)
 
-        chatListViewRobot.triggerReadChatsFetching()
-
-        chatListViewRobot.assertViewStates(
-                ChatListViewState(),
-                ChatListViewState(progress = true),
-                ChatListViewState(error = true),
-                ChatListViewState(error = true, dismissToast = true)
-        )
-    }
-
-    @Test
-    fun testUnreadChatsFetchingSuccess() {
-        whenever(chatListInteractor.fetchUnreadChatsList(any())).thenReturn(Observable.just(
-                PartialChatListViewState.SuccessfulChatListBatchFetch(listOf(ChatItem("1", "Matt", "url/to/pic")))
-        ))
-
-        val chatListViewRobot = ChatListViewRobot(chatListViewModel)
-
-        chatListViewRobot.triggerUnreadChatsFetching()
-
-        chatListViewRobot.assertViewStates(
-                ChatListViewState(),
-                ChatListViewState(progress = true),
-                ChatListViewState(chatItemList = listOf(ChatItem("1", "Matt", "url/to/pic")))
-        )
-    }
-
-    @Test
-    fun testUnreadChatsFetchingError() {
-        whenever(chatListInteractor.fetchUnreadChatsList(any())).thenReturn(
-                Observable.just(PartialChatListViewState.ErrorState(true))
-                        .startWith(PartialChatListViewState.ErrorState())
-                        as Observable<PartialChatListViewState>
-        )
-
-        val chatListViewRobot = ChatListViewRobot(chatListViewModel)
-
-        chatListViewRobot.triggerUnreadChatsFetching()
+        chatListViewRobot.triggerChatsFetching()
 
         chatListViewRobot.assertViewStates(
                 ChatListViewState(),
