@@ -60,4 +60,10 @@
     <string name="general_notifications_preference_category">Notifications for all events</string>
     <string name="event_notifications_preference_category">Notifications for this event</string>
     <string name="event_settings_item_text">Event settings</string>
+    <string name="no_internet_error">You\'re not connected to the internet</string>
+    <string name="generic_error">Something went wrong :(</string>
+    <string name="wrong_password_error">This password is wrong</string>
+    <string name="user_not_found_error">This user doesn\'t exist</string>
+    <string name="invalid_email_error">This email is invalid</string>
+    <string name="already_used_email_error">This email is already used</string>
 </resources>

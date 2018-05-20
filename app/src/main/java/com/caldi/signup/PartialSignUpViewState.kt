@@ -1,5 +1,7 @@
 package com.caldi.signup
 
+import java.lang.Exception
+
 sealed class PartialSignUpViewState {
 
     class InProgressState : PartialSignUpViewState()
@@ -7,7 +9,8 @@ sealed class PartialSignUpViewState {
     data class LocalValidation(val emailValid: Boolean = false,
                                val passwordValid: Boolean = false) : PartialSignUpViewState()
 
-    class ErrorState(val dismissToast: Boolean = false) : PartialSignUpViewState()
+    data class ErrorState(val exception: Exception?,
+                          val dismissToast: Boolean = false) : PartialSignUpViewState()
 
     class SignUpSuccess : PartialSignUpViewState()
 }

@@ -17,8 +17,9 @@ class SignUpInteractor {
                     if (task.isSuccessful) {
                         stateSubject.onNext(PartialSignUpViewState.SignUpSuccess())
                     } else {
-                        stateSubject.onNext(PartialSignUpViewState.ErrorState())
-                        stateSubject.onNext(PartialSignUpViewState.ErrorState(true))
+                        val errorState = PartialSignUpViewState.ErrorState(task.exception)
+                        stateSubject.onNext(errorState)
+                        stateSubject.onNext(errorState.copy(dismissToast = true))
                     }
                 })
         return stateSubject.observeOn(AndroidSchedulers.mainThread())
