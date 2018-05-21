@@ -16,6 +16,7 @@ import com.caldi.constants.EVENT_ID_KEY
 import com.caldi.extensions.getCurrentISODate
 import com.caldi.factories.OrganizerViewModelFactory
 import com.caldi.injection.modules.GlideApp
+import com.caldi.onboarding.OnboardingInfo
 import com.caldi.organizer.list.MessagesAdapter
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
@@ -26,6 +27,7 @@ import kotlinx.android.synthetic.main.activity_organizer.organizerInfoImageView
 import kotlinx.android.synthetic.main.activity_organizer.organizerInfoTextView
 import kotlinx.android.synthetic.main.activity_organizer.organizerInfoView
 import kotlinx.android.synthetic.main.activity_organizer.progressBar
+import kotlinx.android.synthetic.main.toolbar.logo
 import javax.inject.Inject
 
 class OrganizerActivity : BaseDrawerActivity(), OrganizerView {
@@ -91,6 +93,10 @@ class OrganizerActivity : BaseDrawerActivity(), OrganizerView {
                 }
             }
         })
+
+        showOnboarding(
+                OnboardingInfo(logo, getString(R.string.onboarding_organizer_screen), "organizerScreenOnboarding")
+        )
     }
 
     override fun onResume() {

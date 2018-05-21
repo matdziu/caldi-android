@@ -78,7 +78,9 @@ class HomeActivity : BaseOverflowActivity(), HomeView {
         LocalBroadcastManager.getInstance(this)
                 .registerReceiver(notificationTokenReceiver, IntentFilter(NOTIFICATION_TOKEN_ACTION))
 
-        showOnboarding(OnboardingInfo(logo, getString(R.string.onboarding_home_screen), "homeScreenOnboarding"))
+        showOnboarding(
+                OnboardingInfo(logo, getString(R.string.onboarding_home_screen), "homeScreenOnboarding")
+        )
     }
 
     override fun onStart() {

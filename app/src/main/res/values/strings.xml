@@ -67,4 +67,5 @@
     <string name="invalid_email_error">This email is invalid</string>
     <string name="already_used_email_error">This email is already used</string>
     <string name="onboarding_home_screen">On this screen you can add new events and adjust general app settings.</string>
+    <string name="onboarding_organizer_screen">Here you\'ll receive messages from event host. Use top left button to navigate. Click event name banner for more info.</string>
 </resources>
