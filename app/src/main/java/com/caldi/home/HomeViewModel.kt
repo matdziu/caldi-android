@@ -30,10 +30,15 @@ class HomeViewModel(private val homeInteractor: HomeInteractor) : ViewModel() {
     private fun reduce(previousState: HomeViewState, partialState: PartialHomeViewState)
             : HomeViewState {
         return when (partialState) {
-            is PartialHomeViewState.InProgressState -> HomeViewState(inProgress = true)
-            is PartialHomeViewState.ErrorState -> HomeViewState(error = true,
+            is PartialHomeViewState.InProgressState -> HomeViewState(
+                    inProgress = true)
+            is PartialHomeViewState.ErrorState -> HomeViewState(
+                    inProgress = false,
+                    error = true,
                     dismissToast = partialState.dismissToast)
-            is PartialHomeViewState.FetchingSucceeded -> HomeViewState(eventList = partialState.eventList)
+            is PartialHomeViewState.FetchingSucceeded -> HomeViewState(
+                    inProgress = false,
+                    eventList = partialState.eventList)
             is PartialHomeViewState.NotificationTokenSaveSuccess -> previousState
         }
     }

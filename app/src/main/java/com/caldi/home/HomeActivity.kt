@@ -20,6 +20,7 @@ import com.caldi.constants.NOTIFICATION_TOKEN_KEY
 import com.caldi.factories.HomeViewModelFactory
 import com.caldi.home.list.EventsAdapter
 import com.caldi.home.models.Event
+import com.caldi.onboarding.OnboardingInfo
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.firebase.iid.FirebaseInstanceId
 import dagger.android.AndroidInjection
@@ -30,6 +31,7 @@ import kotlinx.android.synthetic.main.activity_home.addEventButton
 import kotlinx.android.synthetic.main.activity_home.eventsRecyclerView
 import kotlinx.android.synthetic.main.activity_home.noEventsTextView
 import kotlinx.android.synthetic.main.activity_home.progressBar
+import kotlinx.android.synthetic.main.toolbar.logo
 import javax.inject.Inject
 
 class HomeActivity : BaseOverflowActivity(), HomeView {
@@ -75,6 +77,8 @@ class HomeActivity : BaseOverflowActivity(), HomeView {
 
         LocalBroadcastManager.getInstance(this)
                 .registerReceiver(notificationTokenReceiver, IntentFilter(NOTIFICATION_TOKEN_ACTION))
+
+        showOnboarding(OnboardingInfo(logo, getString(R.string.onboarding_home_screen), "homeScreenOnboarding"))
     }
 
     override fun onStart() {

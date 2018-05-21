@@ -66,4 +66,5 @@
     <string name="user_not_found_error">This user doesn\'t exist</string>
     <string name="invalid_email_error">This email is invalid</string>
     <string name="already_used_email_error">This email is already used</string>
+    <string name="onboarding_home_screen">On this screen you can add new events and adjust general app settings.</string>
 </resources>
