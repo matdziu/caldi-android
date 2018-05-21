@@ -30,7 +30,8 @@ android {
         }
 
         release {
-            minifyEnabled false
+            buildConfigField "String", OAUTH_CLIENT_ID, "\"55173729475-h749rfo3lhob2el9mlp316bbr90gdau6.apps.googleusercontent.com\""
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
