@@ -14,6 +14,7 @@ import com.caldi.chatlist.list.ChatItemsAdapter
 import com.caldi.chatlist.models.ChatItem
 import com.caldi.constants.EVENT_ID_KEY
 import com.caldi.factories.ChatListViewModelFactory
+import com.caldi.onboarding.OnboardingInfo
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
@@ -21,6 +22,7 @@ import io.reactivex.subjects.Subject
 import kotlinx.android.synthetic.main.activity_chat_list.chatItemsRecyclerView
 import kotlinx.android.synthetic.main.activity_chat_list.noPeopleToChatTextView
 import kotlinx.android.synthetic.main.activity_chat_list.progressBar
+import kotlinx.android.synthetic.main.toolbar.logo
 import javax.inject.Inject
 
 class ChatListActivity : BaseDrawerActivity(), ChatListView {
@@ -59,6 +61,10 @@ class ChatListActivity : BaseDrawerActivity(), ChatListView {
         chatListViewModel = ViewModelProviders.of(this, chatListViewModelFactory)[ChatListViewModel::class.java]
 
         initRecyclerView()
+
+        showOnboarding(
+                OnboardingInfo(logo, getString(R.string.onboarding_chat_list_screen), "chatListOnboarding")
+        )
     }
 
     private fun initRecyclerView() {

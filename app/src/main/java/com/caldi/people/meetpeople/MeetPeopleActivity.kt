@@ -10,11 +10,13 @@ import android.widget.Toast
 import com.caldi.R
 import com.caldi.common.states.PersonProfileViewState
 import com.caldi.constants.EVENT_ID_KEY
+import com.caldi.onboarding.OnboardingInfo
 import com.caldi.people.common.PeopleActivity
 import com.caldi.people.common.PeopleViewState
 import com.caldi.people.filterpeople.FilterPeopleActivity
 import kotlinx.android.synthetic.main.activity_meet_people.noPeopleToMeetTextView
 import kotlinx.android.synthetic.main.activity_meet_people.progressBar
+import kotlinx.android.synthetic.main.toolbar.logo
 
 class MeetPeopleActivity : PeopleActivity() {
 
@@ -33,6 +35,10 @@ class MeetPeopleActivity : PeopleActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setContentView(R.layout.activity_meet_people)
         super.onCreate(savedInstanceState)
+
+        showOnboarding(
+                OnboardingInfo(logo, getString(R.string.onboarding_meet_people_screen), "meetPeopleOnboarding")
+        )
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

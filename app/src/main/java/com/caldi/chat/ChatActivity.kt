@@ -21,6 +21,7 @@ import com.caldi.constants.NEW_CONNECTION_NOTIFICATION_REQUEST_CODE
 import com.caldi.extensions.getCurrentISODate
 import com.caldi.factories.ChatViewModelFactory
 import com.caldi.injection.modules.GlideApp
+import com.caldi.onboarding.OnboardingInfo
 import com.jakewharton.rxbinding2.view.RxView
 import dagger.android.AndroidInjection
 import io.reactivex.Observable
@@ -34,6 +35,7 @@ import kotlinx.android.synthetic.main.activity_chat.messagesRecyclerView
 import kotlinx.android.synthetic.main.activity_chat.progressBar
 import kotlinx.android.synthetic.main.activity_chat.sendMessageButton
 import kotlinx.android.synthetic.main.activity_chat.sendPanelView
+import kotlinx.android.synthetic.main.toolbar.logo
 import javax.inject.Inject
 
 class ChatActivity : BaseDrawerActivity(), ChatView {
@@ -110,6 +112,10 @@ class ChatActivity : BaseDrawerActivity(), ChatView {
                 }
             }
         })
+
+        showOnboarding(
+                OnboardingInfo(logo, getString(R.string.onboarding_chat_screen), "chatScreenOnboarding")
+        )
     }
 
     override fun onResume() {

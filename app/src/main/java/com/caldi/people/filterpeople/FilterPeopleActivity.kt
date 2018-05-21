@@ -13,6 +13,7 @@ import android.widget.Toast
 import com.caldi.R
 import com.caldi.common.states.PersonProfileViewState
 import com.caldi.constants.EVENT_ID_KEY
+import com.caldi.onboarding.OnboardingInfo
 import com.caldi.people.common.PeopleActivity
 import com.caldi.people.common.PeopleViewState
 import com.caldi.people.filterpeople.list.PersonProfilesAdapter
@@ -27,6 +28,7 @@ import kotlinx.android.synthetic.main.activity_filter_people.filterSpinner
 import kotlinx.android.synthetic.main.activity_filter_people.noPeopleToMeetTextView
 import kotlinx.android.synthetic.main.activity_filter_people.peopleRecyclerView
 import kotlinx.android.synthetic.main.activity_filter_people.progressBar
+import kotlinx.android.synthetic.main.toolbar.logo
 
 class FilterPeopleActivity : PeopleActivity() {
 
@@ -62,6 +64,10 @@ class FilterPeopleActivity : PeopleActivity() {
 
         initSpinner()
         initRecyclerView()
+
+        showOnboarding(
+                OnboardingInfo(logo, getString(R.string.onboarding_filter_people_screen), "filterPeopleOnboarding")
+        )
     }
 
     private fun initSpinner() {

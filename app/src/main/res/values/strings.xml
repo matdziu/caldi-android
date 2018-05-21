@@ -68,4 +68,11 @@
     <string name="already_used_email_error">This email is already used</string>
     <string name="onboarding_home_screen">On this screen you can add new events and adjust general app settings.</string>
     <string name="onboarding_organizer_screen">Here you\'ll receive messages from event host. Use top left button to navigate. Click event name banner for more info.</string>
+    <string name="onboarding_meet_people_screen">On this screen you can browse through event attendees. Click green tick button if you like somebody. You can chat only with people who also liked you. Click top right button to filter attendees.</string>
+    <string name="onboarding_filter_people_screen">Here you can filter attendees by info they put in their profiles.</string>
+    <string name="onboarding_chat_list_screen">This screen contains all your connections from this event.</string>
+    <string name="onboarding_chat_screen">Chat with somebody here! You can click on attendee name banner for more info.</string>
+    <string name="onboarding_event_profile">Answer short questions from the organizer to meet new people.</string>
+    <string name="onboarding_event_settings">These settings will have effect only on THIS event.</string>
+    <string name="onboarding_general_settings">These settings will have effect on ALL events.</string>
 </resources>

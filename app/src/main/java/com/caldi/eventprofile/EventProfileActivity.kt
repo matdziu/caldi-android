@@ -27,6 +27,7 @@ import com.caldi.eventprofile.list.QuestionsAdapter
 import com.caldi.extensions.hideSoftKeyboard
 import com.caldi.factories.EventProfileViewModelFactory
 import com.caldi.injection.modules.GlideApp
+import com.caldi.onboarding.OnboardingInfo
 import com.caldi.people.meetpeople.MeetPeopleActivity
 import com.jakewharton.rxbinding2.view.RxView
 import com.theartofdev.edmodo.cropper.CropImage
@@ -44,6 +45,7 @@ import kotlinx.android.synthetic.main.activity_event_profile.questionsRecyclerVi
 import kotlinx.android.synthetic.main.activity_event_profile.saveProfileButton
 import kotlinx.android.synthetic.main.activity_event_profile.uploadPhotoButton
 import kotlinx.android.synthetic.main.activity_event_profile.userLinkEditText
+import kotlinx.android.synthetic.main.toolbar.logo
 import java.io.File
 import javax.inject.Inject
 
@@ -85,6 +87,10 @@ class EventProfileActivity : BaseDrawerActivity(), EventProfileView {
 
         uploadPhotoButton.setOnClickListener { askForImage() }
         profilePictureImageView.setOnClickListener { askForImage() }
+
+        showOnboarding(
+                OnboardingInfo(logo, getString(R.string.onboarding_event_profile), "eventProfileOnboarding")
+        )
     }
 
     private fun askForImage() {

@@ -6,6 +6,8 @@ import android.os.Bundle
 import com.caldi.R
 import com.caldi.base.BaseDrawerActivity
 import com.caldi.constants.EVENT_ID_KEY
+import com.caldi.onboarding.OnboardingInfo
+import kotlinx.android.synthetic.main.toolbar.logo
 
 class EventSettingsActivity : BaseDrawerActivity() {
 
@@ -25,6 +27,9 @@ class EventSettingsActivity : BaseDrawerActivity() {
         fragmentManager.beginTransaction()
                 .replace(R.id.fragmentsContainer, EventSettingsFragment())
                 .commit()
+        showOnboarding(
+                OnboardingInfo(logo, getString(R.string.onboarding_event_settings), "eventSettingsOnboarding")
+        )
     }
 
     override fun onResume() {
