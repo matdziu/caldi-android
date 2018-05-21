@@ -21,3 +21,10 @@
 #-renamesourcefileattribute SourceFile
 
 -dontwarn com.google.errorprone.annotations.**
+-keep class com.caldi.home.models.** { *; }
+-keep class com.caldi.organizer.models.** { *; }
+-keep class com.caldi.chat.models.** { *; }
+-keep class com.caldi.chatlist.models.** { *; }
+-keep class com.caldi.common.models.** { *; }
+-keepattributes Signature
+-keepattributes *Annotation*
