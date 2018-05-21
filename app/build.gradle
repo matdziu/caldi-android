@@ -37,12 +37,12 @@ android {
     buildTypes {
         def OAUTH_CLIENT_ID = "OAUTH_CLIENT_ID"
         debug {
-            buildConfigField "String", OAUTH_CLIENT_ID, "\"55173729475-h749rfo3lhob2el9mlp316bbr90gdau6.apps.googleusercontent.com\""
+            buildConfigField "String", OAUTH_CLIENT_ID, "\"212768750120-jpm4dphqi9jjdsdhkon7s3cfaq695d7j.apps.googleusercontent.com\""
             applicationIdSuffix ".debug"
             versionNameSuffix "-debug"
         }
         release {
-            buildConfigField "String", OAUTH_CLIENT_ID, "\"55173729475-h749rfo3lhob2el9mlp316bbr90gdau6.apps.googleusercontent.com\""
+            buildConfigField "String", OAUTH_CLIENT_ID, "\"1049565303131-ac2dpgonll99l62cqq3kaakqv65haqkr.apps.googleusercontent.com\""
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.config
